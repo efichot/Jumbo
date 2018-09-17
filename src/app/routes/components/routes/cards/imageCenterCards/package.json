@@ -1,9 +1,0 @@
-{
-  "name": "ImageCenterCards",
-  "version": "0.0.0",
-  "private": true,
-  "main": "./ImageCenterCards.js",
-  "dependencies": {
-    "material-ui": "next"
-  }
-}

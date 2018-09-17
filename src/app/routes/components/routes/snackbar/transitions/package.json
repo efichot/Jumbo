@@ -1,9 +1,0 @@
-{
-  "name": "DirectionSnackbar",
-  "version": "0.0.0",
-  "private": true,
-  "main": "./DirectionSnackbar.js",
-  "dependencies": {
-    "material-ui": "next"
-  }
-}

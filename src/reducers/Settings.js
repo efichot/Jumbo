@@ -12,7 +12,7 @@ import {
   VERTICAL_NAVIGATION,
   WINDOW_WIDTH
 } from 'constants/ActionTypes';
-import {DARK_INDIGO} from 'constants/ThemeColors';
+import { DARK_INDIGO } from 'constants/ThemeColors';
 
 const rltLocale = ['ar'];
 const initialSettings = {
@@ -66,18 +66,15 @@ const settings = (state = initialSettings, action) => {
         darkTheme: !state.darkTheme
       };
     case SWITCH_LANGUAGE:
-
       return {
         ...state,
         locale: action.payload,
         isDirectionRTL: rltLocale.includes(action.payload.locale)
-
       };
     case CHANGE_DIRECTION:
       return {
         ...state,
         isDirectionRTL: !state.isDirectionRTL
-
       };
 
     case CHANGE_NAVIGATION_STYLE:
@@ -86,13 +83,11 @@ const settings = (state = initialSettings, action) => {
         navigationStyle: action.payload
       };
 
-
     case HORIZONTAL_MENU_POSITION:
       return {
         ...state,
         horizontalNavPosition: action.payload
       };
-
 
     default:
       return state;

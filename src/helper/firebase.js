@@ -2,12 +2,12 @@ import firebase from "firebase";
 
 // Initialize Firebase
 const config = {
-  apiKey: 'AIzaSyCYaTKjfam_qMXDnGfcdnBxScEq89VQtLk',
-  authDomain: 'curious-sandbox-196209.firebaseapp.com',
-  databaseURL: 'https://curious-sandbox-196209.firebaseio.com',
-  projectId: 'curious-sandbox-196209',
-  storageBucket: '',
-  messagingSenderId: '1034032747860'
+  apiKey: "AIzaSyAOIrQOp6zRzCCyZTKou89Fm7gvL5Te8p4",
+  authDomain: "jumbo-react-2e67a.firebaseapp.com",
+  databaseURL: "https://jumbo-react-2e67a.firebaseio.com",
+  projectId: "jumbo-react-2e67a",
+  storageBucket: "jumbo-react-2e67a.appspot.com",
+  messagingSenderId: "409276958835"
 };
 
 firebase.initializeApp(config);

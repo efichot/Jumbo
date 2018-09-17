@@ -1,9 +1,0 @@
-{
-  "name": "DisabledTabs",
-  "version": "0.0.0",
-  "private": true,
-  "main": "./DisabledTabs.js",
-  "dependencies": {
-    "material-ui": "next"
-  }
-}

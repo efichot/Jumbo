@@ -1,5 +1,11 @@
-import {all, call, fork, put, takeEvery} from "redux-saga/effects";
-import {auth, facebookAuthProvider, githubAuthProvider, googleAuthProvider, twitterAuthProvider} from "helper/firebase";
+import { all, call, fork, put, takeEvery } from 'redux-saga/effects';
+import {
+  auth,
+  facebookAuthProvider,
+  githubAuthProvider,
+  googleAuthProvider,
+  twitterAuthProvider
+} from 'helper/firebase';
 import {
   SIGNIN_FACEBOOK_USER,
   SIGNIN_GITHUB_USER,
@@ -8,60 +14,84 @@ import {
   SIGNIN_USER,
   SIGNOUT_USER,
   SIGNUP_USER
-} from "constants/ActionTypes";
-import {showAuthMessage, userSignInSuccess, userSignOutSuccess, userSignUpSuccess} from "actions/Auth";
+} from 'constants/ActionTypes';
+import {
+  showAuthMessage,
+  userSignInSuccess,
+  userSignOutSuccess,
+  userSignUpSuccess
+} from 'actions/Auth';
 import {
   userFacebookSignInSuccess,
   userGithubSignInSuccess,
   userGoogleSignInSuccess,
   userTwitterSignInSuccess
-} from "../actions/Auth";
+} from '../actions/Auth';
 
 const createUserWithEmailPasswordRequest = async (email, password) =>
-  await  auth.createUserWithEmailAndPassword(email, password)
+  await auth
+    .createUserWithEmailAndPassword(email, password)
     .then(authUser => authUser)
     .catch(error => error);
 
+const updateProfile = async name =>
+  await auth.currentUser
+    .updateProfile({
+      displayName: name
+    })
+    .then(() => console.log('User name updated'))
+    .catch(error => error);
+
 const signInUserWithEmailPasswordRequest = async (email, password) =>
-  await  auth.signInWithEmailAndPassword(email, password)
+  await auth
+    .signInWithEmailAndPassword(email, password)
     .then(authUser => authUser)
     .catch(error => error);
 
 const signOutRequest = async () =>
-  await  auth.signOut()
+  await auth
+    .signOut()
     .then(authUser => authUser)
     .catch(error => error);
 
-
 const signInUserWithGoogleRequest = async () =>
-  await  auth.signInWithPopup(googleAuthProvider)
+  await auth
+    .signInWithPopup(googleAuthProvider)
     .then(authUser => authUser)
     .catch(error => error);
 
 const signInUserWithFacebookRequest = async () =>
-  await  auth.signInWithPopup(facebookAuthProvider)
+  await auth
+    .signInWithPopup(facebookAuthProvider)
     .then(authUser => authUser)
     .catch(error => error);
 
 const signInUserWithGithubRequest = async () =>
-  await  auth.signInWithPopup(githubAuthProvider)
+  await auth
+    .signInWithPopup(githubAuthProvider)
     .then(authUser => authUser)
     .catch(error => error);
 
 const signInUserWithTwitterRequest = async () =>
-  await  auth.signInWithPopup(twitterAuthProvider)
+  await auth
+    .signInWithPopup(twitterAuthProvider)
     .then(authUser => authUser)
     .catch(error => error);
 
-function* createUserWithEmailPassword({payload}) {
-  const {email, password} = payload;
+function* createUserWithEmailPassword({ payload }) {
+  const { email, password, name } = payload;
   try {
-    const signUpUser = yield call(createUserWithEmailPasswordRequest, email, password);
+    const signUpUser = yield call(
+      createUserWithEmailPasswordRequest,
+      email,
+      password
+    );
+    yield call(updateProfile, name);
     if (signUpUser.message) {
       yield put(showAuthMessage(signUpUser.message));
     } else {
       localStorage.setItem('user_id', signUpUser.user.uid);
-      yield put(userSignUpSuccess(signUpUser.user.uid));
+      yield put(userSignUpSuccess(signUpUser.user));
     }
   } catch (error) {
     yield put(showAuthMessage(error));
@@ -75,13 +105,12 @@ function* signInUserWithGoogle() {
       yield put(showAuthMessage(signUpUser.message));
     } else {
       localStorage.setItem('user_id', signUpUser.user.uid);
-      yield put(userGoogleSignInSuccess(signUpUser.user.uid));
+      yield put(userGoogleSignInSuccess(signUpUser.user));
     }
   } catch (error) {
     yield put(showAuthMessage(error));
   }
 }
-
 
 function* signInUserWithFacebook() {
   try {
@@ -97,7 +126,6 @@ function* signInUserWithFacebook() {
   }
 }
 
-
 function* signInUserWithGithub() {
   try {
     const signUpUser = yield call(signInUserWithGithubRequest);
@@ -111,7 +139,6 @@ function* signInUserWithGithub() {
     yield put(showAuthMessage(error));
   }
 }
-
 
 function* signInUserWithTwitter() {
   try {
@@ -131,15 +158,19 @@ function* signInUserWithTwitter() {
   }
 }
 
-function* signInUserWithEmailPassword({payload}) {
-  const {email, password} = payload;
+function* signInUserWithEmailPassword({ payload }) {
+  const { email, password } = payload;
   try {
-    const signInUser = yield call(signInUserWithEmailPasswordRequest, email, password);
+    const signInUser = yield call(
+      signInUserWithEmailPasswordRequest,
+      email,
+      password
+    );
     if (signInUser.message) {
       yield put(showAuthMessage(signInUser.message));
     } else {
       localStorage.setItem('user_id', signInUser.user.uid);
-      yield put(userSignInSuccess(signInUser.user.uid));
+      yield put(userSignInSuccess(signInUser.user));
     }
   } catch (error) {
     yield put(showAuthMessage(error));
@@ -189,11 +220,13 @@ export function* signOutUser() {
 }
 
 export default function* rootSaga() {
-  yield all([fork(signInUser),
+  yield all([
+    fork(signInUser),
     fork(createUserAccount),
     fork(signInWithGoogle),
     fork(signInWithFacebook),
     fork(signInWithTwitter),
     fork(signInWithGithub),
-    fork(signOutUser)]);
+    fork(signOutUser)
+  ]);
 }

@@ -296,9 +296,9 @@ class ToDoWithRedux extends Component {
                             onClick={this.onToggleDrawer.bind(this)}>
                   <i className="zmdi zmdi-menu"/>
                 </IconButton>
-                <AppModuleHeader placeholder="Search To Do" user={this.props.user}
+                {/* <AppModuleHeader placeholder="Search To Do" user={this.props.user}
                                  onChange={this.updateSearch.bind(this)}
-                                 value={this.props.searchTodo}/>
+                                 value={this.props.searchTodo}/> */}
               </div>
               <div className="module-box-content">
                 {this.props.currentTodo === null ?

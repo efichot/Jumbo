@@ -1,9 +1,0 @@
-{
-  "name": "CenteredTabs",
-  "version": "0.0.0",
-  "private": true,
-  "main": "./CenteredTabs.js",
-  "dependencies": {
-    "material-ui": "next"
-  }
-}

@@ -1,6 +1,0 @@
-{
-  "name": "BasicTable",
-  "version": "0.0.0",
-  "private": true,
-  "main": "./Components/BasicTable.js"
-}

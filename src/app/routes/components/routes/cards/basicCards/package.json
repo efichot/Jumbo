@@ -1,9 +1,0 @@
-{
-  "name": "BasicCard",
-  "version": "0.0.0",
-  "private": true,
-  "main": "./BasicCard.js",
-  "dependencies": {
-    "material-ui": "next"
-  }
-}

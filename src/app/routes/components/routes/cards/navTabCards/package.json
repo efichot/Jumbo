@@ -1,9 +1,0 @@
-{
-  "name": "NavTabCards",
-  "version": "0.0.0",
-  "private": true,
-  "main": "./NavTabCards.js",
-  "dependencies": {
-    "material-ui": "next"
-  }
-}

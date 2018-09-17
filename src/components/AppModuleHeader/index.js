@@ -43,12 +43,6 @@ class AppModuleHeader extends React.Component {
           </div>
         </div>
 
-        <Popover className="p-3" placement="bottom" isOpen={this.state.popoverOpen} target="Popover1"
-                 toggle={this.toggle}>
-          <h3>{user.name}</h3>
-          <h4>{user.email}</h4>
-        </Popover>
-
         <div className="d-inline-block d-sm-none">
           <Dropdown
             className="quick-menu nav-searchbox"
@@ -70,21 +64,6 @@ class AppModuleHeader extends React.Component {
                          value={value}/>
             </DropdownMenu>
           </Dropdown>
-        </div>
-
-        <div className="module-box-header-right">
-          {apps && <IconButton className="size-40" aria-label="Menu">
-            <i className="zmdi zmdi-apps"/>
-          </IconButton>}
-          {notification && <IconButton className="size-40" aria-label="Menu">
-            <i className="zmdi zmdi-notifications-none"/>
-          </IconButton>}
-
-          <img className="ml-2 rounded-circle size-40 pointer" id="Popover1" alt={user.name}
-               onMouseEnter={this.toggle}
-               onMouseLeave={this.toggle}
-               onClick={this.toggle}
-               src={user.avatar}/>
         </div>
       </div>
     )

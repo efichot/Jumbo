@@ -15,6 +15,7 @@ import {
   userSignIn,
   userTwitterSignIn
 } from "actions/Auth";
+import iota from 'assets/images/iota_light.svg';
 
 class SignIn extends React.Component {
   constructor() {
@@ -49,7 +50,7 @@ class SignIn extends React.Component {
 
           <div className="app-logo-content d-flex align-items-center justify-content-center">
             <Link className="logo-lg" to="/" title="Jambo">
-              <img src="http://via.placeholder.com/177x65" alt="jambo" title="jambo"/>
+              <img src={iota} alt="jambo" title="jambo" style={{width: '100%'}}/>
             </Link>
           </div>
 

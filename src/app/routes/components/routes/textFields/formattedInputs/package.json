@@ -1,9 +1,0 @@
-{
-  "name": "InputAdornments ",
-  "version": "0.0.0",
-  "private": true,
-  "main": "./InputAdornments.js",
-  "dependencies": {
-    "material-ui": "next"
-  }
-}

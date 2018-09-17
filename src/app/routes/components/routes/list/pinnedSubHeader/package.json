@@ -1,9 +1,0 @@
-{
-  "name": "PinnedSubheaderList",
-  "version": "0.0.0",
-  "private": true,
-  "main": "./PinnedSubheaderList.js",
-  "dependencies": {
-    "material-ui": "next"
-  }
-}

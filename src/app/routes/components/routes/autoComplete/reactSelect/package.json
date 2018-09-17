@@ -1,9 +1,0 @@
-{
-  "name": "IntegrationReactSelect",
-  "version": "0.0.0",
-  "private": true,
-  "main": "./IntegrationReactSelect.js",
-  "dependencies": {
-    "material-ui": "next"
-  }
-}

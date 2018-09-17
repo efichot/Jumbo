@@ -1,9 +1,0 @@
-{
-  "name": "ImageGridList",
-  "version": "0.0.0",
-  "private": true,
-  "main": "./ImageGridList.js",
-  "dependencies": {
-    "material-ui": "next"
-  }
-}

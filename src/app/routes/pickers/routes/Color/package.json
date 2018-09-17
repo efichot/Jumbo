@@ -1,9 +1,0 @@
-{
-  "name": "Color",
-  "version": "0.0.0",
-  "private": true,
-  "main": "./index.js",
-  "dependencies": {
-    "react-color": "^2.13.8"
-  }
-}

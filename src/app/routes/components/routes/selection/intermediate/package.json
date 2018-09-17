@@ -1,9 +1,0 @@
-{
-  "name": "Intermediate",
-  "version": "0.0.0",
-  "private": true,
-  "main": "./Intermediate.js",
-  "dependencies": {
-    "material-ui": "next"
-  }
-}
