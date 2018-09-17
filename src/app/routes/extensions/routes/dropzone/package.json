@@ -1,0 +1,9 @@
+{
+  "name": "Dropzone",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./index.js",
+  "dependencies": {
+    "react-dropzone": "^4.2.9"
+  }
+}
