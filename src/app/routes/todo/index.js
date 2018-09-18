@@ -11,10 +11,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import {
-  NotificationContainer,
-  NotificationManager
-} from 'react-notifications';
+import { NotificationManager } from 'react-notifications';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import SweetAlert from 'react-bootstrap-sweetalert';
@@ -171,8 +168,6 @@ export default class Dashboard extends Component {
           >
             <IntlMessages id="sweetAlerts.youWillNotAble" />
           </SweetAlert>
-
-          <NotificationContainer />
         </div>
       </div>
     );

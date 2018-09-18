@@ -45,6 +45,7 @@ import SignUp from './SignUp';
 import { setInitUrl } from '../actions/Auth';
 import RTL from 'util/RTL';
 import asyncComponent from 'util/asyncComponent';
+import { NotificationContainer } from 'react-notifications';
 
 window.$ = window.jQuery = require('jquery');
 
@@ -167,7 +168,7 @@ class App extends Component {
       if (authUser === null) {
         return <Redirect to={'/signin'} />;
       } else if (initURL === '' || initURL === '/' || initURL === '/signin') {
-        return <Redirect to={'/app/dashboard/default'} />;
+        return <Redirect to={'/app/dashboard'} />;
       } else {
         return <Redirect to={initURL} />;
       }
@@ -204,6 +205,7 @@ class App extends Component {
                     )}
                   />
                 </Switch>
+                <NotificationContainer />
               </div>
             </RTL>
           </IntlProvider>

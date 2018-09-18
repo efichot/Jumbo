@@ -1,4 +1,5 @@
 import firebase from 'firebase';
+import { NotificationManager } from 'react-notifications';
 
 // Initialize Firebase
 const config = {
@@ -33,6 +34,11 @@ messaging
   })
   .then(token => console.log(token))
   .catch(console.log('Error Occured'));
+
+messaging.onMessage(function(payload) {
+  console.log('Message received. ', payload);
+  NotificationManager.info(payload.notification.body);
+});
 
 export {
   db,
