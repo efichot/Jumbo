@@ -22,6 +22,18 @@ const db = firebase.firestore();
 const settings = { timestampsInSnapshots: true };
 db.settings(settings);
 
+// FCM
+const messaging = firebase.messaging();
+
+messaging
+  .requestPermission()
+  .then(() => {
+    console.log('Have Permission');
+    return messaging.getToken();
+  })
+  .then(token => console.log(token))
+  .catch(console.log('Error Occured'));
+
 export {
   db,
   auth,
