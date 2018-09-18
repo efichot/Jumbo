@@ -87,10 +87,10 @@ class SidenavContent extends Component {
             <IntlMessages id="sidebar.main" />
           </li>
           <li className="menu no-arrow">
-            <NavLink to="/app/to-do-redux">
-              <i className="zmdi zmdi-check-square zmdi-hc-fw" />
+            <NavLink to="/app/to-do">
+              <i class="zmdi zmdi-fire" />
               <span className="nav-text">
-                <IntlMessages id="sidebar.appModule.toDoRedux" />
+                <IntlMessages id="sidebar.dashboard.firebase" />
               </span>
             </NavLink>
           </li>

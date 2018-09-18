@@ -1,15 +1,15 @@
-import React, {Component} from 'react';
-import {createMuiTheme, MuiThemeProvider} from '@material-ui/core/styles';
+import React, { Component } from 'react';
+import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
 import MomentUtils from 'material-ui-pickers/utils/moment-utils';
 import MuiPickersUtilsProvider from 'material-ui-pickers/utils/MuiPickersUtilsProvider';
-import {Redirect, Route, Switch} from 'react-router-dom';
-import {connect} from 'react-redux';
-import {IntlProvider} from 'react-intl'
-import 'react-notifications/lib/notifications.css'
+import { Redirect, Route, Switch } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { IntlProvider } from 'react-intl';
+import 'react-notifications/lib/notifications.css';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import 'owl.carousel/dist/assets/owl.carousel.css';
 import 'owl.carousel/dist/assets/owl.theme.default.css';
-import 'styles/jumbo.css'
+import 'styles/jumbo.css';
 import indigoTheme from './themes/indigoTheme';
 import cyanTheme from './themes/cyanTheme';
 import orangeTheme from './themes/orangeTheme';
@@ -42,28 +42,31 @@ import {
 import MainApp from 'app/index';
 import SignIn from './SignIn';
 import SignUp from './SignUp';
-import {setInitUrl} from '../actions/Auth';
+import { setInitUrl } from '../actions/Auth';
 import RTL from 'util/RTL';
 import asyncComponent from 'util/asyncComponent';
 
-window.$ = window.jQuery = require("jquery");
+window.$ = window.jQuery = require('jquery');
 
-const RestrictedRoute = ({component: Component, ...rest, authUser}) =>
+const RestrictedRoute = ({ component: Component, authUser, ...rest }) => (
   <Route
     {...rest}
     render={props =>
-      authUser
-        ? <Component {...props} />
-        : <Redirect
+      authUser ? (
+        <Component {...props} />
+      ) : (
+        <Redirect
           to={{
             pathname: '/signin',
-            state: {from: props.location}
+            state: { from: props.location }
           }}
-        />}
-  />;
+        />
+      )
+    }
+  />
+);
 
 class App extends Component {
-
   componentWillMount() {
     if (this.props.initURL === '') {
       this.props.setInitUrl(this.props.history.location.pathname);
@@ -136,31 +139,42 @@ class App extends Component {
         applyTheme = createMuiTheme(greenTheme);
         break;
       }
+      default: {
+      }
     }
     return applyTheme;
   }
 
   render() {
-    const {match, location, themeColor, isDarkTheme, locale, authUser, initURL, isDirectionRTL} = this.props;
+    const {
+      match,
+      location,
+      themeColor,
+      isDarkTheme,
+      locale,
+      authUser,
+      initURL,
+      isDirectionRTL
+    } = this.props;
     let applyTheme = createMuiTheme(indigoTheme);
     if (isDarkTheme) {
       document.body.classList.add('dark-theme');
-      applyTheme = createMuiTheme(darkTheme)
+      applyTheme = createMuiTheme(darkTheme);
     } else {
       applyTheme = this.getColorTheme(themeColor, applyTheme);
     }
     if (location.pathname === '/') {
       if (authUser === null) {
-        return ( <Redirect to={'/signin'}/> );
+        return <Redirect to={'/signin'} />;
       } else if (initURL === '' || initURL === '/' || initURL === '/signin') {
-        return ( <Redirect to={'/app/dashboard/default'}/> );
+        return <Redirect to={'/app/dashboard/default'} />;
       } else {
-        return ( <Redirect to={initURL}/> );
+        return <Redirect to={initURL} />;
       }
     }
     if (isDirectionRTL) {
       applyTheme.direction = 'rtl';
-      document.body.classList.add('rtl')
+      document.body.classList.add('rtl');
     } else {
       document.body.classList.remove('rtl');
       applyTheme.direction = 'ltr';
@@ -172,16 +186,23 @@ class App extends Component {
         <MuiPickersUtilsProvider utils={MomentUtils}>
           <IntlProvider
             locale={currentAppLocale.locale}
-            messages={currentAppLocale.messages}>
+            messages={currentAppLocale.messages}
+          >
             <RTL>
               <div className="app-main">
                 <Switch>
-                  <RestrictedRoute path={`${match.url}app`} authUser={authUser}
-                                   component={MainApp}/>
-                  <Route path='/signin' component={SignIn}/>
-                  <Route path='/signup' component={SignUp}/>
+                  <RestrictedRoute
+                    path={`${match.url}app`}
+                    authUser={authUser}
+                    component={MainApp}
+                  />
+                  <Route path="/signin" component={SignIn} />
+                  <Route path="/signup" component={SignUp} />
                   <Route
-                    component={asyncComponent(() => import('app/routes/extraPages/routes/404'))}/>
+                    component={asyncComponent(() =>
+                      import('app/routes/extraPages/routes/404')
+                    )}
+                  />
                 </Switch>
               </div>
             </RTL>
@@ -192,10 +213,27 @@ class App extends Component {
   }
 }
 
-const mapStateToProps = ({settings, auth}) => {
-  const {themeColor, sideNavColor, darkTheme, locale, isDirectionRTL} = settings;
-  const {authUser, initURL} = auth;
-  return {themeColor, sideNavColor, isDarkTheme: darkTheme, locale, isDirectionRTL, authUser, initURL}
+const mapStateToProps = ({ settings, auth }) => {
+  const {
+    themeColor,
+    sideNavColor,
+    darkTheme,
+    locale,
+    isDirectionRTL
+  } = settings;
+  const { authUser, initURL } = auth;
+  return {
+    themeColor,
+    sideNavColor,
+    isDarkTheme: darkTheme,
+    locale,
+    isDirectionRTL,
+    authUser,
+    initURL
+  };
 };
 
-export default connect(mapStateToProps, {setInitUrl})(App);
+export default connect(
+  mapStateToProps,
+  { setInitUrl }
+)(App);

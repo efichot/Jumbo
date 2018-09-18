@@ -555,5 +555,6 @@
   "popup.statistics": "Statistiques",
   "popup.clearData": "Effacer les données",
   "component.selectionControl.radioBtnGroup": "Groupe de boutons radio",
-  "component.popover.anchorPlayground": "Anchor Playground"
+  "component.popover.anchorPlayground": "Anchor Playground",
+  "sidebar.dashboard.firebase": "Firebase"
 }

@@ -16,6 +16,7 @@ import ColorOption from 'containers/Customizer/ColorOption';
 import { isIOS, isMobile } from 'react-device-detect';
 import asyncComponent from '../util/asyncComponent';
 import TopNav from 'components/TopNav';
+import Todo from './routes/todo';
 
 class App extends React.Component {
   render() {
@@ -63,12 +64,7 @@ class App extends React.Component {
           <main className="app-main-content-wrapper">
             <div className="app-main-content">
               <Switch>
-                <Route
-                  path={`${match.url}/to-do-redux`}
-                  component={asyncComponent(() =>
-                    import('./routes/todo/redux/index')
-                  )}
-                />
+                <Route exact path={`${match.url}/to-do`} component={Todo} />
               </Switch>
             </div>
             <Footer />
