@@ -34,7 +34,7 @@ const createUserWithEmailPasswordRequest = async (email, password) =>
     .then(authUser => authUser)
     .catch(error => error);
 
-const updateProfile = async name =>
+const updateProfileName = async name =>
   await auth.currentUser
     .updateProfile({
       displayName: name
@@ -86,11 +86,10 @@ function* createUserWithEmailPassword({ payload }) {
       email,
       password
     );
-    yield call(updateProfile, name);
+    yield call(updateProfileName, name);
     if (signUpUser.message) {
       yield put(showAuthMessage(signUpUser.message));
     } else {
-      localStorage.setItem('user_id', signUpUser.user.uid);
       yield put(userSignUpSuccess(signUpUser.user));
     }
   } catch (error) {
@@ -104,7 +103,6 @@ function* signInUserWithGoogle() {
     if (signUpUser.message) {
       yield put(showAuthMessage(signUpUser.message));
     } else {
-      localStorage.setItem('user_id', signUpUser.user.uid);
       yield put(userGoogleSignInSuccess(signUpUser.user));
     }
   } catch (error) {
@@ -118,8 +116,7 @@ function* signInUserWithFacebook() {
     if (signUpUser.message) {
       yield put(showAuthMessage(signUpUser.message));
     } else {
-      localStorage.setItem('user_id', signUpUser.user.uid);
-      yield put(userFacebookSignInSuccess(signUpUser.user.uid));
+      yield put(userFacebookSignInSuccess(signUpUser.user));
     }
   } catch (error) {
     yield put(showAuthMessage(error));
@@ -132,8 +129,7 @@ function* signInUserWithGithub() {
     if (signUpUser.message) {
       yield put(showAuthMessage(signUpUser.message));
     } else {
-      localStorage.setItem('user_id', signUpUser.user.uid);
-      yield put(userGithubSignInSuccess(signUpUser.user.uid));
+      yield put(userGithubSignInSuccess(signUpUser.user));
     }
   } catch (error) {
     yield put(showAuthMessage(error));
@@ -150,8 +146,7 @@ function* signInUserWithTwitter() {
         yield put(showAuthMessage(signUpUser.message));
       }
     } else {
-      localStorage.setItem('user_id', signUpUser.user.uid);
-      yield put(userTwitterSignInSuccess(signUpUser.user.uid));
+      yield put(userTwitterSignInSuccess(signUpUser.user));
     }
   } catch (error) {
     yield put(showAuthMessage(error));

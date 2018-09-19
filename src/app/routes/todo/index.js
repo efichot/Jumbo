@@ -79,7 +79,7 @@ export default class Dashboard extends Component {
   };
 
   deleteTasks = () => {
-    this.state.selected.map(id => {
+    this.state.selected.forEach(id => {
       db.doc(`todos/${id}`).delete();
     });
     this.toggleWarning();
