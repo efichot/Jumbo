@@ -42,6 +42,7 @@ import {
 import MainApp from 'app/index';
 import SignIn from './SignIn';
 import SignUp from './SignUp';
+import ResetPass from './ResetPass';
 import { setInitUrl } from '../actions/Auth';
 import RTL from 'util/RTL';
 import asyncComponent from 'util/asyncComponent';
@@ -199,6 +200,7 @@ class App extends Component {
                   />
                   <Route path="/signin" component={SignIn} />
                   <Route path="/signup" component={SignUp} />
+                  <Route path="/resetpass" component={ResetPass} />
                   <Route
                     component={asyncComponent(() =>
                       import('app/routes/extraPages/routes/404')

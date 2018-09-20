@@ -1,4 +1,4 @@
-import { all, call, fork, put, takeEvery } from 'redux-saga/effects';
+import { call, put, takeEvery } from 'redux-saga/effects';
 import {
   auth,
   facebookAuthProvider,
@@ -13,13 +13,15 @@ import {
   SIGNIN_TWITTER_USER,
   SIGNIN_USER,
   SIGNOUT_USER,
-  SIGNUP_USER
+  SIGNUP_USER,
+  RESET_PASS
 } from 'constants/ActionTypes';
 import {
   showAuthMessage,
   userSignInSuccess,
   userSignOutSuccess,
-  userSignUpSuccess
+  userSignUpSuccess,
+  userSendMailSuccess
 } from 'actions/Auth';
 import {
   userFacebookSignInSuccess,
@@ -28,7 +30,7 @@ import {
   userTwitterSignInSuccess
 } from '../actions/Auth';
 
-const createUserWithEmailPasswordRequest = async (email, password) =>
+const createUserWithEmailPasswordRequest = async (email, password, name) =>
   await auth
     .createUserWithEmailAndPassword(email, password)
     .then(authUser => authUser)
@@ -40,6 +42,12 @@ const updateProfileName = async name =>
       displayName: name
     })
     .then(() => console.log('User name updated'))
+    .catch(error => error);
+
+const sendEmailVerification = async user =>
+  await user
+    .sendEmailVerification()
+    .then(() => console.log('email verification sent to user'))
     .catch(error => error);
 
 const signInUserWithEmailPasswordRequest = async (email, password) =>
@@ -78,6 +86,12 @@ const signInUserWithTwitterRequest = async () =>
     .then(authUser => authUser)
     .catch(error => error);
 
+const sendMail = async email =>
+  await auth
+    .sendPasswordResetEmail(email)
+    .then(() => console.log('Email sent'))
+    .catch(error => error);
+
 function* createUserWithEmailPassword({ payload }) {
   const { email, password, name } = payload;
   try {
@@ -86,10 +100,11 @@ function* createUserWithEmailPassword({ payload }) {
       email,
       password
     );
-    yield call(updateProfileName, name);
     if (signUpUser.message) {
       yield put(showAuthMessage(signUpUser.message));
     } else {
+      yield call(sendEmailVerification, signUpUser.user);
+      yield call(updateProfileName, name);
       yield put(userSignUpSuccess(signUpUser.user));
     }
   } catch (error) {
@@ -186,42 +201,25 @@ function* signOut() {
   }
 }
 
-export function* createUserAccount() {
-  yield takeEvery(SIGNUP_USER, createUserWithEmailPassword);
-}
-
-export function* signInWithGoogle() {
-  yield takeEvery(SIGNIN_GOOGLE_USER, signInUserWithGoogle);
-}
-
-export function* signInWithFacebook() {
-  yield takeEvery(SIGNIN_FACEBOOK_USER, signInUserWithFacebook);
-}
-
-export function* signInWithTwitter() {
-  yield takeEvery(SIGNIN_TWITTER_USER, signInUserWithTwitter);
-}
-
-export function* signInWithGithub() {
-  yield takeEvery(SIGNIN_GITHUB_USER, signInUserWithGithub);
-}
-
-export function* signInUser() {
-  yield takeEvery(SIGNIN_USER, signInUserWithEmailPassword);
-}
-
-export function* signOutUser() {
-  yield takeEvery(SIGNOUT_USER, signOut);
+function* resetPass({ payload }) {
+  const { email } = payload;
+  const error = yield call(sendMail, email);
+  if (error) {
+    yield put(showAuthMessage(error.message));
+  } else {
+    yield put(userSendMailSuccess());
+  }
 }
 
 export default function* rootSaga() {
-  yield all([
-    fork(signInUser),
-    fork(createUserAccount),
-    fork(signInWithGoogle),
-    fork(signInWithFacebook),
-    fork(signInWithTwitter),
-    fork(signInWithGithub),
-    fork(signOutUser)
-  ]);
+  yield [
+    takeEvery(SIGNUP_USER, createUserWithEmailPassword),
+    takeEvery(SIGNIN_GOOGLE_USER, signInUserWithGoogle),
+    takeEvery(SIGNIN_FACEBOOK_USER, signInUserWithFacebook),
+    takeEvery(SIGNIN_TWITTER_USER, signInUserWithTwitter),
+    takeEvery(SIGNIN_GITHUB_USER, signInUserWithGithub),
+    takeEvery(SIGNIN_USER, signInUserWithEmailPassword),
+    takeEvery(SIGNOUT_USER, signOut),
+    takeEvery(RESET_PASS, resetPass)
+  ];
 }

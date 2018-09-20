@@ -17,16 +17,18 @@ import {
   SIGNOUT_USER,
   SIGNOUT_USER_SUCCESS,
   SIGNUP_USER,
-  SIGNUP_USER_SUCCESS
-} from "constants/ActionTypes";
+  SIGNUP_USER_SUCCESS,
+  RESET_PASS,
+  USER_SEND_MAIL_SUCCESS
+} from 'constants/ActionTypes';
 
-export const userSignUp = (user) => {
+export const userSignUp = user => {
   return {
     type: SIGNUP_USER,
     payload: user
   };
 };
-export const userSignIn = (user) => {
+export const userSignIn = user => {
   return {
     type: SIGNIN_USER,
     payload: user
@@ -37,39 +39,38 @@ export const userSignOut = () => {
     type: SIGNOUT_USER
   };
 };
-export const userSignUpSuccess = (authUser) => {
+export const userSignUpSuccess = authUser => {
   return {
     type: SIGNUP_USER_SUCCESS,
     payload: authUser
   };
 };
 
-export const userSignInSuccess = (authUser) => {
+export const userSignInSuccess = authUser => {
   return {
     type: SIGNIN_USER_SUCCESS,
     payload: authUser
-  }
+  };
 };
 export const userSignOutSuccess = () => {
   return {
-    type: SIGNOUT_USER_SUCCESS,
-  }
+    type: SIGNOUT_USER_SUCCESS
+  };
 };
 
-export const showAuthMessage = (message) => {
+export const showAuthMessage = message => {
   return {
     type: SHOW_MESSAGE,
     payload: message
   };
 };
 
-
 export const userGoogleSignIn = () => {
   return {
     type: SIGNIN_GOOGLE_USER
   };
 };
-export const userGoogleSignInSuccess = (authUser) => {
+export const userGoogleSignInSuccess = authUser => {
   return {
     type: SIGNIN_GOOGLE_USER_SUCCESS,
     payload: authUser
@@ -80,13 +81,13 @@ export const userFacebookSignIn = () => {
     type: SIGNIN_FACEBOOK_USER
   };
 };
-export const userFacebookSignInSuccess = (authUser) => {
+export const userFacebookSignInSuccess = authUser => {
   return {
     type: SIGNIN_FACEBOOK_USER_SUCCESS,
     payload: authUser
   };
 };
-export const setInitUrl = (url) => {
+export const setInitUrl = url => {
   return {
     type: INIT_URL,
     payload: url
@@ -97,7 +98,7 @@ export const userTwitterSignIn = () => {
     type: SIGNIN_TWITTER_USER
   };
 };
-export const userTwitterSignInSuccess = (authUser) => {
+export const userTwitterSignInSuccess = authUser => {
   return {
     type: SIGNIN_TWITTER_USER_SUCCESS,
     payload: authUser
@@ -108,7 +109,7 @@ export const userGithubSignIn = () => {
     type: SIGNIN_GITHUB_USER
   };
 };
-export const userGithubSignInSuccess = (authUser) => {
+export const userGithubSignInSuccess = authUser => {
   return {
     type: SIGNIN_GITHUB_USER_SUCCESS,
     payload: authUser
@@ -116,17 +117,31 @@ export const userGithubSignInSuccess = (authUser) => {
 };
 export const showAuthLoader = () => {
   return {
-    type: ON_SHOW_LOADER,
+    type: ON_SHOW_LOADER
   };
 };
 
 export const hideMessage = () => {
   return {
-    type: HIDE_MESSAGE,
+    type: HIDE_MESSAGE
   };
 };
+
 export const hideAuthLoader = () => {
   return {
-    type: ON_HIDE_LOADER,
+    type: ON_HIDE_LOADER
+  };
+};
+
+export const resetPass = email => {
+  return {
+    type: RESET_PASS,
+    payload: email
+  };
+};
+
+export const userSendMailSuccess = email => {
+  return {
+    type: USER_SEND_MAIL_SUCCESS
   };
 };

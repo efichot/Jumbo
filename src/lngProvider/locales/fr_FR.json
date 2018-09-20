@@ -539,6 +539,7 @@
   "signIn.signUp": "Créer un compte",
   "signIn.connectWith": "ou se connecter avec",
   "signUp.alreadyMember": "Je suis déjà membre",
+  "signIn.resetPass": "Mot de passe oublié?",
   "appModule.signin": "Se connecter",
   "appModule.signup": "S'inscrire",
   "pages.samplePage": "Page d'exemple",
@@ -556,5 +557,7 @@
   "popup.clearData": "Effacer les données",
   "component.selectionControl.radioBtnGroup": "Groupe de boutons radio",
   "component.popover.anchorPlayground": "Anchor Playground",
-  "sidebar.dashboard.firebase": "Firebase"
+  "sidebar.dashboard.firebase": "Firebase",
+  "appModule.resetPass": "Envoyer le mail",
+  "appModule.returnSignInPage": "Retourner sur la page de connexion"
 }

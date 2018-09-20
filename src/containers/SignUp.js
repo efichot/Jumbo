@@ -22,20 +22,23 @@ import {
 import iota from 'assets/images/iota_light.svg';
 
 class SignUp extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      name: '',
-      email: '',
-      password: ''
-    };
-  }
+  state = {
+    name: '',
+    email: '',
+    password: ''
+  };
+
+  componentDidMount = () => {
+    if (this.props.authUser !== null) {
+      this.props.history.push('/');
+    }
+  };
 
   componentDidUpdate() {
     if (this.props.showMessage) {
       setTimeout(() => {
         this.props.hideMessage();
-      }, 3000);
+      }, 100);
     }
     if (this.props.authUser !== null) {
       this.props.history.push('/');

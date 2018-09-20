@@ -10,7 +10,8 @@ import {
   SIGNIN_TWITTER_USER_SUCCESS,
   SIGNIN_USER_SUCCESS,
   SIGNOUT_USER_SUCCESS,
-  SIGNUP_USER_SUCCESS
+  SIGNUP_USER_SUCCESS,
+  USER_SEND_MAIL_SUCCESS
 } from 'constants/ActionTypes';
 
 const INIT_STATE = {
@@ -18,7 +19,8 @@ const INIT_STATE = {
   alertMessage: '',
   showMessage: false,
   initURL: '',
-  authUser: null
+  authUser: null,
+  successMessage: ''
 };
 
 export default (state = INIT_STATE, action) => {
@@ -64,6 +66,7 @@ export default (state = INIT_STATE, action) => {
       return {
         ...state,
         alertMessage: '',
+        successMessage: '',
         showMessage: false,
         loader: false
       };
@@ -107,6 +110,15 @@ export default (state = INIT_STATE, action) => {
       return {
         ...state,
         loader: false
+      };
+    }
+    case USER_SEND_MAIL_SUCCESS: {
+      return {
+        ...state,
+        loader: false,
+        successMessage: 'Check your emails',
+        showMessage: true,
+        alertMessage: ''
       };
     }
     default:

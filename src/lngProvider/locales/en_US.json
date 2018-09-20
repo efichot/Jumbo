@@ -538,6 +538,7 @@
   "signUp.error": "Right",
   "signIn.signUp": "Create an account",
   "signIn.connectWith": "or connect with",
+  "signIn.resetPass": "Forgot your password?",
   "signUp.alreadyMember": "I am already a member",
   "appModule.signin": "Sign In",
   "appModule.signup": "Sign Up",
@@ -556,5 +557,7 @@
   "popup.clearData": "Clear Data",
   "component.selectionControl.radioBtnGroup": "Radio Buttons Group",
   "component.popover.anchorPlayground": "Anchor Playground",
-  "sidebar.dashboard.firebase": "Firebase"
+  "sidebar.dashboard.firebase": "Firebase",
+  "appModule.resetPass": "Send email",
+  "appModule.returnSignInPage": "Return on SignIn page"
 }

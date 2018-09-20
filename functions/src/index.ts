@@ -67,9 +67,18 @@ const userCreate = functions.auth.user().onCreate(user => {
     .catch(e => console.log(e));
 });
 
+const userDelete = functions.auth.user().onDelete(user => {
+  db.collection('users')
+    .doc(user.uid)
+    .delete()
+    .then(() => console.log('User deleted to the users collection'))
+    .catch(e => console.log(e));
+});
+
 module.exports = {
   api,
   createTask,
   deleteTask,
-  userCreate
+  userCreate,
+  userDelete
 };

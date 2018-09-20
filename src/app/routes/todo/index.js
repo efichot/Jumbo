@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { db } from 'helper/firebase';
+import { db, auth } from 'helper/firebase';
 import ContainerHeader from 'components/ContainerHeader/index';
 import IntlMessages from 'util/IntlMessages';
 import moment from 'moment';
@@ -80,7 +80,10 @@ export default class Dashboard extends Component {
 
   deleteTasks = () => {
     this.state.selected.forEach(id => {
-      db.doc(`todos/${id}`).delete();
+      db.doc(`todos/${id}`)
+        .delete()
+        .then(() => console.log(`Document ${id} deleted`))
+        .catch(e => console.log(e));
     });
     this.toggleWarning();
   };
