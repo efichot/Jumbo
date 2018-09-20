@@ -23,6 +23,7 @@ import LanguageSwitcher from 'components/LanguageSwitcher/index';
 import Menu from 'components/TopNav/Menu';
 import UserInfoPopup from 'components/UserInfo/UserInfoPopup';
 import iota from 'assets/images/iota_light.svg';
+import defaultPhoto from 'assets/images/placeholder.jpg';
 
 class Header extends React.Component {
   onAppNotificationSelect = () => {
@@ -90,7 +91,8 @@ class Header extends React.Component {
       drawerType,
       locale,
       navigationStyle,
-      horizontalNavPosition
+      horizontalNavPosition,
+      authUser
     } = this.props;
     const drawerStyle = drawerType.includes(FIXED_DRAWER)
       ? 'd-block d-xl-none'
@@ -257,7 +259,7 @@ class Header extends React.Component {
                     <IconButton className="icon-btn size-30">
                       <Avatar
                         alt="..."
-                        src="http://via.placeholder.com/150x150"
+                        src={authUser.photoURL || defaultPhoto}
                         className="size-30"
                       />
                     </IconButton>
@@ -276,14 +278,21 @@ class Header extends React.Component {
   }
 }
 
-const mapStateToProps = ({ settings }) => {
+const mapStateToProps = ({ settings, auth }) => {
   const {
     drawerType,
     locale,
     navigationStyle,
     horizontalNavPosition
   } = settings;
-  return { drawerType, locale, navigationStyle, horizontalNavPosition };
+  const { authUser } = auth;
+  return {
+    drawerType,
+    locale,
+    navigationStyle,
+    horizontalNavPosition,
+    authUser
+  };
 };
 
 export default withRouter(

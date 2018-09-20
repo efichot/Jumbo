@@ -6,6 +6,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { userSignOut } from 'actions/Auth';
 import IntlMessages from 'util/IntlMessages';
 import defaultPhoto from 'assets/images/placeholder.jpg';
+import { withRouter } from 'react-router-dom';
 
 class UserInfo extends React.Component {
   state = {
@@ -22,7 +23,7 @@ class UserInfo extends React.Component {
   };
 
   render() {
-    const { authUser } = this.props;
+    const { authUser, history } = this.props;
     return (
       <div className="user-profile d-flex flex-row align-items-center">
         <Avatar
@@ -50,11 +51,11 @@ class UserInfo extends React.Component {
             }
           }}
         >
-          <MenuItem onClick={this.handleRequestClose}>
+          <MenuItem onClick={() => history.push('/app/profile')}>
             <i className="zmdi zmdi-account zmdi-hc-fw mr-2" />
             <IntlMessages id="popup.profile" />
           </MenuItem>
-          <MenuItem onClick={this.handleRequestClose}>
+          <MenuItem onClick={() => history.push('/app/settings')}>
             <i className="zmdi zmdi-settings zmdi-hc-fw mr-2" />
             <IntlMessages id="popup.setting" />
           </MenuItem>
@@ -79,7 +80,9 @@ const mapStateToProps = ({ settings, auth }) => {
   const { authUser } = auth;
   return { locale, authUser };
 };
-export default connect(
-  mapStateToProps,
-  { userSignOut }
-)(UserInfo);
+export default withRouter(
+  connect(
+    mapStateToProps,
+    { userSignOut }
+  )(UserInfo)
+);

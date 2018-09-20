@@ -17,6 +17,8 @@ import { isIOS, isMobile } from 'react-device-detect';
 import asyncComponent from '../util/asyncComponent';
 import TopNav from 'components/TopNav';
 import Todo from './routes/todo';
+import Settings from './routes/settings';
+import Profile from './routes/profile';
 
 class App extends React.Component {
   render() {
@@ -65,6 +67,21 @@ class App extends React.Component {
             <div className="app-main-content">
               <Switch>
                 <Route exact path={`${match.url}/to-do`} component={Todo} />
+                <Route
+                  exact
+                  path={`${match.url}/settings`}
+                  component={Settings}
+                />
+                <Route
+                  exact
+                  path={`${match.url}/profile`}
+                  component={Profile}
+                />
+                <Route
+                  component={asyncComponent(() =>
+                    import('app/routes/extraPages/routes/404')
+                  )}
+                />
               </Switch>
             </div>
             <Footer />
