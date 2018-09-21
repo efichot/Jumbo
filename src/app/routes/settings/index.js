@@ -206,7 +206,7 @@ export class Settings extends Component {
                   </div>
                 </div>
                 <div className="row">
-                  <div className="col align-self-center">
+                  <div className="col-5 align-self-center">
                     <h4>
                       <IntlMessages id="settings.changePass" />:
                     </h4>
