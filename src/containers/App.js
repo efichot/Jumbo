@@ -43,10 +43,15 @@ import MainApp from 'app/index';
 import SignIn from './SignIn';
 import SignUp from './SignUp';
 import ResetPass from './ResetPass';
-import { setInitUrl } from '../actions/Auth';
+import {
+  setInitUrl,
+  userSignInSuccess,
+  userSignOutSuccess
+} from '../actions/Auth';
 import RTL from 'util/RTL';
 import asyncComponent from 'util/asyncComponent';
 import { NotificationContainer } from 'react-notifications';
+import { auth } from 'helper/firebase';
 
 window.$ = window.jQuery = require('jquery');
 
@@ -69,10 +74,18 @@ const RestrictedRoute = ({ component: Component, authUser, ...rest }) => (
 );
 
 class App extends Component {
-  componentWillMount() {
+  componentDidMount() {
     if (this.props.initURL === '') {
       this.props.setInitUrl(this.props.history.location.pathname);
     }
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        this.props.userSignInSuccess(user);
+      } else {
+        console.log('User not sign in');
+        this.props.userSignOutSuccess();
+      }
+    });
   }
 
   getColorTheme(themeColor, applyTheme) {
@@ -239,5 +252,5 @@ const mapStateToProps = ({ settings, auth }) => {
 
 export default connect(
   mapStateToProps,
-  { setInitUrl }
+  { setInitUrl, userSignInSuccess, userSignOutSuccess }
 )(App);

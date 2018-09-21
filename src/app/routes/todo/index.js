@@ -1,5 +1,6 @@
 import React, { Component, Fragment } from 'react';
-import { db, auth } from 'helper/firebase';
+import { connect } from 'react-redux';
+import { db } from 'helper/firebase';
 import ContainerHeader from 'components/ContainerHeader/index';
 import IntlMessages from 'util/IntlMessages';
 import moment from 'moment';
@@ -15,8 +16,10 @@ import { NotificationManager } from 'react-notifications';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import SweetAlert from 'react-bootstrap-sweetalert';
+import { showAuthLoader, hideAuthLoader } from 'actions/Auth';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
-export default class Dashboard extends Component {
+class Dashboard extends Component {
   state = {
     todos: null,
     open: false,
@@ -25,6 +28,7 @@ export default class Dashboard extends Component {
   };
 
   componentDidMount = () => {
+    this.props.showAuthLoader();
     db.collection('todos').onSnapshot(docs => {
       let todos = [];
       docs.forEach(doc => {
@@ -41,6 +45,7 @@ export default class Dashboard extends Component {
         []
       );
       this.setState({ todos, selected });
+      this.props.hideAuthLoader();
     });
   };
 
@@ -90,7 +95,7 @@ export default class Dashboard extends Component {
 
   render() {
     const { todos, selected, warning } = this.state;
-
+    const { loader } = this.props;
     return (
       <div className="app-wrapper">
         <div className="dashboard animated slideInUpTiny animation-duration-3">
@@ -116,6 +121,11 @@ export default class Dashboard extends Component {
                     </Fragment>
                   ))}
               </ul>
+              {loader && (
+                <div className="loader-view">
+                  <CircularProgress />
+                </div>
+              )}
             </CardContent>
             {selected.length > 0 && (
               <Button onClick={this.toggleWarning} color="secondary">
@@ -176,3 +186,13 @@ export default class Dashboard extends Component {
     );
   }
 }
+
+const mapStateToProps = ({ auth }) => {
+  const { loader } = auth;
+  return { loader };
+};
+
+export default connect(
+  mapStateToProps,
+  { showAuthLoader, hideAuthLoader }
+)(Dashboard);

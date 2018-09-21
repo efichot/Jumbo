@@ -51,11 +51,21 @@ class UserInfo extends React.Component {
             }
           }}
         >
-          <MenuItem onClick={() => history.push('/app/profile')}>
+          <MenuItem
+            onClick={() => {
+              this.handleRequestClose();
+              history.push('/app/profile');
+            }}
+          >
             <i className="zmdi zmdi-account zmdi-hc-fw mr-2" />
             <IntlMessages id="popup.profile" />
           </MenuItem>
-          <MenuItem onClick={() => history.push('/app/settings')}>
+          <MenuItem
+            onClick={() => {
+              this.handleRequestClose();
+              history.push('/app/settings');
+            }}
+          >
             <i className="zmdi zmdi-settings zmdi-hc-fw mr-2" />
             <IntlMessages id="popup.setting" />
           </MenuItem>

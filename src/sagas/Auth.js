@@ -18,17 +18,9 @@ import {
 } from 'constants/ActionTypes';
 import {
   showAuthMessage,
-  userSignInSuccess,
   userSignOutSuccess,
-  userSignUpSuccess,
   userSendMailSuccess
 } from 'actions/Auth';
-import {
-  userFacebookSignInSuccess,
-  userGithubSignInSuccess,
-  userGoogleSignInSuccess,
-  userTwitterSignInSuccess
-} from '../actions/Auth';
 
 const createUserWithEmailPasswordRequest = async (email, password, name) =>
   await auth
@@ -105,7 +97,6 @@ function* createUserWithEmailPassword({ payload }) {
     } else {
       yield call(sendEmailVerification, signUpUser.user);
       yield call(updateProfileName, name);
-      yield put(userSignUpSuccess(signUpUser.user));
     }
   } catch (error) {
     yield put(showAuthMessage(error));
@@ -117,8 +108,6 @@ function* signInUserWithGoogle() {
     const signUpUser = yield call(signInUserWithGoogleRequest);
     if (signUpUser.message) {
       yield put(showAuthMessage(signUpUser.message));
-    } else {
-      yield put(userGoogleSignInSuccess(signUpUser.user));
     }
   } catch (error) {
     yield put(showAuthMessage(error));
@@ -130,8 +119,6 @@ function* signInUserWithFacebook() {
     const signUpUser = yield call(signInUserWithFacebookRequest);
     if (signUpUser.message) {
       yield put(showAuthMessage(signUpUser.message));
-    } else {
-      yield put(userFacebookSignInSuccess(signUpUser.user));
     }
   } catch (error) {
     yield put(showAuthMessage(error));
@@ -143,8 +130,6 @@ function* signInUserWithGithub() {
     const signUpUser = yield call(signInUserWithGithubRequest);
     if (signUpUser.message) {
       yield put(showAuthMessage(signUpUser.message));
-    } else {
-      yield put(userGithubSignInSuccess(signUpUser.user));
     }
   } catch (error) {
     yield put(showAuthMessage(error));
@@ -160,8 +145,6 @@ function* signInUserWithTwitter() {
       } else {
         yield put(showAuthMessage(signUpUser.message));
       }
-    } else {
-      yield put(userTwitterSignInSuccess(signUpUser.user));
     }
   } catch (error) {
     yield put(showAuthMessage(error));
@@ -178,9 +161,6 @@ function* signInUserWithEmailPassword({ payload }) {
     );
     if (signInUser.message) {
       yield put(showAuthMessage(signInUser.message));
-    } else {
-      localStorage.setItem('user_id', signInUser.user.uid);
-      yield put(userSignInSuccess(signInUser.user));
     }
   } catch (error) {
     yield put(showAuthMessage(error));

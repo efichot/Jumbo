@@ -4,14 +4,10 @@ import {
   ON_HIDE_LOADER,
   ON_SHOW_LOADER,
   SHOW_MESSAGE,
-  SIGNIN_FACEBOOK_USER_SUCCESS,
-  SIGNIN_GITHUB_USER_SUCCESS,
-  SIGNIN_GOOGLE_USER_SUCCESS,
-  SIGNIN_TWITTER_USER_SUCCESS,
   SIGNIN_USER_SUCCESS,
   SIGNOUT_USER_SUCCESS,
-  SIGNUP_USER_SUCCESS,
-  USER_SEND_MAIL_SUCCESS
+  USER_SEND_MAIL_SUCCESS,
+  UPDATE_ACCOUNT
 } from 'constants/ActionTypes';
 
 const INIT_STATE = {
@@ -25,18 +21,17 @@ const INIT_STATE = {
 
 export default (state = INIT_STATE, action) => {
   switch (action.type) {
-    case SIGNUP_USER_SUCCESS: {
-      return {
-        ...state,
-        loader: false,
-        authUser: action.payload
-      };
-    }
     case SIGNIN_USER_SUCCESS: {
       return {
         ...state,
         loader: false,
-        authUser: action.payload
+        authUser: {
+          email: action.payload.email,
+          displayName: action.payload.displayName,
+          phoneNumber: action.payload.phoneNumber,
+          photoURL: action.payload.photoURL,
+          emailVerified: action.payload.emailVerified
+        }
       };
     }
     case INIT_URL: {
@@ -71,35 +66,6 @@ export default (state = INIT_STATE, action) => {
         loader: false
       };
     }
-
-    case SIGNIN_GOOGLE_USER_SUCCESS: {
-      return {
-        ...state,
-        loader: false,
-        authUser: action.payload
-      };
-    }
-    case SIGNIN_FACEBOOK_USER_SUCCESS: {
-      return {
-        ...state,
-        loader: false,
-        authUser: action.payload
-      };
-    }
-    case SIGNIN_TWITTER_USER_SUCCESS: {
-      return {
-        ...state,
-        loader: false,
-        authUser: action.payload
-      };
-    }
-    case SIGNIN_GITHUB_USER_SUCCESS: {
-      return {
-        ...state,
-        loader: false,
-        authUser: action.payload
-      };
-    }
     case ON_SHOW_LOADER: {
       return {
         ...state,
@@ -119,6 +85,17 @@ export default (state = INIT_STATE, action) => {
         successMessage: 'Check your emails',
         showMessage: true,
         alertMessage: ''
+      };
+    }
+    case UPDATE_ACCOUNT: {
+      return {
+        ...state,
+        authUser: {
+          ...state.authUser,
+          displayName: action.payload.name,
+          email: action.payload.email,
+          photoURL: action.payload.photoURL
+        }
       };
     }
     default:

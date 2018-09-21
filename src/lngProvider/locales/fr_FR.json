@@ -559,5 +559,11 @@
   "component.popover.anchorPlayground": "Anchor Playground",
   "sidebar.dashboard.firebase": "Firebase",
   "appModule.resetPass": "Envoyer le mail",
-  "appModule.returnSignInPage": "Retourner sur la page de connexion"
+  "appModule.returnSignInPage": "Retourner sur la page de connexion",
+  "settings.changeName": "Modifier le nom",
+  "settings.changeEmail": "Modifier le mail",
+  "settings.emailVerified": "Email verifié",
+  "settings.changePhoto": "Modifier la photo",
+  "settings.deleteAccount": "Supprimer le compte",
+  "settings.updateAccount": "Modifier le compte"
 }

@@ -93,8 +93,9 @@ class App extends React.Component {
   }
 }
 
-const mapStateToProps = ({ settings }) => {
+const mapStateToProps = ({ settings, auth }) => {
+  const { authUser } = auth;
   const { drawerType, navigationStyle, horizontalNavPosition } = settings;
-  return { drawerType, navigationStyle, horizontalNavPosition };
+  return { drawerType, navigationStyle, horizontalNavPosition, authUser };
 };
 export default withRouter(connect(mapStateToProps)(App));

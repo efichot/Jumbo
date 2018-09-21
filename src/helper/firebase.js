@@ -13,6 +13,7 @@ const config = {
 
 firebase.initializeApp(config);
 const auth = firebase.auth();
+const storage = firebase.storage();
 
 const googleAuthProvider = new firebase.auth.GoogleAuthProvider();
 const facebookAuthProvider = new firebase.auth.FacebookAuthProvider();
@@ -43,6 +44,7 @@ messaging.onMessage(function(payload) {
 export {
   db,
   auth,
+  storage,
   googleAuthProvider,
   githubAuthProvider,
   facebookAuthProvider,

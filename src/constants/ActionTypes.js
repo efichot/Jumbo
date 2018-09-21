@@ -45,15 +45,10 @@ export const HIDE_CONTACT_LOADER = 'hide_contact_loader';
 
 //Auth const
 export const SIGNUP_USER = 'signup_user';
-export const SIGNUP_USER_SUCCESS = 'signup_user_success';
 export const SIGNIN_GOOGLE_USER = 'signin_google_user';
-export const SIGNIN_GOOGLE_USER_SUCCESS = 'signin_google_user_success';
 export const SIGNIN_FACEBOOK_USER = 'signin_facebook_user';
-export const SIGNIN_FACEBOOK_USER_SUCCESS = 'signin_facebook_user_success';
 export const SIGNIN_TWITTER_USER = 'signin_twitter_user';
-export const SIGNIN_TWITTER_USER_SUCCESS = 'signin_twitter_user_success';
 export const SIGNIN_GITHUB_USER = 'signin_github_user';
-export const SIGNIN_GITHUB_USER_SUCCESS = 'signin_github_user_SUCCESS';
 export const SIGNIN_USER = 'signin_user';
 export const SIGNIN_USER_SUCCESS = 'signin_user_success';
 export const SIGNOUT_USER = 'signout_user';
@@ -61,6 +56,7 @@ export const SIGNOUT_USER_SUCCESS = 'signout_user_success';
 export const INIT_URL = 'init_url';
 export const RESET_PASS = 'reset_pass';
 export const USER_SEND_MAIL_SUCCESS = 'user_send_mail_success';
+export const UPDATE_ACCOUNT = 'update_account';
 
 // Chat Module const
 

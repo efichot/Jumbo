@@ -59,9 +59,8 @@ const userCreate = functions.auth.user().onCreate(user => {
   db.collection('users')
     .doc(user.uid)
     .set({
-      name: user.displayName || '',
-      email: user.email,
-      photoURL: user.photoURL || ''
+      notifications: [],
+      messages: []
     })
     .then(() => console.log('User added to the users collection'))
     .catch(e => console.log(e));

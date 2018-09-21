@@ -5,21 +5,17 @@ import {
   ON_SHOW_LOADER,
   SHOW_MESSAGE,
   SIGNIN_FACEBOOK_USER,
-  SIGNIN_FACEBOOK_USER_SUCCESS,
   SIGNIN_GITHUB_USER,
-  SIGNIN_GITHUB_USER_SUCCESS,
   SIGNIN_GOOGLE_USER,
-  SIGNIN_GOOGLE_USER_SUCCESS,
   SIGNIN_TWITTER_USER,
-  SIGNIN_TWITTER_USER_SUCCESS,
   SIGNIN_USER,
   SIGNIN_USER_SUCCESS,
   SIGNOUT_USER,
   SIGNOUT_USER_SUCCESS,
   SIGNUP_USER,
-  SIGNUP_USER_SUCCESS,
   RESET_PASS,
-  USER_SEND_MAIL_SUCCESS
+  USER_SEND_MAIL_SUCCESS,
+  UPDATE_ACCOUNT
 } from 'constants/ActionTypes';
 
 export const userSignUp = user => {
@@ -39,12 +35,6 @@ export const userSignOut = () => {
     type: SIGNOUT_USER
   };
 };
-export const userSignUpSuccess = authUser => {
-  return {
-    type: SIGNUP_USER_SUCCESS,
-    payload: authUser
-  };
-};
 
 export const userSignInSuccess = authUser => {
   return {
@@ -52,6 +42,7 @@ export const userSignInSuccess = authUser => {
     payload: authUser
   };
 };
+
 export const userSignOutSuccess = () => {
   return {
     type: SIGNOUT_USER_SUCCESS
@@ -70,23 +61,13 @@ export const userGoogleSignIn = () => {
     type: SIGNIN_GOOGLE_USER
   };
 };
-export const userGoogleSignInSuccess = authUser => {
-  return {
-    type: SIGNIN_GOOGLE_USER_SUCCESS,
-    payload: authUser
-  };
-};
+
 export const userFacebookSignIn = () => {
   return {
     type: SIGNIN_FACEBOOK_USER
   };
 };
-export const userFacebookSignInSuccess = authUser => {
-  return {
-    type: SIGNIN_FACEBOOK_USER_SUCCESS,
-    payload: authUser
-  };
-};
+
 export const setInitUrl = url => {
   return {
     type: INIT_URL,
@@ -98,23 +79,13 @@ export const userTwitterSignIn = () => {
     type: SIGNIN_TWITTER_USER
   };
 };
-export const userTwitterSignInSuccess = authUser => {
-  return {
-    type: SIGNIN_TWITTER_USER_SUCCESS,
-    payload: authUser
-  };
-};
+
 export const userGithubSignIn = () => {
   return {
     type: SIGNIN_GITHUB_USER
   };
 };
-export const userGithubSignInSuccess = authUser => {
-  return {
-    type: SIGNIN_GITHUB_USER_SUCCESS,
-    payload: authUser
-  };
-};
+
 export const showAuthLoader = () => {
   return {
     type: ON_SHOW_LOADER
@@ -143,5 +114,12 @@ export const resetPass = email => {
 export const userSendMailSuccess = email => {
   return {
     type: USER_SEND_MAIL_SUCCESS
+  };
+};
+
+export const updateAccount = modif => {
+  return {
+    type: UPDATE_ACCOUNT,
+    payload: modif
   };
 };
