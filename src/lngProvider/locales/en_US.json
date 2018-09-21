@@ -565,5 +565,7 @@
   "settings.emailVerified": "Email verified",
   "settings.changePhoto": "Change photo",
   "settings.deleteAccount": "Delete account",
-  "settings.updateAccount": "Update account"
+  "settings.updateAccount": "Update account",
+  "settings.changePass": "Update password",
+  "settings.updatePass": "Change password"
 }

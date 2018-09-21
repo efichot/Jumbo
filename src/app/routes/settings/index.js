@@ -205,6 +205,24 @@ export class Settings extends Component {
                     </div>
                   </div>
                 </div>
+                <div className="row">
+                  <div className="col align-self-center">
+                    <h4>
+                      <IntlMessages id="settings.changePass" />:
+                    </h4>
+                  </div>
+                  <div className="col">
+                    <Button
+                      variant="contained"
+                      size="small"
+                      color="default"
+                      className="m-2"
+                      onClick={this.updatePass}
+                    >
+                      <IntlMessages id="settings.updatePass" />
+                    </Button>
+                  </div>
+                </div>
               </div>
             </CardContent>
             <CardActions>
