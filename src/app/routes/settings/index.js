@@ -13,13 +13,32 @@ import { auth, storage } from 'helper/firebase';
 import { updateAccount, showAuthMessage, hideMessage } from 'actions/Auth';
 import { NotificationManager } from 'react-notifications';
 import SweetAlert from 'react-bootstrap-sweetalert';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import FormControl from '@material-ui/core/FormControl';
+import Input from '@material-ui/core/Input';
+import InputLabel from '@material-ui/core/InputLabel';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import Visibility from '@material-ui/icons/Visibility';
+import VisibilityOff from '@material-ui/icons/VisibilityOff';
+import IconButton from '@material-ui/core/IconButton';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 export class Settings extends Component {
   state = {
     name: '',
     email: '',
     verified: false,
     file: null,
-    warning: false
+    warning: false,
+    loading: false,
+    pass: false,
+    password: '',
+    confirmPassword: '',
+    showPassword: false,
+    showConfirmPassword: false
   };
 
   componentDidUpdate() {
@@ -43,6 +62,10 @@ export class Settings extends Component {
     this.setState({ warning: !this.state.warning });
   };
 
+  togglePass = () => {
+    this.setState({ pass: !this.state.pass });
+  };
+
   deleteAccount = () => {
     const user = auth.currentUser;
     user
@@ -55,6 +78,7 @@ export class Settings extends Component {
   updateAccount = () => {
     const { name, email, file } = this.state;
     const user = auth.currentUser;
+    this.setState({ loading: true });
     file &&
       storage
         .ref()
@@ -81,8 +105,12 @@ export class Settings extends Component {
             email: user.email,
             photoURL: user.photoURL
           });
+          this.setState({ file: null, loading: false });
         })
-        .catch(e => this.props.showAuthMessage(e.message));
+        .catch(e => {
+          this.props.showAuthMessage(e.message);
+          this.setState({ loading: false });
+        });
 
     !file &&
       user
@@ -97,12 +125,32 @@ export class Settings extends Component {
             email: user.email,
             photoURL: user.photoURL
           });
+          this.setState({ loading: false });
         })
         .catch(e => this.props.showAuthMessage(e.message));
   };
 
+  handleClickShowPassword = () => {
+    this.setState(state => ({ showPassword: !state.showPassword }));
+  };
+
+  handleClickShowConfirmPassword = () => {
+    this.setState(state => ({
+      showConfirmPassword: !state.showConfirmPassword
+    }));
+  };
+
   render() {
-    const { file, warning } = this.state;
+    const {
+      file,
+      warning,
+      loading,
+      pass,
+      password,
+      confirmPassword,
+      showPassword,
+      showConfirmPassword
+    } = this.state;
     const { authUser, showMessage, alertMessage } = this.props;
     return (
       <div className="app-wrapper">
@@ -217,7 +265,7 @@ export class Settings extends Component {
                       size="small"
                       color="default"
                       className="m-2"
-                      onClick={this.updatePass}
+                      onClick={this.togglePass}
                     >
                       <IntlMessages id="settings.updatePass" />
                     </Button>
@@ -243,7 +291,11 @@ export class Settings extends Component {
                   className="m-2"
                   onClick={this.updateAccount}
                 >
-                  <IntlMessages id="settings.updateAccount" />
+                  {!loading ? (
+                    <IntlMessages id="settings.updateAccount" />
+                  ) : (
+                    <CircularProgress size={18} style={{ color: 'green' }} />
+                  )}
                 </Button>
               </div>
             </CardActions>
@@ -262,6 +314,74 @@ export class Settings extends Component {
           >
             <IntlMessages id="sweetAlerts.youWillNotAble" />
           </SweetAlert>
+
+          <Dialog open={pass} onClose={this.togglePass}>
+            <DialogTitle>Subscribe</DialogTitle>
+            <DialogContent>
+              <DialogContentText>
+                To subscribe to this website, please enter your email address
+                here. We will send updates occationally.
+              </DialogContentText>
+              <FormControl fullWidth>
+                <InputLabel htmlFor="password">Password</InputLabel>
+                <Input
+                  id="password"
+                  type={this.state.showPassword ? 'text' : 'password'}
+                  value={password}
+                  name="password"
+                  onChange={e =>
+                    this.setState({ [e.target.name]: e.target.value })
+                  }
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="Toggle password visibility"
+                        onClick={this.handleClickShowPassword}
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                />
+              </FormControl>
+              <FormControl fullWidth>
+                <InputLabel htmlFor="confirmPassword">
+                  Confirm Password
+                </InputLabel>
+                <Input
+                  id="confirmPassword"
+                  type={this.state.showConfirmPassword ? 'text' : 'password'}
+                  value={confirmPassword}
+                  name="confirmPassword"
+                  onChange={e =>
+                    this.setState({ [e.target.name]: e.target.value })
+                  }
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="Toggle confirm password visibility"
+                        onClick={this.handleClickShowConfirmPassword}
+                      >
+                        {showConfirmPassword ? (
+                          <VisibilityOff />
+                        ) : (
+                          <Visibility />
+                        )}
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                />
+              </FormControl>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={this.togglePass} color="secondary">
+                Cancel
+              </Button>
+              <Button onClick={this.togglePass} color="primary">
+                Subscribe
+              </Button>
+            </DialogActions>
+          </Dialog>
         </div>
         {showMessage && NotificationManager.error(alertMessage)}
       </div>
