@@ -89,7 +89,7 @@ class Menu extends Component {
 
             <ul className="sub-menu">
               <li>
-                <NavLink to="/app/to-do">
+                <NavLink to="/app/dashboard">
                   <i className="zmdi zmdi-check-square zmdi-hc-fw" />
                   <span className="nav-text">
                     <IntlMessages id="sidebar.appModule.toDoRedux" />

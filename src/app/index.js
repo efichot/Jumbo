@@ -66,7 +66,7 @@ class App extends React.Component {
           <main className="app-main-content-wrapper">
             <div className="app-main-content">
               <Switch>
-                <Route exact path={`${match.url}/to-do`} component={Todo} />
+                <Route exact path={`${match.url}/dashboard`} component={Todo} />
                 <Route
                   exact
                   path={`${match.url}/settings`}

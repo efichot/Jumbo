@@ -567,5 +567,12 @@
   "settings.deleteAccount": "Delete account",
   "settings.updateAccount": "Update account",
   "settings.changePass": "Update password",
-  "settings.updatePass": "Change password"
+  "settings.updatePass": "Change password",
+  "setting.dialog.pass": "Change password",
+  "setting.dialog.passText": "You need to confirm your password and have one with at least 8 characters long",
+  "setting.dialog.passInput": "Password",
+  "setting.dialog.confirmPassInput": "Confirm password",
+  "dialog.cancel": "Cancel",
+  "dialog.confirm": "Confirm",
+  "sweetAlerts.accountUpdated": "Account updated"
 }

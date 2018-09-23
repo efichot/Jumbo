@@ -567,5 +567,12 @@
   "settings.deleteAccount": "Supprimer le compte",
   "settings.updateAccount": "Modifier le compte",
   "settings.changePass": "Modifier le mot de passe",
-  "settings.updatePass": "Changer de mot de passe"
+  "settings.updatePass": "Changer de mot de passe",
+  "setting.dialog.pass": "Change ton mot de passe",
+  "setting.dialog.passText": "Vous devez confirmer votre password et en choisir un avec au minimum 8 caratères",
+  "setting.dialog.passInput": "Mot de passe",
+  "setting.dialog.confirmPassInput": "Confirme ton mot de passe",
+  "dialog.cancel": "Annuler",
+  "dialog.confirm": "Confirmer",
+  "sweetAlerts.accountUpdated": "Compte modifier"
 }

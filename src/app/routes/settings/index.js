@@ -24,8 +24,8 @@ import IconButton from '@material-ui/core/IconButton';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogContentText from '@material-ui/core/DialogContentText';
 export class Settings extends Component {
   state = {
     name: '',
@@ -38,7 +38,9 @@ export class Settings extends Component {
     password: '',
     confirmPassword: '',
     showPassword: false,
-    showConfirmPassword: false
+    showConfirmPassword: false,
+    match: false,
+    success: false
   };
 
   componentDidUpdate() {
@@ -63,7 +65,11 @@ export class Settings extends Component {
   };
 
   togglePass = () => {
-    this.setState({ pass: !this.state.pass });
+    this.setState({
+      pass: !this.state.pass,
+      password: '',
+      confirmPassword: ''
+    });
   };
 
   deleteAccount = () => {
@@ -125,7 +131,7 @@ export class Settings extends Component {
             email: user.email,
             photoURL: user.photoURL
           });
-          this.setState({ loading: false });
+          this.setState({ loading: false, success: true });
         })
         .catch(e => this.props.showAuthMessage(e.message));
   };
@@ -140,6 +146,19 @@ export class Settings extends Component {
     }));
   };
 
+  changePass = () => {
+    const user = auth.currentUser;
+    this.setState({ loading: true });
+
+    user
+      .updatePassword(this.state.password)
+      .then(() => {
+        console.log('Password updated');
+        this.setState({ success: true, pass: false, loading: false });
+      })
+      .catch(e => this.props.showAuthMessage(e.message));
+  };
+
   render() {
     const {
       file,
@@ -149,7 +168,8 @@ export class Settings extends Component {
       password,
       confirmPassword,
       showPassword,
-      showConfirmPassword
+      showConfirmPassword,
+      success
     } = this.state;
     const { authUser, showMessage, alertMessage } = this.props;
     return (
@@ -316,14 +336,17 @@ export class Settings extends Component {
           </SweetAlert>
 
           <Dialog open={pass} onClose={this.togglePass}>
-            <DialogTitle>Subscribe</DialogTitle>
+            <DialogTitle>
+              <IntlMessages id="setting.dialog.pass" />
+            </DialogTitle>
             <DialogContent>
               <DialogContentText>
-                To subscribe to this website, please enter your email address
-                here. We will send updates occationally.
+                <IntlMessages id="setting.dialog.passText" />
               </DialogContentText>
               <FormControl fullWidth>
-                <InputLabel htmlFor="password">Password</InputLabel>
+                <InputLabel htmlFor="password">
+                  <IntlMessages id="setting.dialog.passInput" />
+                </InputLabel>
                 <Input
                   id="password"
                   type={this.state.showPassword ? 'text' : 'password'}
@@ -346,7 +369,7 @@ export class Settings extends Component {
               </FormControl>
               <FormControl fullWidth>
                 <InputLabel htmlFor="confirmPassword">
-                  Confirm Password
+                  <IntlMessages id="setting.dialog.confirmPassInput" />
                 </InputLabel>
                 <Input
                   id="confirmPassword"
@@ -375,13 +398,30 @@ export class Settings extends Component {
             </DialogContent>
             <DialogActions>
               <Button onClick={this.togglePass} color="secondary">
-                Cancel
+                <IntlMessages id="dialog.cancel" />
               </Button>
-              <Button onClick={this.togglePass} color="primary">
-                Subscribe
+              <Button
+                onClick={this.changePass}
+                color="primary"
+                disabled={password.length >= 8 && password !== confirmPassword}
+              >
+                {!loading ? (
+                  <IntlMessages id="dialog.confirm" />
+                ) : (
+                  <CircularProgress size={18} style={{ color: 'green' }} />
+                )}
               </Button>
             </DialogActions>
           </Dialog>
+
+          <SweetAlert
+            show={success}
+            success
+            title={<IntlMessages id="sweetAlerts.goodJob" />}
+            onConfirm={() => this.setState({ success: false })}
+          >
+            <IntlMessages id="sweetAlerts.accountUpdated" />
+          </SweetAlert>
         </div>
         {showMessage && NotificationManager.error(alertMessage)}
       </div>

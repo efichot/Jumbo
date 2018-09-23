@@ -87,7 +87,7 @@ class SidenavContent extends Component {
             <IntlMessages id="sidebar.main" />
           </li>
           <li className="menu no-arrow">
-            <NavLink to="/app/to-do">
+            <NavLink to="/app/dashboard">
               <i className="zmdi zmdi-fire" />
               <span className="nav-text">
                 <IntlMessages id="sidebar.dashboard.firebase" />
