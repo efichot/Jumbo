@@ -16,7 +16,7 @@ import ColorOption from 'containers/Customizer/ColorOption';
 import { isIOS, isMobile } from 'react-device-detect';
 import asyncComponent from '../util/asyncComponent';
 import TopNav from 'components/TopNav';
-import Todo from './routes/todo';
+import Dashboard from './routes/dashboard';
 import Settings from './routes/settings';
 import Profile from './routes/profile';
 
@@ -66,7 +66,11 @@ class App extends React.Component {
           <main className="app-main-content-wrapper">
             <div className="app-main-content">
               <Switch>
-                <Route exact path={`${match.url}/dashboard`} component={Todo} />
+                <Route
+                  exact
+                  path={`${match.url}/dashboard`}
+                  component={Dashboard}
+                />
                 <Route
                   exact
                   path={`${match.url}/settings`}

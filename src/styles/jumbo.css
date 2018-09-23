@@ -15674,8 +15674,8 @@ button {
     justify-content: space-around;
 }
 
-.zmdi {
-    margin-top: -9px;
+.zmdi, .size-30 {
+    margin-top: -10px;
 }
 
 .zmdi-settings {

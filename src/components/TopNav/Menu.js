@@ -92,7 +92,7 @@ class Menu extends Component {
                 <NavLink to="/app/dashboard">
                   <i className="zmdi zmdi-check-square zmdi-hc-fw" />
                   <span className="nav-text">
-                    <IntlMessages id="sidebar.appModule.toDoRedux" />
+                    <IntlMessages id="sidebar.dashboard.firebase" />
                   </span>
                 </NavLink>
               </li>
