@@ -13,6 +13,7 @@ import ChatUserList from 'components/chatPanel/ChatUserList';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import IconButton from '@material-ui/core/IconButton';
 import Input from '@material-ui/core/Input';
+import { db } from 'helper/firebase';
 
 export class Chat extends Component {
   state = {
@@ -26,7 +27,13 @@ export class Chat extends Component {
     mood: ''
   };
 
-  componentDidMount = () => {};
+  componentDidMount = () => {
+    const { uid } = this.props.authUser;
+    db.collection('users')
+      .doc(uid)
+      .get()
+      .then(doc => this.setState({ mood: doc.data().mood }));
+  };
 
   updateSearchChatUser = evt => {
     this.setState({
@@ -153,7 +160,7 @@ export class Chat extends Component {
     );
   };
 
-  updateMessageValue = evt => {
+  updateMoodValue = evt => {
     this.setState({
       mood: evt.target.value
     });
@@ -217,8 +224,8 @@ export class Chat extends Component {
                   multiline
                   rows={3}
                   onKeyUp={this._handleKeyPress}
-                  onChange={this.updateMessageValue}
-                  defaultValue="it's a status....not your diary..."
+                  onChange={this.updateMoodValue}
+                  value={this.state.mood}
                   placeholder="Status"
                   margin="none"
                 />

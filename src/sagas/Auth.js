@@ -1,4 +1,5 @@
 import { call, put, takeEvery } from 'redux-saga/effects';
+import axios from 'axios';
 import {
   auth,
   facebookAuthProvider,
@@ -28,12 +29,20 @@ const createUserWithEmailPasswordRequest = async (email, password, name) =>
     .then(authUser => authUser)
     .catch(error => error);
 
-const updateProfileName = async name =>
+const updateDisplayName = async name =>
   await auth.currentUser
     .updateProfile({
       displayName: name
     })
     .then(() => console.log('User name updated'))
+    .catch(error => error);
+
+const updateDisplayNameDB = async name =>
+  await axios
+    .post('', {
+      displayName: name
+    })
+    .then(() => console.log('User name updated in db'))
     .catch(error => error);
 
 const sendEmailVerification = async user =>
@@ -95,8 +104,9 @@ function* createUserWithEmailPassword({ payload }) {
     if (signUpUser.message) {
       yield put(showAuthMessage(signUpUser.message));
     } else {
+      yield call(updateDisplayName, name);
       yield call(sendEmailVerification, signUpUser.user);
-      yield call(updateProfileName, name);
+      yield call(updateDisplayNameDB, name);
     }
   } catch (error) {
     yield put(showAuthMessage(error));

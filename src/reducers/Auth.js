@@ -30,7 +30,8 @@ export default (state = INIT_STATE, action) => {
           displayName: action.payload.displayName,
           phoneNumber: action.payload.phoneNumber,
           photoURL: action.payload.photoURL,
-          emailVerified: action.payload.emailVerified
+          emailVerified: action.payload.emailVerified,
+          uid: action.payload.uid
         }
       };
     }
