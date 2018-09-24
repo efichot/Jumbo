@@ -96,6 +96,14 @@ class Menu extends Component {
                   </span>
                 </NavLink>
               </li>
+              <li className="menu no-arrow">
+                <NavLink to="/app/chat">
+                  <i className="zmdi zmdi-comments" />
+                  <span className="nav-text">
+                    <IntlMessages id="sidebar.appModule.chat" />
+                  </span>
+                </NavLink>
+              </li>
             </ul>
           </li>
         </ul>
