@@ -80,6 +80,7 @@ class App extends Component {
     }
     auth.onAuthStateChanged(user => {
       if (user) {
+        console.log('User sign in');
         this.props.userSignInSuccess(user);
       } else {
         console.log('User not sign in');

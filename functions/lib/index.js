@@ -19,19 +19,6 @@ app.use(cors({ origin: true }));
 app.get('/test', (req, res) => {
     res.send('Hello from firebase cloud functions!');
 });
-app.get('/listUsers', (req, res) => {
-    admin
-        .auth()
-        .listUsers(1000)
-        .then(listUsersResult => {
-        listUsersResult.users.forEach(userRecord => {
-            console.log('user', userRecord.toJSON());
-        });
-    })
-        .catch(error => {
-        console.log('Error listing users:', error);
-    });
-});
 const api = functions.https.onRequest(app);
 /////////* FIRESTORE Functions */////////////
 const createTask = functions.firestore
@@ -60,9 +47,11 @@ const userCreate = functions.auth.user().onCreate(user => {
         displayName: user.displayName,
         photoURL: user.photoURL,
         email: user.email,
+        emailVerified: user.emailVerified,
         notifications: [],
         messages: [],
-        mood: "it's a status....not your diary..."
+        mood: "it's a status....not your diary...",
+        contacts: []
     })
         .then(() => console.log('User added to the users collection'))
         .catch(e => console.log(e));

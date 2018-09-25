@@ -9,7 +9,7 @@ import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Switch from '@material-ui/core/Switch';
 import Dropzone from 'react-dropzone';
-import { auth, storage } from 'helper/firebase';
+import { db, auth, storage } from 'helper/firebase';
 import { updateAccount, showAuthMessage, hideMessage } from 'actions/Auth';
 import { NotificationManager } from 'react-notifications';
 import SweetAlert from 'react-bootstrap-sweetalert';
@@ -97,13 +97,26 @@ export class Settings extends Component {
             .getDownloadURL()
         )
         .then(url => {
-          console.log(url);
+          db.collection('users')
+            .doc(user.uid)
+            .update({
+              displayName: name,
+              photoURL: url
+            });
           return user.updateProfile({
             displayName: name,
             photoURL: url
           });
         })
         .then(() => user.updateEmail(email))
+        .then(() =>
+          db
+            .collection('users')
+            .doc(user.uid)
+            .update({
+              email
+            })
+        )
         .then(() => {
           console.log('Account updated');
           this.props.updateAccount({
@@ -123,7 +136,23 @@ export class Settings extends Component {
         .updateProfile({
           displayName: name
         })
+        .then(() =>
+          db
+            .collection('users')
+            .doc(user.uid)
+            .update({
+              displayName: name
+            })
+        )
         .then(() => user.updateEmail(email))
+        .then(() =>
+          db
+            .collection('users')
+            .doc(user.uid)
+            .update({
+              email
+            })
+        )
         .then(() => {
           console.log('Account updated');
           this.props.updateAccount({

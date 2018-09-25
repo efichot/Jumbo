@@ -42,6 +42,7 @@ messaging.onMessage(function(payload) {
 });
 
 export {
+  firebase,
   db,
   auth,
   storage,

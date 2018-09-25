@@ -1,7 +1,7 @@
 import { call, put, takeEvery } from 'redux-saga/effects';
-import axios from 'axios';
 import {
   auth,
+  db,
   facebookAuthProvider,
   githubAuthProvider,
   googleAuthProvider,
@@ -20,7 +20,8 @@ import {
 import {
   showAuthMessage,
   userSignOutSuccess,
-  userSendMailSuccess
+  userSendMailSuccess,
+  userSignInSuccess
 } from 'actions/Auth';
 
 const createUserWithEmailPasswordRequest = async (email, password, name) =>
@@ -29,20 +30,22 @@ const createUserWithEmailPasswordRequest = async (email, password, name) =>
     .then(authUser => authUser)
     .catch(error => error);
 
-const updateDisplayName = async name =>
-  await auth.currentUser
+const updateDisplayName = async (name, user) =>
+  await user
     .updateProfile({
       displayName: name
     })
-    .then(() => console.log('User name updated'))
+    .then(() => console.log('DisplayName updated'))
     .catch(error => error);
 
-const updateDisplayNameDB = async name =>
-  await axios
-    .post('', {
+const updateDisplayNameDB = async (name, uid) =>
+  await db
+    .collection('users')
+    .doc(uid)
+    .update({
       displayName: name
     })
-    .then(() => console.log('User name updated in db'))
+    .then(() => console.log('DisplayName updated in db'))
     .catch(error => error);
 
 const sendEmailVerification = async user =>
@@ -104,9 +107,10 @@ function* createUserWithEmailPassword({ payload }) {
     if (signUpUser.message) {
       yield put(showAuthMessage(signUpUser.message));
     } else {
-      yield call(updateDisplayName, name);
+      yield call(updateDisplayName, name, signUpUser.user);
+      yield call(updateDisplayNameDB, name, signUpUser.user.uid);
       yield call(sendEmailVerification, signUpUser.user);
-      yield call(updateDisplayNameDB, name);
+      yield put(userSignInSuccess(signUpUser.user));
     }
   } catch (error) {
     yield put(showAuthMessage(error));

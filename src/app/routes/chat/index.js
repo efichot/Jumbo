@@ -13,7 +13,19 @@ import ChatUserList from 'components/chatPanel/ChatUserList';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import IconButton from '@material-ui/core/IconButton';
 import Input from '@material-ui/core/Input';
-import { db } from 'helper/firebase';
+import { db, firebase } from 'helper/firebase';
+import { NotificationManager } from 'react-notifications';
+import Button from '@material-ui/core/Button';
+import AddIcon from '@material-ui/icons/Add';
+import Avatar from '@material-ui/core/Avatar';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemAvatar from '@material-ui/core/ListItemAvatar';
+import ListItemText from '@material-ui/core/ListItemText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Dialog from '@material-ui/core/Dialog';
+import PerfectScrollbar from 'react-perfect-scrollbar';
+import Default from 'assets/images/placeholder.jpg';
 
 export class Chat extends Component {
   state = {
@@ -24,15 +36,59 @@ export class Chat extends Component {
     selectedSectionId: '',
     chatUsers: [],
     contactList: [],
-    mood: ''
+    contacts: [],
+    mood: '',
+    loader: false,
+    allContacts: [],
+    dialogAddContact: false,
+    userSelected: null
   };
 
   componentDidMount = () => {
     const { uid } = this.props.authUser;
+
+    db.collection('users')
+      .doc(uid)
+      .onSnapshot(doc => {
+        this.setState({ contacts: doc.data().contacts });
+      });
+
     db.collection('users')
       .doc(uid)
       .get()
-      .then(doc => this.setState({ mood: doc.data().mood }));
+      .then(doc => this.setState({ mood: doc.data().mood }))
+      .catch(e => NotificationManager.error(e));
+
+    db.collection('users').onSnapshot(docs => {
+      let allContacts = [];
+      let i = 0;
+      docs.forEach(doc => {
+        allContacts = [
+          ...allContacts,
+          {
+            displayName: doc.data().displayName,
+            email: doc.data().email,
+            photoURL: doc.data().photoURL,
+            mood: doc.data().mood,
+            connected: doc.data().connected,
+            uid: doc.id
+          }
+        ];
+      });
+      this.setState({
+        allContacts: allContacts.filter(
+          contact =>
+            contact.uid !== uid &&
+            this.state.contacts.indexOf(contact.uid) === -1
+        ),
+        contactList: allContacts
+          .filter(contact => this.state.contacts.indexOf(contact.uid) !== -1)
+          .map(contact => ({
+            ...contact,
+            index: i++
+          }))
+      });
+    });
   };
 
   updateSearchChatUser = evt => {
@@ -51,8 +107,38 @@ export class Chat extends Component {
     this.setState({ selectedTabIndex: index });
   };
 
+  handleChangeDialogAddContact = () => {
+    this.setState({ dialogAddContact: !this.state.dialogAddContact });
+  };
+
+  addContact = contactUid => e => {
+    const { uid } = this.props.authUser;
+    db.collection('users')
+      .doc(uid)
+      .update({
+        contacts: firebase.firestore.FieldValue.arrayUnion(contactUid)
+      })
+      .then(() => NotificationManager.success('Contact added'))
+      .catch(e => NotificationManager.error(e));
+    this.handleChangeDialogAddContact();
+  };
+
+  onSelectUser = user => {
+    console.log(user);
+    this.setState({
+      loader: true,
+      selectedSectionId: user.index,
+      userSelected: user
+    });
+
+    setTimeout(() => {
+      this.setState({ loader: false });
+    }, 1500);
+  };
+
   ChatUsers = () => {
     const { displayName, photoURL, email } = this.props.authUser;
+    const { allContacts, dialogAddContact } = this.state;
     return (
       <div className="chat-sidenav-main">
         <div className="chat-sidenav-header">
@@ -68,7 +154,7 @@ export class Chat extends Component {
               <div className="chat-avatar-mode">
                 <img
                   id="user-avatar-button"
-                  src={photoURL}
+                  src={photoURL || Default}
                   className="rounded-circle size-50"
                   alt=""
                 />
@@ -127,11 +213,12 @@ export class Chat extends Component {
               {this.state.chatUsers.length === 0 ? (
                 <div className="p-5">User not found</div>
               ) : (
-                <ChatUserList
-                  chatUsers={this.state.chatUsers}
-                  selectedSectionId={this.state.selectedSectionId}
-                  onSelectUser={this.onSelectUser.bind(this)}
-                />
+                console.log('ee')
+                // <ChatUserList
+                //   chatUsers={this.state.chatUsers}
+                //   selectedSectionId={this.state.selectedSectionId}
+                //   onSelectUser={this.onSelectUser}
+                // />
               )}
             </CustomScrollbars>
 
@@ -144,17 +231,53 @@ export class Chat extends Component {
                     : 'calc(100vh - 202px)'
               }}
             >
+              <div className="w-50 mx-auto my-2">
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  onClick={this.handleChangeDialogAddContact}
+                >
+                  Add Contact
+                  <AddIcon />
+                </Button>
+              </div>
               {this.state.contactList.length === 0 ? (
                 <div className="p-5">User not found</div>
               ) : (
                 <ContactList
                   contactList={this.state.contactList}
                   selectedSectionId={this.state.selectedSectionId}
-                  onSelectUser={this.onSelectUser.bind(this)}
+                  onSelectUser={this.onSelectUser}
                 />
               )}
             </CustomScrollbars>
           </SwipeableViews>
+
+          {/* dialog for add contact */}
+
+          <Dialog
+            onClose={this.handleChangeDialogAddContact}
+            aria-labelledby="simple-dialog-title"
+            open={dialogAddContact}
+          >
+            <DialogTitle id="simple-dialog-title">
+              Set backup account
+            </DialogTitle>
+            <div>
+              <PerfectScrollbar>
+                <List>
+                  {allContacts.map(({ email, photoURL, uid }) => (
+                    <ListItem button onClick={this.addContact(uid)} key={email}>
+                      <ListItemAvatar>
+                        <Avatar alt="avatar" src={photoURL || Default} />
+                      </ListItemAvatar>
+                      <ListItemText primary={email} />
+                    </ListItem>
+                  ))}
+                </List>
+              </PerfectScrollbar>
+            </div>
+          </Dialog>
         </div>
       </div>
     );
@@ -166,7 +289,16 @@ export class Chat extends Component {
     });
   };
 
-  submitMood = () => {};
+  submitMood = () => {
+    const { uid } = this.props.authUser;
+    db.collection('users')
+      .doc(uid)
+      .update({
+        mood: this.state.mood
+      })
+      .then(() => NotificationManager.success('Mood updated'))
+      .catch(e => NotificationManager.error(e));
+  };
 
   _handleKeyPress = e => {
     if (e.key === 'Enter') {
@@ -195,7 +327,7 @@ export class Chat extends Component {
           <div className="chat-user chat-user-center">
             <div className="chat-avatar mx-auto">
               <img
-                src={photoURL}
+                src={photoURL || Default}
                 className="avatar avatar-shadow rounded-circle size-60 huge"
                 alt="John Doe"
               />
@@ -237,6 +369,62 @@ export class Chat extends Component {
     );
   };
 
+  communication = () => {
+    const { userSelected } = this.state;
+    return (
+      <div className="chat-main">
+        <div className="chat-main-header">
+          <IconButton
+            className="d-block d-xl-none chat-btn"
+            aria-label="Menu"
+            onClick={this.onToggleDrawer}
+          >
+            <i className="zmdi zmdi-menu" style={{ marginTop: '6px' }} />
+          </IconButton>
+          <div className="chat-main-header-info">
+            <div className="chat-avatar mr-2">
+              <div className="chat-avatar-mode">
+                <img
+                  src={userSelected.photoURL}
+                  className="rounded-circle size-60"
+                  alt=""
+                />
+
+                <span className={`chat-mode ${userSelected.connected}`} />
+              </div>
+            </div>
+
+            <div className="chat-contact-name">{userSelected.displayName}</div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  showCommunication = () => (
+    <div className="chat-box">
+      <div className="chat-box-main">
+        {this.state.userSelected === null ? (
+          <div className="loader-view">
+            <i className="zmdi zmdi-comment s-128 text-muted" />
+            <h1 className="text-muted">
+              {<IntlMessages id="chat.selectUserChat" />}
+            </h1>
+            <Button
+              className="d-block d-xl-none"
+              color="primary"
+              onClick={this.onToggleDrawer}
+            >
+              {<IntlMessages id="chat.selectContactChat" />}
+            </Button>
+          </div>
+        ) : (
+          this.communication()
+        )}
+      </div>
+    </div>
+  );
+
   onToggleDrawer = () =>
     this.setState({ drawerState: !this.state.drawerState });
 
@@ -263,8 +451,7 @@ export class Chat extends Component {
                 <CircularProgress />
               </div>
             ) : (
-              // this.showCommunication()
-              'ee'
+              this.showCommunication()
             )}
           </div>
         </div>
