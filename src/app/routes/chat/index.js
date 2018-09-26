@@ -124,7 +124,6 @@ export class Chat extends Component {
   };
 
   onSelectUser = user => {
-    console.log(user);
     this.setState({
       loader: true,
       selectedSectionId: user.index,
@@ -133,7 +132,7 @@ export class Chat extends Component {
 
     setTimeout(() => {
       this.setState({ loader: false });
-    }, 1500);
+    }, 500);
   };
 
   ChatUsers = () => {
