@@ -41,7 +41,9 @@ export class Chat extends Component {
     loader: false,
     allContacts: [],
     dialogAddContact: false,
-    userSelected: null
+    userSelected: null,
+    message: '',
+    chats: []
   };
 
   componentDidMount = () => {
@@ -50,14 +52,12 @@ export class Chat extends Component {
     db.collection('users')
       .doc(uid)
       .onSnapshot(doc => {
-        this.setState({ contacts: doc.data().contacts });
+        this.setState({
+          contacts: doc.data().contacts,
+          mood: doc.data().mood,
+          chats: doc.data().chats
+        });
       });
-
-    db.collection('users')
-      .doc(uid)
-      .get()
-      .then(doc => this.setState({ mood: doc.data().mood }))
-      .catch(e => NotificationManager.error(e));
 
     db.collection('users').onSnapshot(docs => {
       let allContacts = [];
@@ -107,7 +107,7 @@ export class Chat extends Component {
     this.setState({ selectedTabIndex: index });
   };
 
-  handleChangeDialogAddContact = () => {
+  toggleDialogAddContact = () => {
     this.setState({ dialogAddContact: !this.state.dialogAddContact });
   };
 
@@ -119,8 +119,8 @@ export class Chat extends Component {
         contacts: firebase.firestore.FieldValue.arrayUnion(contactUid)
       })
       .then(() => NotificationManager.success('Contact added'))
-      .catch(e => NotificationManager.error(e));
-    this.handleChangeDialogAddContact();
+      .catch(e => NotificationManager.error(e.message));
+    this.toggleDialogAddContact();
   };
 
   onSelectUser = user => {
@@ -234,7 +234,7 @@ export class Chat extends Component {
                 <Button
                   variant="contained"
                   color="secondary"
-                  onClick={this.handleChangeDialogAddContact}
+                  onClick={this.toggleDialogAddContact}
                 >
                   Add Contact
                   <AddIcon />
@@ -255,7 +255,7 @@ export class Chat extends Component {
           {/* dialog for add contact */}
 
           <Dialog
-            onClose={this.handleChangeDialogAddContact}
+            onClose={this.toggleDialogAddContact}
             aria-labelledby="simple-dialog-title"
             open={dialogAddContact}
           >
@@ -296,10 +296,10 @@ export class Chat extends Component {
         mood: this.state.mood
       })
       .then(() => NotificationManager.success('Mood updated'))
-      .catch(e => NotificationManager.error(e));
+      .catch(e => NotificationManager.error(e.message));
   };
 
-  _handleKeyPress = e => {
+  _handleKeyPressMood = e => {
     if (e.key === 'Enter') {
       this.submitMood();
     }
@@ -354,7 +354,7 @@ export class Chat extends Component {
                   id="exampleTextarea"
                   multiline
                   rows={3}
-                  onKeyUp={this._handleKeyPress}
+                  onKeyUp={this._handleKeyPressMood}
                   onChange={this.updateMoodValue}
                   value={this.state.mood}
                   placeholder="Status"
@@ -368,8 +368,49 @@ export class Chat extends Component {
     );
   };
 
+  submitComment = () => {
+    const { uid } = this.props.authUser;
+    const { message, userSelected, chats } = this.state;
+
+    // if (chats) {
+    db.collection('chats')
+      .add({
+        conversation: firebase.firestore.FieldValue.arrayUnion({
+          sender: uid,
+          message,
+          sentAt: new Date()
+        })
+      })
+      .then(doc => {
+        db.collection('users')
+          .doc(uid)
+          .update({
+            chats: firebase.firestore.FieldValue.arrayUnion({
+              [userSelected.uid]: doc.id
+            })
+          });
+        return db
+          .collection('users')
+          .doc(userSelected.uid)
+          .update({
+            chats: firebase.firestore.FieldValue.arrayUnion({
+              [uid]: doc.id
+            })
+          });
+      })
+      .then(() => console.log('Message send'))
+      .catch(e => NotificationManager.error(e.message));
+    // }
+  };
+
+  _handleKeyPressComment = e => {
+    if (e.key === 'Enter') {
+      this.submitComment();
+    }
+  };
+
   communication = () => {
-    const { userSelected } = this.state;
+    const { userSelected, message } = this.state;
     return (
       <div className="chat-main">
         <div className="chat-main-header">
@@ -394,6 +435,48 @@ export class Chat extends Component {
             </div>
 
             <div className="chat-contact-name">{userSelected.displayName}</div>
+          </div>
+        </div>
+        <CustomScrollbars
+          className="chat-list-scroll scrollbar"
+          style={{
+            height:
+              this.props.width >= 1200
+                ? 'calc(100vh - 300px)'
+                : 'calc(100vh - 255px)'
+          }}
+        >
+          ddd
+          {/* <Conversation
+            conversationData={conversationData}
+            selectedUser={selectedUser}
+          /> */}
+        </CustomScrollbars>
+        <div className="chat-main-footer">
+          <div
+            className="d-flex flex-row align-items-center"
+            style={{ maxHeight: 51 }}
+          >
+            <div className="col">
+              <div className="form-group">
+                <textarea
+                  id="required"
+                  className="border-0 form-control chat-textarea"
+                  onKeyUp={this._handleKeyPressComment}
+                  onChange={e => this.setState({ message: e.target.value })}
+                  value={message}
+                  placeholder="Type and hit enter to send message"
+                />
+              </div>
+            </div>
+            <div className="chat-sent">
+              <IconButton
+                onClick={this.submitComment}
+                aria-label="Send message"
+              >
+                <i className="zmdi  zmdi-mail-send" />
+              </IconButton>
+            </div>
           </div>
         </div>
       </div>
