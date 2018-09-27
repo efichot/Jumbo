@@ -10,6 +10,7 @@ import SwipeableViews from 'react-swipeable-views';
 import CustomScrollbars from 'util/CustomScrollbars';
 import ContactList from 'components/chatPanel/ContactList/index';
 import ChatUserList from 'components/chatPanel/ChatUserList';
+import Conversation from 'components/chatPanel/Conversation/index';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import IconButton from '@material-ui/core/IconButton';
 import Input from '@material-ui/core/Input';
@@ -43,7 +44,9 @@ export class Chat extends Component {
     dialogAddContact: false,
     userSelected: null,
     message: '',
-    chats: []
+    chats: [],
+    currentChat: [],
+    idChat: ''
   };
 
   componentDidMount = () => {
@@ -124,15 +127,26 @@ export class Chat extends Component {
   };
 
   onSelectUser = user => {
+    const idChat = this.state.chats[user.uid];
+
     this.setState({
       loader: true,
       selectedSectionId: user.index,
       userSelected: user
     });
-
-    setTimeout(() => {
-      this.setState({ loader: false });
-    }, 500);
+    if (idChat) {
+      db.collection('chats')
+        .doc(idChat)
+        .onSnapshot(doc => {
+          this.setState({
+            currentChat: doc.data().messages,
+            loader: false,
+            idChat
+          });
+        });
+    } else {
+      this.setState({ loader: false, currentChat: [] });
+    }
   };
 
   ChatUsers = () => {
@@ -370,37 +384,53 @@ export class Chat extends Component {
 
   submitComment = () => {
     const { uid } = this.props.authUser;
-    const { message, userSelected, chats } = this.state;
+    const { message, userSelected, currentChat } = this.state;
 
-    // if (chats) {
-    db.collection('chats')
-      .add({
-        conversation: firebase.firestore.FieldValue.arrayUnion({
-          sender: uid,
-          message,
-          sentAt: new Date()
+    if (!currentChat.length) {
+      // No chat yet
+      db.collection('chats')
+        .add({
+          messages: firebase.firestore.FieldValue.arrayUnion({
+            sender: uid,
+            message,
+            sentAt: new Date()
+          })
         })
-      })
-      .then(doc => {
-        db.collection('users')
-          .doc(uid)
-          .update({
-            chats: firebase.firestore.FieldValue.arrayUnion({
-              [userSelected.uid]: doc.id
-            })
-          });
-        return db
-          .collection('users')
-          .doc(userSelected.uid)
-          .update({
-            chats: firebase.firestore.FieldValue.arrayUnion({
-              [uid]: doc.id
-            })
-          });
-      })
-      .then(() => console.log('Message send'))
-      .catch(e => NotificationManager.error(e.message));
-    // }
+        .then(doc => {
+          db.collection('users')
+            .doc(uid)
+            .update({
+              [`chats.${userSelected.uid}`]: doc.id
+            });
+          return db
+            .collection('users')
+            .doc(userSelected.uid)
+            .update({
+              [`chats.${uid}`]: doc.id
+            });
+        })
+        .then(() => {
+          console.log('Message send');
+          this.setState({ message: '' });
+        })
+        .catch(e => NotificationManager.error(e.message));
+    } else {
+      // Already a chat
+      db.collection('chats')
+        .doc(this.state.idChat)
+        .update({
+          messages: firebase.firestore.FieldValue.arrayUnion({
+            sender: uid,
+            message,
+            sentAt: new Date()
+          })
+        })
+        .then(() => {
+          console.log('Message send');
+          this.setState({ message: '' });
+        })
+        .catch(e => NotificationManager.error(e.message));
+    }
   };
 
   _handleKeyPressComment = e => {
@@ -410,7 +440,7 @@ export class Chat extends Component {
   };
 
   communication = () => {
-    const { userSelected, message } = this.state;
+    const { userSelected, message, currentChat } = this.state;
     return (
       <div className="chat-main">
         <div className="chat-main-header">
@@ -446,11 +476,11 @@ export class Chat extends Component {
                 : 'calc(100vh - 255px)'
           }}
         >
-          ddd
-          {/* <Conversation
-            conversationData={conversationData}
-            selectedUser={selectedUser}
-          /> */}
+          <Conversation
+            conversationData={currentChat}
+            userSelected={userSelected}
+            user={this.props.authUser}
+          />
         </CustomScrollbars>
         <div className="chat-main-footer">
           <div
@@ -474,7 +504,10 @@ export class Chat extends Component {
                 onClick={this.submitComment}
                 aria-label="Send message"
               >
-                <i className="zmdi  zmdi-mail-send" />
+                <i
+                  className="zmdi  zmdi-mail-send"
+                  style={{ marginTop: '4px' }}
+                />
               </IconButton>
             </div>
           </div>
@@ -485,8 +518,8 @@ export class Chat extends Component {
 
   showCommunication = () => (
     <div className="chat-box">
-      <div className="chat-box-main">
-        {this.state.userSelected === null ? (
+      {this.state.userSelected === null ? (
+        <div className="chat-box-main">
           <div className="loader-view">
             <i className="zmdi zmdi-comment s-128 text-muted" />
             <h1 className="text-muted">
@@ -500,10 +533,10 @@ export class Chat extends Component {
               {<IntlMessages id="chat.selectContactChat" />}
             </Button>
           </div>
-        ) : (
-          this.communication()
-        )}
-      </div>
+        </div>
+      ) : (
+        this.communication()
+      )}
     </div>
   );
 
@@ -542,9 +575,10 @@ export class Chat extends Component {
   }
 }
 
-const mapStateToProps = ({ auth }) => {
+const mapStateToProps = ({ auth, settings }) => {
   const { authUser } = auth;
-  return { authUser };
+  const { width } = settings;
+  return { authUser, width };
 };
 
 export default connect(

@@ -1,17 +1,28 @@
 import React from 'react';
-import ReceivedMessageCell from "./ReceivedMessageCell/index";
-import SentMessageCell from "./SentMessageCell/index";
+import ReceivedMessageCell from './ReceivedMessageCell/index';
+import SentMessageCell from './SentMessageCell/index';
 
-const Conversation = ({conversationData, selectedUser}) => {
-
-    return (
-        <div className="chat-main-content">
-            {conversationData.map((conversation, index) => conversation.type === 'sent' ?
-                <SentMessageCell key={index} conversation={conversation}/> :
-                <ReceivedMessageCell key={index} conversation={conversation} user={selectedUser}/>
-            )}
-        </div>
-    )
+const Conversation = ({ conversationData, userSelected, user }) => {
+  return (
+    <div className="chat-main-content" style={{ height: '700px' }}>
+      {conversationData.map(
+        (conversation, index) =>
+          conversation.sender === user.uid ? (
+            <SentMessageCell
+              key={index}
+              conversation={conversation}
+              user={user}
+            />
+          ) : (
+            <ReceivedMessageCell
+              key={index}
+              conversation={conversation}
+              user={userSelected}
+            />
+          )
+      )}
+    </div>
+  );
 };
 
 export default Conversation;

@@ -18,11 +18,7 @@ const UserCell = ({ onSelectUser, selectedSectionId, user }) => {
               className="rounded-circle size-40"
               alt="Abbott"
             />
-            <span
-              className={`chat-mode smallcal ${
-                user.connected ? 'online' : 'offline'
-              }`}
-            />
+            <span className={`chat-mode smallcal ${user.connected}`} />
           </div>
         </div>
 

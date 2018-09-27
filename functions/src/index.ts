@@ -67,7 +67,7 @@ const userCreate = functions.auth.user().onCreate(user => {
       messages: [],
       mood: "it's a status....not your diary...",
       contacts: [],
-      chats: []
+      chats: {}
     })
     .then(() => console.log('User added to the users collection'))
     .catch(e => console.log(e));

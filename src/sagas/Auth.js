@@ -38,15 +38,24 @@ const updateDisplayName = async (name, user) =>
     .then(() => console.log('DisplayName updated'))
     .catch(error => error);
 
-const updateDisplayNameDB = async (name, uid) =>
+const updateDisplayNameAndStateDB = async (name, uid) =>
   await db
     .collection('users')
     .doc(uid)
     .update({
-      displayName: name
+      displayName: name,
+      connected: 'online'
     })
     .then(() => console.log('DisplayName updated in db'))
     .catch(error => error);
+
+const offlineState = async () =>
+  await db
+    .collection('users')
+    .doc(auth.currentUser.uid)
+    .update({
+      connected: 'offline'
+    });
 
 const sendEmailVerification = async user =>
   await user
@@ -108,7 +117,7 @@ function* createUserWithEmailPassword({ payload }) {
       yield put(showAuthMessage(signUpUser.message));
     } else {
       yield call(updateDisplayName, name, signUpUser.user);
-      yield call(updateDisplayNameDB, name, signUpUser.user.uid);
+      yield call(updateDisplayNameAndStateDB, name, signUpUser.user.uid);
       yield call(sendEmailVerification, signUpUser.user);
       yield put(userSignInSuccess(signUpUser.user));
     }
@@ -183,9 +192,9 @@ function* signInUserWithEmailPassword({ payload }) {
 
 function* signOut() {
   try {
+    yield call(offlineState);
     const signOutUser = yield call(signOutRequest);
     if (signOutUser === undefined) {
-      localStorage.removeItem('user_id');
       yield put(userSignOutSuccess(signOutUser));
     } else {
       yield put(showAuthMessage(signOutUser.message));

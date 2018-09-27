@@ -31,7 +31,7 @@ export default (state = INIT_STATE, action) => {
           phoneNumber: action.payload.phoneNumber,
           photoURL: action.payload.photoURL,
           emailVerified: action.payload.emailVerified,
-          connected: true,
+          connected: 'online',
           uid: action.payload.uid
         }
       };
@@ -48,7 +48,7 @@ export default (state = INIT_STATE, action) => {
         authUser: null,
         initURL: '/app/dashboard',
         loader: false,
-        connected: false
+        connected: 'offline'
       };
     }
 
