@@ -4,7 +4,7 @@ import SentMessageCell from './SentMessageCell/index';
 
 const Conversation = ({ conversationData, userSelected, user }) => {
   return (
-    <div className="chat-main-content" style={{ height: '700px' }}>
+    <div className="chat-main-content">
       {conversationData.map(
         (conversation, index) =>
           conversation.sender === user.uid ? (

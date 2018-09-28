@@ -134,7 +134,7 @@ class Header extends React.Component {
           </Link>
 
           <SearchBox
-            styleName="d-none d-lg-block"
+            styleName="d-none d-md-block"
             placeholder=""
             onChange={this.updateSearchText.bind(this)}
             value={this.state.searchText}
@@ -143,7 +143,7 @@ class Header extends React.Component {
             horizontalNavPosition === INSIDE_THE_HEADER && <Menu />}
 
           <ul className="header-notifications list-inline ml-auto">
-            <li className="d-inline-block d-lg-none list-inline-item">
+            <li className="d-inline-block d-md-none list-inline-item">
               <Dropdown
                 className="quick-menu nav-searchbox"
                 isOpen={this.state.searchBox}

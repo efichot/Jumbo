@@ -550,7 +550,7 @@
   "appNotification.message": "Aucune notification pour le moment!",
   "popup.profile": "Profil",
   "popup.setting": "Réglage",
-  "popup.logout": "Connectez - Out",
+  "popup.logout": "Déconnexion",
   "popup.updateData": "Mettre à jour",
   "popup.detailedLog": "Journal détaillé",
   "popup.statistics": "Statistiques",

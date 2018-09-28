@@ -44,7 +44,7 @@ const updateDisplayNameAndStateDB = async (name, uid) =>
     .doc(uid)
     .update({
       displayName: name,
-      connected: 'online'
+      status: 'online'
     })
     .then(() => console.log('DisplayName updated in db'))
     .catch(error => error);
@@ -54,7 +54,7 @@ const offlineState = async () =>
     .collection('users')
     .doc(auth.currentUser.uid)
     .update({
-      connected: 'offline'
+      status: 'offline'
     });
 
 const sendEmailVerification = async user =>

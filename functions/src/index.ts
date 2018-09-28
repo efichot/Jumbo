@@ -62,7 +62,6 @@ const userCreate = functions.auth.user().onCreate(user => {
       displayName: user.displayName,
       photoURL: user.photoURL,
       email: user.email,
-      emailVerified: user.emailVerified,
       notifications: [],
       messages: [],
       mood: "it's a status....not your diary...",

@@ -24,9 +24,12 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import ListItemText from '@material-ui/core/ListItemText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import Select from '@material-ui/core/Select';
 import Dialog from '@material-ui/core/Dialog';
-import PerfectScrollbar from 'react-perfect-scrollbar';
 import Default from 'assets/images/placeholder.jpg';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
 
 export class Chat extends Component {
   state = {
@@ -35,7 +38,7 @@ export class Chat extends Component {
     search: '',
     selectedTabIndex: 0,
     selectedSectionId: '',
-    chatUsers: [],
+    chatList: [],
     contactList: [],
     contacts: [],
     mood: '',
@@ -46,7 +49,8 @@ export class Chat extends Component {
     message: '',
     chats: [],
     currentChat: [],
-    idChat: ''
+    idChat: '',
+    status: ''
   };
 
   componentDidMount = () => {
@@ -58,7 +62,8 @@ export class Chat extends Component {
         this.setState({
           contacts: doc.data().contacts,
           mood: doc.data().mood,
-          chats: doc.data().chats
+          chats: doc.data().chats,
+          status: doc.data().status
         });
       });
 
@@ -73,11 +78,12 @@ export class Chat extends Component {
             email: doc.data().email,
             photoURL: doc.data().photoURL,
             mood: doc.data().mood,
-            connected: doc.data().connected,
+            status: doc.data().status,
             uid: doc.id
           }
         ];
       });
+
       this.setState({
         allContacts: allContacts.filter(
           contact =>
@@ -90,6 +96,29 @@ export class Chat extends Component {
             ...contact,
             index: i++
           }))
+      });
+
+      let arrKeys = Object.keys(this.state.chats);
+      let chatList = [];
+      Object.values(this.state.chats).forEach((v, i) => {
+        db.collection('chats')
+          .doc(v)
+          .onSnapshot(doc => {
+            chatList = [
+              ...chatList,
+              {
+                unreadMessage: doc.data().unreadMessage,
+                lastMessage: doc.data().messages[
+                  doc.data().messages.length - 1
+                ],
+                user: allContacts.filter(
+                  contact => contact.uid === arrKeys[i]
+                )[0],
+                index: i
+              }
+            ];
+            this.setState({ chatList });
+          });
       });
     });
   };
@@ -151,7 +180,7 @@ export class Chat extends Component {
 
   ChatUsers = () => {
     const { displayName, photoURL, email } = this.props.authUser;
-    const { allContacts, dialogAddContact } = this.state;
+    const { allContacts, dialogAddContact, status } = this.state;
     return (
       <div className="chat-sidenav-main">
         <div className="chat-sidenav-header">
@@ -171,7 +200,7 @@ export class Chat extends Component {
                   className="rounded-circle size-50"
                   alt=""
                 />
-                <span className="chat-mode online" />
+                <span className={`chat-mode ${status}`} />
               </div>
             </div>
 
@@ -223,15 +252,14 @@ export class Chat extends Component {
                     : 'calc(100vh - 202px)'
               }}
             >
-              {this.state.chatUsers.length === 0 ? (
+              {this.state.chatList.length === 0 ? (
                 <div className="p-5">User not found</div>
               ) : (
-                console.log('ee')
-                // <ChatUserList
-                //   chatUsers={this.state.chatUsers}
-                //   selectedSectionId={this.state.selectedSectionId}
-                //   onSelectUser={this.onSelectUser}
-                // />
+                <ChatUserList
+                  chatUsers={this.state.chatList}
+                  selectedSectionId={this.state.selectedSectionId}
+                  onSelectUser={this.onSelectUser}
+                />
               )}
             </CustomScrollbars>
 
@@ -277,7 +305,7 @@ export class Chat extends Component {
               Set backup account
             </DialogTitle>
             <div>
-              <PerfectScrollbar>
+              <CustomScrollbars style={{ height: 'calc(100vh - 700px)' }}>
                 <List>
                   {allContacts.map(({ email, photoURL, uid }) => (
                     <ListItem button onClick={this.addContact(uid)} key={email}>
@@ -288,7 +316,7 @@ export class Chat extends Component {
                     </ListItem>
                   ))}
                 </List>
-              </PerfectScrollbar>
+              </CustomScrollbars>
             </div>
           </Dialog>
         </div>
@@ -317,6 +345,19 @@ export class Chat extends Component {
     if (e.key === 'Enter') {
       this.submitMood();
     }
+  };
+
+  handleChangeStatus = e => {
+    db.collection('users')
+      .doc(this.props.authUser.uid)
+      .update({
+        status: e.target.value
+      })
+      .then(() => {
+        NotificationManager.success('Status Updated');
+        this.setState({ [e.target.name]: e.target.value });
+      })
+      .catch(e => NotificationManager.error(e.message));
   };
 
   AppUsersInfo = () => {
@@ -376,6 +417,24 @@ export class Chat extends Component {
                 />
               </div>
             </form>
+            <div className="p-4">
+              <FormControl>
+                <InputLabel htmlFor="status">Status</InputLabel>
+                <Select
+                  value={this.state.status}
+                  onChange={this.handleChangeStatus}
+                  inputProps={{
+                    name: 'status',
+                    id: 'status'
+                  }}
+                  style={{ width: '200%' }}
+                >
+                  <MenuItem value="online">Online</MenuItem>
+                  <MenuItem value="away">Away</MenuItem>
+                  <MenuItem value="offline">Offline</MenuItem>
+                </Select>
+              </FormControl>
+            </div>
           </CustomScrollbars>
         </div>
       </div>
@@ -460,7 +519,7 @@ export class Chat extends Component {
                   alt=""
                 />
 
-                <span className={`chat-mode ${userSelected.connected}`} />
+                <span className={`chat-mode ${userSelected.status}`} />
               </div>
             </div>
 
@@ -473,7 +532,7 @@ export class Chat extends Component {
             height:
               this.props.width >= 1200
                 ? 'calc(100vh - 300px)'
-                : 'calc(100vh - 255px)'
+                : 'calc(100vh - 280px)'
           }}
         >
           <Conversation
