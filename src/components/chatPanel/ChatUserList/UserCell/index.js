@@ -1,7 +1,7 @@
 import React from 'react';
 import moment from 'moment';
 
-const UserCell = ({ chat, selectedSectionId, onSelectUser }) => {
+const UserCell = ({ chat, selectedSectionId, onSelectUser, uid }) => {
   return (
     <div
       className={`chat-user-item ${
@@ -35,7 +35,7 @@ const UserCell = ({ chat, selectedSectionId, onSelectUser }) => {
 
         <div className="chat-date col-xl-2 col-3">
           <div className="bg-primary rounded-circle badge text-white">
-            {!chat.unreadMessage ? '' : chat.unreadMessage}
+            {!chat.unreadMessage[uid] ? '' : chat.unreadMessage[uid]}
           </div>
         </div>
       </div>

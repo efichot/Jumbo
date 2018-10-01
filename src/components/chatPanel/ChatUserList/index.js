@@ -1,7 +1,7 @@
 import React from 'react';
 import UserCell from './UserCell/index';
 
-const ChatUserList = ({ chatUsers, selectedSectionId, onSelectUser }) => {
+const ChatUserList = ({ chatUsers, selectedSectionId, onSelectUser, uid }) => {
   return (
     <div className="chat-user">
       {chatUsers.map((chat, index) => (
@@ -10,6 +10,7 @@ const ChatUserList = ({ chatUsers, selectedSectionId, onSelectUser }) => {
           chat={chat}
           selectedSectionId={selectedSectionId}
           onSelectUser={onSelectUser}
+          uid={uid}
         />
       ))}
     </div>

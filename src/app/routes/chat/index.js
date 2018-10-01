@@ -117,7 +117,19 @@ export class Chat extends Component {
                 index: i
               }
             ];
-            this.setState({ chatList });
+            let arr = [];
+            this.setState({
+              chatList: chatList
+                .reverse()
+                .filter(chat => {
+                  if (arr.indexOf(chat.user.uid) === -1) {
+                    arr.push(chat.user.uid);
+                    return true;
+                  }
+                  return false;
+                })
+                .reverse()
+            });
           });
       });
     });
@@ -157,6 +169,7 @@ export class Chat extends Component {
 
   onSelectUser = user => {
     const idChat = this.state.chats[user.uid];
+    const { uid } = this.props;
 
     this.setState({
       loader: true,
@@ -173,6 +186,17 @@ export class Chat extends Component {
             idChat
           });
         });
+
+      const docRef = db.collection('chats').doc(idChat);
+
+      return db.runTransaction(transaction => {
+        return transaction.get(docRef).then(doc => {
+          transaction.update(docRef, {
+            [`unreadMessage.${uid}`]: 0,
+            [`unreadMessage.${user.uid}`]: doc.data().unreadMessage[user.uid]
+          });
+        });
+      });
     } else {
       this.setState({ loader: false, currentChat: [] });
     }
@@ -259,6 +283,7 @@ export class Chat extends Component {
                   chatUsers={this.state.chatList}
                   selectedSectionId={this.state.selectedSectionId}
                   onSelectUser={this.onSelectUser}
+                  uid={this.props.authUser.uid}
                 />
               )}
             </CustomScrollbars>
@@ -443,7 +468,7 @@ export class Chat extends Component {
 
   submitComment = () => {
     const { uid } = this.props.authUser;
-    const { message, userSelected, currentChat } = this.state;
+    const { message, userSelected, currentChat, idChat } = this.state;
 
     if (!currentChat.length) {
       // No chat yet
@@ -453,7 +478,10 @@ export class Chat extends Component {
             sender: uid,
             message,
             sentAt: new Date()
-          })
+          }),
+          [`unreadMessage.${uid}`]: 0,
+          [`unreadMessage.${userSelected.uid}`]: 1,
+          lastMessage: message
         })
         .then(doc => {
           db.collection('users')
@@ -475,14 +503,22 @@ export class Chat extends Component {
         .catch(e => NotificationManager.error(e.message));
     } else {
       // Already a chat
-      db.collection('chats')
-        .doc(this.state.idChat)
-        .update({
-          messages: firebase.firestore.FieldValue.arrayUnion({
-            sender: uid,
-            message,
-            sentAt: new Date()
-          })
+      const docRef = db.collection('chats').doc(idChat);
+      return db
+        .runTransaction(transaction => {
+          return transaction.get(docRef).then(doc => {
+            transaction.update(docRef, {
+              messages: firebase.firestore.FieldValue.arrayUnion({
+                sender: uid,
+                message,
+                sentAt: new Date()
+              }),
+              [`unreadMessage.${uid}`]: 0,
+              [`unreadMessage.${userSelected.uid}`]:
+                doc.data().unreadMessage[userSelected.uid] + 1,
+              lastMessage: message
+            });
+          });
         })
         .then(() => {
           console.log('Message send');
