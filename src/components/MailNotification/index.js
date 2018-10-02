@@ -9,7 +9,7 @@ const MailNotification = ({ messages }) => {
       style={{ height: 280 }}
     >
       <ul className="list-unstyled">
-        {Object.values(messages).map((notification, index) => (
+        {messages.map((notification, index) => (
           <NotificationItem key={index} notification={notification} />
         ))}
       </ul>

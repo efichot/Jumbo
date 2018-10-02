@@ -35,7 +35,7 @@ class Header extends React.Component {
     userInfo: false,
     langSwitcher: false,
     appNotification: false,
-    messages: {}
+    messages: []
   };
 
   componentDidMount = () => {
@@ -43,7 +43,7 @@ class Header extends React.Component {
     db.collection('users')
       .doc(uid)
       .onSnapshot(doc => {
-        this.setState({ messages: doc.data().messages });
+        this.setState({ messages: Object.values(doc.data().messages) });
       });
   };
 
@@ -214,7 +214,7 @@ class Header extends React.Component {
                   data-toggle="dropdown"
                 >
                   <IconButton className="icon-btn size-20 font-size-20">
-                    <i className="zmdi zmdi-notifications-active icon-alert animated infinite wobble" />
+                    <i className="zmdi zmdi-notifications-active icon-alert animated wobble" />
                   </IconButton>
                 </DropdownToggle>
 
@@ -239,7 +239,11 @@ class Header extends React.Component {
                   data-toggle="dropdown"
                 >
                   <IconButton className="icon-btn size-20 font-size-20">
-                    <i className="zmdi zmdi-comment-alt-text icon-alert zmdi-hc-fw" />
+                    <i
+                      className={`zmdi zmdi-comment-alt-text zmdi-hc-fw animated ${
+                        messages.length ? 'icon-alert wobble' : ''
+                      }`}
+                    />
                   </IconButton>
                 </DropdownToggle>
 
