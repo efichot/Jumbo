@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { NavLink, withRouter } from 'react-router-dom';
-
 import IntlMessages from 'util/IntlMessages';
 
 class Menu extends Component {

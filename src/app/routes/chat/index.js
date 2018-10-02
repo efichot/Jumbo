@@ -478,7 +478,7 @@ export class Chat extends Component {
   };
 
   submitComment = () => {
-    const { uid } = this.props.authUser;
+    const { uid, photoURL, displayName } = this.props.authUser;
     const { message, userSelected, currentChat, idChat } = this.state;
 
     if (!currentChat.length) {
@@ -509,6 +509,20 @@ export class Chat extends Component {
               [`chats.${uid}`]: doc.id
             });
         })
+        .then(() =>
+          db
+            .collection('users')
+            .doc(userSelected.uid)
+            .update({
+              [`messages.${uid}`]: {
+                photoURL,
+                displayName,
+                time: new Date(),
+                message,
+                unreadMessage: 1
+              }
+            })
+        )
         .then(() => {
           console.log('Message send');
           this.setState({ message: '' });
@@ -530,6 +544,34 @@ export class Chat extends Component {
               [`unreadMessage.${userSelected.uid}`]:
                 doc.data().unreadMessage[userSelected.uid] + 1,
               lastMessage: message
+            });
+          });
+        })
+        .then(() => {
+          const docRef = db.collection('users').doc(userSelected.uid);
+          return db.runTransaction(transaction => {
+            return transaction.get(docRef).then(doc => {
+              if (!doc.data().messages[uid]) {
+                transaction.update(docRef, {
+                  [`messages.${uid}`]: {
+                    photoURL,
+                    displayName,
+                    time: new Date(),
+                    message,
+                    unreadMessage: 1
+                  }
+                });
+              } else {
+                transaction.update(docRef, {
+                  [`messages.${uid}`]: {
+                    photoURL,
+                    displayName,
+                    time: new Date(),
+                    message,
+                    unreadMessage: doc.data().messages[uid].unreadMessage + 1
+                  }
+                });
+              }
             });
           });
         })

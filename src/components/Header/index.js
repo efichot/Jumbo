@@ -24,8 +24,29 @@ import Menu from 'components/TopNav/Menu';
 import UserInfoPopup from 'components/UserInfo/UserInfoPopup';
 import iota from 'assets/images/iota_light.svg';
 import defaultPhoto from 'assets/images/placeholder.jpg';
+import { db } from 'helper/firebase';
 
 class Header extends React.Component {
+  state = {
+    anchorEl: undefined,
+    searchBox: false,
+    searchText: '',
+    mailNotification: false,
+    userInfo: false,
+    langSwitcher: false,
+    appNotification: false,
+    messages: {}
+  };
+
+  componentDidMount = () => {
+    const { uid } = this.props.authUser;
+    db.collection('users')
+      .doc(uid)
+      .onSnapshot(doc => {
+        this.setState({ messages: doc.data().messages });
+      });
+  };
+
   onAppNotificationSelect = () => {
     this.setState({
       appNotification: !this.state.appNotification
@@ -62,19 +83,6 @@ class Header extends React.Component {
     });
   };
 
-  constructor() {
-    super();
-    this.state = {
-      anchorEl: undefined,
-      searchBox: false,
-      searchText: '',
-      mailNotification: false,
-      userInfo: false,
-      langSwitcher: false,
-      appNotification: false
-    };
-  }
-
   onToggleCollapsedNav = e => {
     const val = !this.props.navCollapsed;
     this.props.toggleCollapsedNav(val);
@@ -94,6 +102,7 @@ class Header extends React.Component {
       horizontalNavPosition,
       authUser
     } = this.props;
+    const { messages } = this.state;
     const drawerStyle = drawerType.includes(FIXED_DRAWER)
       ? 'd-block d-xl-none'
       : drawerType.includes(COLLAPSED_DRAWER)
@@ -239,7 +248,7 @@ class Header extends React.Component {
                     styleName="align-items-center"
                     heading={<IntlMessages id="mailNotification.title" />}
                   />
-                  <MailNotification />
+                  <MailNotification messages={messages} />
                 </DropdownMenu>
               </Dropdown>
             </li>

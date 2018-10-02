@@ -40,7 +40,7 @@ const userCreate = functions.auth.user().onCreate(user => {
       photoURL: user.photoURL,
       email: user.email,
       notifications: [],
-      messages: [],
+      messages: {},
       mood: "it's a status....not your diary...",
       contacts: [],
       chats: {}
