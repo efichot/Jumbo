@@ -83,16 +83,22 @@ class SidenavContent extends Component {
     return (
       <CustomScrollbars className=" scrollbar">
         <ul className="nav-menu">
+          {/* Main */}
           <li className="nav-header">
             <IntlMessages id="sidebar.main" />
           </li>
           <li className="menu no-arrow">
             <NavLink to="/app/dashboard">
-              <i className="zmdi zmdi-fire" />
+              <i className="zmdi zmdi-view-dashboard" />
               <span className="nav-text">
-                <IntlMessages id="sidebar.dashboard.firebase" />
+                <IntlMessages id="sidebar.dashboard" />
               </span>
             </NavLink>
+          </li>
+
+          {/* Modules */}
+          <li className="nav-header">
+            <IntlMessages id="sidebar.modules" />
           </li>
           <li className="menu no-arrow">
             <NavLink to="/app/chat">
@@ -101,6 +107,45 @@ class SidenavContent extends Component {
                 <IntlMessages id="sidebar.appModule.chat" />
               </span>
             </NavLink>
+          </li>
+          <li className="menu no-arrow">
+            <NavLink to="/app/todo">
+              <i className="zmdi zmdi-check-square" />
+              <span className="nav-text">
+                <IntlMessages id="sidebar.appModule.toDo" />
+              </span>
+            </NavLink>
+          </li>
+
+          {/* Extras */}
+          <li className="nav-header">
+            <IntlMessages id="sidebar.extras" />
+          </li>
+          <li className="menu">
+            <Button href="javascript:void(0)">
+              <i className="zmdi zmdi-chevron-down" />
+              <span className="nav-text">
+                <IntlMessages id="sidebar.menuLevels" />
+              </span>
+            </Button>
+            <ul className="sub-menu">
+              <li>
+                <NavLink to="/app/link1">
+                  <i className="zmdi zmdi-n-1-square" />
+                  <span className="nav-text">
+                    <IntlMessages id="sidebar.menuLevels.level1" />
+                  </span>
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/app/link2">
+                  <i className="zmdi zmdi-n-2-square" />
+                  <span className="nav-text">
+                    <IntlMessages id="sidebar.menuLevels.level2" />
+                  </span>
+                </NavLink>
+              </li>
+            </ul>
           </li>
         </ul>
       </CustomScrollbars>

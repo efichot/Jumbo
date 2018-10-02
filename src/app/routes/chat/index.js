@@ -40,6 +40,8 @@ export class Chat extends Component {
     selectedSectionId: '',
     chatList: [],
     contactList: [],
+    contactListSearch: [],
+    chatListSearch: [],
     contacts: [],
     mood: '',
     loader: false,
@@ -83,19 +85,20 @@ export class Chat extends Component {
           }
         ];
       });
-
+      const contactList = allContacts
+        .filter(contact => this.state.contacts.indexOf(contact.uid) !== -1)
+        .map(contact => ({
+          ...contact,
+          index: i++
+        }));
       this.setState({
         allContacts: allContacts.filter(
           contact =>
             contact.uid !== uid &&
             this.state.contacts.indexOf(contact.uid) === -1
         ),
-        contactList: allContacts
-          .filter(contact => this.state.contacts.indexOf(contact.uid) !== -1)
-          .map(contact => ({
-            ...contact,
-            index: i++
-          }))
+        contactList,
+        contactListSearch: contactList
       });
 
       let arrKeys = Object.keys(this.state.chats);
@@ -118,17 +121,19 @@ export class Chat extends Component {
               }
             ];
             let arr = [];
+            const chatLists = chatList
+              .reverse()
+              .filter(chat => {
+                if (arr.indexOf(chat.user.uid) === -1) {
+                  arr.push(chat.user.uid);
+                  return true;
+                }
+                return false;
+              })
+              .reverse();
             this.setState({
-              chatList: chatList
-                .reverse()
-                .filter(chat => {
-                  if (arr.indexOf(chat.user.uid) === -1) {
-                    arr.push(chat.user.uid);
-                    return true;
-                  }
-                  return false;
-                })
-                .reverse()
+              chatList: chatLists,
+              chatListSearch: chatLists
             });
           });
       });
@@ -138,8 +143,14 @@ export class Chat extends Component {
   updateSearchChatUser = evt => {
     this.setState({
       search: evt.target.value,
-      contactList: [],
-      chatUsers: []
+      contactListSearch: this.state.contactList.filter(contact => {
+        const rgx = new RegExp(evt.target.value.toLowerCase());
+        return rgx.test(contact.displayName.toLowerCase());
+      }),
+      chatListSearch: this.state.chatList.filter(chat => {
+        const rgx = new RegExp(evt.target.value.toLowerCase());
+        return rgx.test(chat.user.displayName.toLowerCase());
+      })
     });
   };
 
@@ -280,7 +291,7 @@ export class Chat extends Component {
                 <div className="p-5">User not found</div>
               ) : (
                 <ChatUserList
-                  chatUsers={this.state.chatList}
+                  chatUsers={this.state.chatListSearch}
                   selectedSectionId={this.state.selectedSectionId}
                   onSelectUser={this.onSelectUser}
                   uid={this.props.authUser.uid}
@@ -311,7 +322,7 @@ export class Chat extends Component {
                 <div className="p-5">User not found</div>
               ) : (
                 <ContactList
-                  contactList={this.state.contactList}
+                  contactList={this.state.contactListSearch}
                   selectedSectionId={this.state.selectedSectionId}
                   onSelectUser={this.onSelectUser}
                 />
@@ -479,8 +490,10 @@ export class Chat extends Component {
             message,
             sentAt: new Date()
           }),
-          [`unreadMessage.${uid}`]: 0,
-          [`unreadMessage.${userSelected.uid}`]: 1,
+          unreadMessage: {
+            [uid]: 0,
+            [userSelected.uid]: 1
+          },
           lastMessage: message
         })
         .then(doc => {

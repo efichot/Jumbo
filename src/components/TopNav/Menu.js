@@ -82,20 +82,30 @@ class Menu extends Component {
     return (
       <div className="app-main-menu d-none d-md-block">
         <ul className="navbar-nav navbar-nav-mega">
+          {/* Main */}
+
+          <li className="nav-item">
+            <a href="javascript:void(0)">
+              <IntlMessages id="sidebar.main" />
+            </a>
+            <ul className="sub-menu">
+              <li>
+                <NavLink to="/app/dashboard">
+                  <i className="zmdi zmdi-view-dashboard" />
+                  <span className="nav-text">
+                    <IntlMessages id="sidebar.dashboard" />
+                  </span>
+                </NavLink>
+              </li>
+            </ul>
+          </li>
+
+          {/* Modules */}
           <li className="nav-item">
             <a href="javascript:void(0)">
               <IntlMessages id="sidebar.modules" />
             </a>
-
             <ul className="sub-menu">
-              <li>
-                <NavLink to="/app/dashboard">
-                  <i className="zmdi zmdi-check-square zmdi-hc-fw" />
-                  <span className="nav-text">
-                    <IntlMessages id="sidebar.dashboard.firebase" />
-                  </span>
-                </NavLink>
-              </li>
               <li className="menu no-arrow">
                 <NavLink to="/app/chat">
                   <i className="zmdi zmdi-comments" />
@@ -103,6 +113,49 @@ class Menu extends Component {
                     <IntlMessages id="sidebar.appModule.chat" />
                   </span>
                 </NavLink>
+              </li>
+              <li className="menu no-arrow">
+                <NavLink to="/app/todo">
+                  <i className="zmdi zmdi-check-square" />
+                  <span className="nav-text">
+                    <IntlMessages id="sidebar.appModule.toDo" />
+                  </span>
+                </NavLink>
+              </li>
+            </ul>
+          </li>
+
+          {/* Extras */}
+          <li className="nav-item">
+            <a href="javascript:void(0)">
+              <IntlMessages id="sidebar.extras" />
+            </a>
+            <ul className="sub-menu">
+              <li className="nav-arrow">
+                <a role="button" href="javascript:void(0)">
+                  <i className="zmdi zmdi-view-web zmdi-hc-fw" />
+                  <span className="nav-text">
+                    <IntlMessages id="sidebar.menuLevels" />
+                  </span>
+                </a>
+                <ul className="sub-menu">
+                  <li>
+                    <NavLink className="prepend-icon" to="/app/link1">
+                      <i className="zmdi zmdi-n-1-square" />
+                      <span className="nav-text">
+                        <IntlMessages id="sidebar.menuLevels.level1" />
+                      </span>
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink className="prepend-icon" to="/app/link2">
+                      <i className="zmdi zmdi-n-2-square" />
+                      <span className="nav-text">
+                        <IntlMessages id="sidebar.menuLevels.level2" />
+                      </span>
+                    </NavLink>
+                  </li>
+                </ul>
               </li>
             </ul>
           </li>

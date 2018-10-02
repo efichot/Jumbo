@@ -30,29 +30,6 @@ const api = functions.https.onRequest(app);
 
 /////////* FIRESTORE Functions */////////////
 
-const createTask = functions.firestore
-  .document('todos/{todoID}')
-  .onCreate((snap, context) => {
-    db.doc(`todos/${context.params.todoID}`)
-      .update({
-        newField: 'test'
-      })
-      .then(() => console.log('newField added properly!'))
-      .catch(e => console.log(e));
-  });
-
-const deleteTask = functions.firestore
-  .document('todos/{todoID}')
-  .onDelete((snap, context) => {
-    db.collection('trash')
-      .add({
-        ...snap.data(),
-        id: context.params.todoID
-      })
-      .then(() => console.log('Task added to the trash collection'))
-      .catch(e => console.log(e));
-  });
-
 //////////* AUTH Functions */////////////////
 
 const userCreate = functions.auth.user().onCreate(user => {
@@ -82,8 +59,6 @@ const userDelete = functions.auth.user().onDelete(user => {
 
 module.exports = {
   api,
-  createTask,
-  deleteTask,
   userCreate,
   userDelete
 };

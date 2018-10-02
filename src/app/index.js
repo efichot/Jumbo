@@ -20,6 +20,7 @@ import Dashboard from './routes/dashboard';
 import Settings from './routes/settings';
 import Profile from './routes/profile';
 import Chat from './routes/chat';
+import Todo from './routes/todo';
 
 class App extends React.Component {
   render() {
@@ -83,6 +84,7 @@ class App extends React.Component {
                   component={Profile}
                 />
                 <Route exact path={`${match.url}/chat`} component={Chat} />
+                <Route exact path={`${match.url}/todo`} component={Todo} />
                 <Route
                   component={asyncComponent(() =>
                     import('app/routes/extraPages/routes/404')

@@ -2,7 +2,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import Drawer from '@material-ui/core/Drawer';
-import { Config } from 'constants/ThemeColors';
 import SidenavContent from './SidenavContent';
 import UserInfo from 'components/UserInfo';
 import {
