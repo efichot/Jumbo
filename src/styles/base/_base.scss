@@ -95,7 +95,7 @@ body.ios-mobile-view-height {
   border-bottom: solid 1px $gray-300;
 }
 
-div[tabindex="-1"] {
+div[tabindex='-1'] {
   z-index: 1200 !important;
 }
 
@@ -103,7 +103,7 @@ div[tabindex="-1"] {
   z-index: 1510 !important;
 }
 
-.col-with-divider div[class*="col-"] {
+.col-with-divider div[class*='col-'] {
   border-left: solid 1px $gray-300;
   &:first-child {
     border: 0 none;
@@ -135,8 +135,8 @@ div[tabindex="-1"] {
   color: $app-primary;
   text-transform: capitalize;
   &:after {
-    content: "\f30f";
-    font-family: "Material-Design-Iconic-Font";
+    content: '\f30f';
+    font-family: 'Material-Design-Iconic-Font';
     color: $app-primary;
     margin-left: 8px;
     font-size: 20px;
@@ -226,7 +226,8 @@ div[tabindex="-1"] {
 }
 
 .remove-table-border {
-  td, th {
+  td,
+  th {
     border: 0 none;
   }
 }
@@ -254,7 +255,7 @@ div[tabindex="-1"] {
 
 @each $color_name, $color in $colors_palette {
   @each $color_type, $color_value in $color {
-    @if $color_type == "base" {
+    @if $color_type == 'base' {
       .border-#{$color_name} {
         border-color: $color_value !important;
       }
@@ -338,4 +339,12 @@ a.badge-dark {
 
 .font-size-20 {
   font-size: 20px !important;
+}
+
+.zmdi {
+  margin-top: -9px;
+}
+
+.zmdi-settings {
+  margin-top: -4px;
 }

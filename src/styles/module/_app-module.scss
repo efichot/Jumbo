@@ -59,6 +59,7 @@
 
 .module-add-task {
   @include display-flex();
+  @include justify-content(center);
   padding: 24px;
 }
 
@@ -75,7 +76,6 @@
   & li a {
     padding: 12px 29px;
     color: lighten($body-color, 50%);
-    @include display-flex();
     @include align-items(center);
     text-decoration: none;
 

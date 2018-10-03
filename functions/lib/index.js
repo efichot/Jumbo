@@ -21,24 +21,6 @@ app.get('/test', (req, res) => {
 });
 const api = functions.https.onRequest(app);
 /////////* FIRESTORE Functions */////////////
-const createTask = functions.firestore
-    .document('todos/{todoID}')
-    .onCreate((snap, context) => {
-    db.doc(`todos/${context.params.todoID}`)
-        .update({
-        newField: 'test'
-    })
-        .then(() => console.log('newField added properly!'))
-        .catch(e => console.log(e));
-});
-const deleteTask = functions.firestore
-    .document('todos/{todoID}')
-    .onDelete((snap, context) => {
-    db.collection('trash')
-        .add(Object.assign({}, snap.data(), { id: context.params.todoID }))
-        .then(() => console.log('Task added to the trash collection'))
-        .catch(e => console.log(e));
-});
 //////////* AUTH Functions */////////////////
 const userCreate = functions.auth.user().onCreate(user => {
     db.collection('users')
@@ -47,11 +29,11 @@ const userCreate = functions.auth.user().onCreate(user => {
         displayName: user.displayName,
         photoURL: user.photoURL,
         email: user.email,
-        emailVerified: user.emailVerified,
         notifications: [],
-        messages: [],
+        messages: {},
         mood: "it's a status....not your diary...",
-        contacts: []
+        contacts: [],
+        chats: {}
     })
         .then(() => console.log('User added to the users collection'))
         .catch(e => console.log(e));
@@ -65,8 +47,6 @@ const userDelete = functions.auth.user().onDelete(user => {
 });
 module.exports = {
     api,
-    createTask,
-    deleteTask,
     userCreate,
     userDelete
 };

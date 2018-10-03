@@ -40,6 +40,7 @@
     "html-webpack-plugin": "2.29.0",
     "jest": "20.0.4",
     "jss-rtl": "^0.2.3",
+    "lodash": "^4.17.11",
     "material-ui-pickers": "^1.0.0-rc.11",
     "moment": "^2.22.2",
     "node-sass": "^4.9.2",
@@ -100,7 +101,7 @@
     "whatwg-fetch": "2.0.3"
   },
   "scripts": {
-    "start": "cross-env NODE_PATH=src node scripts/start.js",
+    "start": "sass src/styles/style.scss:src/styles/jumbo.css && cross-env NODE_PATH=src node scripts/start.js",
     "build": "cross-env NODE_PATH=src node scripts/build.js",
     "sass": "sass --watch src/styles/style.scss:src/styles/jumbo.css",
     "test": "node scripts/test.js --env=jsdom"

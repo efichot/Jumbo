@@ -30,6 +30,7 @@ import Default from 'assets/images/placeholder.jpg';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
+import _ from 'lodash';
 
 export class Chat extends Component {
   state = {
@@ -124,7 +125,11 @@ export class Chat extends Component {
             const chatLists = chatList
               .reverse()
               .filter(chat => {
-                if (arr.indexOf(chat.user.uid) === -1) {
+                if (
+                  chat.user &&
+                  chat.user.uid &&
+                  arr.indexOf(chat.user.uid) === -1
+                ) {
                   arr.push(chat.user.uid);
                   return true;
                 }
@@ -180,7 +185,7 @@ export class Chat extends Component {
 
   onSelectUser = user => {
     const idChat = this.state.chats[user.uid];
-    const { uid } = this.props;
+    const { uid } = this.props.authUser;
 
     this.setState({
       loader: true,
@@ -188,6 +193,26 @@ export class Chat extends Component {
       userSelected: user
     });
     if (idChat) {
+      const docRef = db.collection('chats').doc(idChat);
+
+      db.runTransaction(transaction => {
+        return transaction.get(docRef).then(doc => {
+          transaction.update(docRef, {
+            unreadMessage: {
+              [uid]: 0,
+              [user.uid]: doc.data().unreadMessage[user.uid]
+            }
+          });
+        });
+      });
+      const docRefUser = db.collection('users').doc(uid);
+      docRefUser.get().then(doc => {
+        if (!_.isEmpty(doc.data().messages)) {
+          docRefUser.update({
+            [`messages.${user.uid}.unreadMessage`]: 0
+          });
+        }
+      });
       db.collection('chats')
         .doc(idChat)
         .onSnapshot(doc => {
@@ -197,17 +222,6 @@ export class Chat extends Component {
             idChat
           });
         });
-
-      const docRef = db.collection('chats').doc(idChat);
-
-      return db.runTransaction(transaction => {
-        return transaction.get(docRef).then(doc => {
-          transaction.update(docRef, {
-            [`unreadMessage.${uid}`]: 0,
-            [`unreadMessage.${user.uid}`]: doc.data().unreadMessage[user.uid]
-          });
-        });
-      });
     } else {
       this.setState({ loader: false, currentChat: [] });
     }
@@ -698,7 +712,7 @@ export class Chat extends Component {
 
     return (
       <div className="app-wrapper app-wrapper-module">
-        <div className="app-module chat-module animated slideInUpTiny animation-duration-3">
+        <div className="app-module chat-module animated slideInUpTiny animation-duration-5">
           <div className="chat-module-box">
             <div className="d-block d-xl-none">
               <Drawer open={drawerState} onClose={this.onToggleDrawer}>

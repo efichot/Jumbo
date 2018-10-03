@@ -94,6 +94,15 @@ class Header extends React.Component {
     });
   }
 
+  clearMessages = () => {
+    const { uid } = this.props.authUser;
+    db.collection('users')
+      .doc(uid)
+      .update({
+        messages: {}
+      });
+  };
+
   render() {
     const {
       drawerType,
@@ -214,7 +223,7 @@ class Header extends React.Component {
                   data-toggle="dropdown"
                 >
                   <IconButton className="icon-btn size-20 font-size-20">
-                    <i className="zmdi zmdi-notifications-active icon-alert animated wobble" />
+                    <i className="zmdi zmdi-notifications-active icon-alert animated swing" />
                   </IconButton>
                 </DropdownToggle>
 
@@ -241,7 +250,7 @@ class Header extends React.Component {
                   <IconButton className="icon-btn size-20 font-size-20">
                     <i
                       className={`zmdi zmdi-comment-alt-text zmdi-hc-fw animated ${
-                        messages.length ? 'icon-alert wobble' : ''
+                        messages.length ? 'icon-alert swing' : ''
                       }`}
                     />
                   </IconButton>
@@ -251,6 +260,7 @@ class Header extends React.Component {
                   <CardHeader
                     styleName="align-items-center"
                     heading={<IntlMessages id="mailNotification.title" />}
+                    clearData={this.clearMessages}
                   />
                   <MailNotification messages={messages} />
                 </DropdownMenu>

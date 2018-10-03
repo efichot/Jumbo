@@ -10,7 +10,7 @@ const NotificationItem = ({ notification }) => {
       <div className="user-avatar">
         <Avatar alt="" src={photoURL} />
         <span className="badge badge-danger rounded-circle">
-          {unreadMessage}
+          {!unreadMessage ? '' : unreadMessage}
         </span>
       </div>
       <div className="media-body">
