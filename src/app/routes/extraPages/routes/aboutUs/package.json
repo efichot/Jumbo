@@ -1,9 +1,0 @@
-{
-  "name": "AboutUs",
-  "version": "0.0.0",
-  "private": true,
-  "main": "./AboutUs.js",
-  "dependencies": {
-    "react-owl-carousel": "^2.2.0"
-  }
-}

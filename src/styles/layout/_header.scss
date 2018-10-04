@@ -157,7 +157,7 @@
       border-right: 5px solid transparent;
       border-bottom: 5px solid $white;
       top: -9px;
-      content: "";
+      content: '';
       height: 9px;
       position: absolute;
       right: 8px;
@@ -169,7 +169,7 @@
       border-right: 5px solid transparent;
       border-bottom: 5px solid $black;
       top: -10px;
-      content: "";
+      content: '';
       height: 10px;
       position: absolute;
       right: 8px;
@@ -260,7 +260,7 @@
     &:after {
       display: block;
       position: absolute;
-      content: "";
+      content: '';
       right: 0;
       top: 0;
       z-index: 10;
