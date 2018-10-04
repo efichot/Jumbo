@@ -13,6 +13,16 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import ToDoList from 'components/todo/ToDoList';
 import { db } from 'helper/firebase';
 import { arrayMove } from 'react-sortable-hoc';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import TextField from '@material-ui/core/TextField';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
+import InputLabel from '@material-ui/core/InputLabel';
+import Chip from '@material-ui/core/Chip';
 export class Todo extends Component {
   state = {
     drawer: false,
@@ -21,7 +31,10 @@ export class Todo extends Component {
     selectedToDos: 0,
     menuLabel: false,
     anchorEl: null,
-    loader: true
+    loader: true,
+    open: false,
+    name: '',
+    labelsSelected: []
   };
 
   componentDidMount = () => {
@@ -57,7 +70,12 @@ export class Todo extends Component {
           }}
         >
           <div className="module-add-task">
-            <Button variant="contained" color="primary" className="btn-block">
+            <Button
+              variant="contained"
+              color="primary"
+              className="btn-block"
+              onClick={this.toggleDialog}
+            >
               <IntlMessages id="todo.addTask" />
             </Button>
           </div>
@@ -170,6 +188,21 @@ export class Todo extends Component {
 
   handleRequestClose = () => this.setState({ menuLabel: false });
 
+  toggleDialog = () => this.setState({ open: !this.state.open, name: '' });
+
+  addTodo = () => {
+    const { name } = this.state;
+    const { photoURL } = this.props.authUser;
+
+    db.collection('todos').add({
+      name,
+      labels: [],
+      time: new Date(),
+      photoURL
+    });
+    this.toggleDialog();
+  };
+
   render() {
     const {
       drawer,
@@ -178,9 +211,14 @@ export class Todo extends Component {
       toDos,
       anchorEl,
       menuLabel,
-      loader
+      loader,
+      open,
+      name,
+      labelsSelected
     } = this.state;
     const { authUser } = this.props;
+
+    const labels = ['Important', 'Useless'];
 
     return (
       <div className="app-wrapper">
@@ -255,6 +293,70 @@ export class Todo extends Component {
                       Useless
                     </MenuItem>
                   </Menu>
+
+                  {/* Dialog add Task */}
+                  <Dialog
+                    open={open}
+                    onClose={this.toggleDialog}
+                    aria-labelledby="form-dialog-title"
+                  >
+                    <DialogTitle id="form-dialog-title">Add Todo</DialogTitle>
+                    <DialogContent>
+                      <DialogContentText>
+                        You can add a Todo you just need to fill the field for
+                        given a name to your new todo.
+                      </DialogContentText>
+                      <TextField
+                        autoFocus
+                        margin="dense"
+                        id="name"
+                        label="Name"
+                        name="name"
+                        value={name}
+                        type="text"
+                        onChange={e =>
+                          this.setState({ [e.target.name]: e.target.value })
+                        }
+                        fullWidth
+                      />
+                      <div className="d-flex justify-content-center">
+                        <FormControl className="w-50">
+                          <InputLabel htmlFor="select-multiple-chip">
+                            Labels
+                          </InputLabel>
+                          <Select
+                            multiple
+                            value={labelsSelected}
+                            onChange={e =>
+                              this.setState({ labelsSelected: e.target.value })
+                            }
+                            renderValue={selected => (
+                              <div>
+                                {selected.map(value => (
+                                  <Chip key={value} label={value} />
+                                ))}
+                              </div>
+                            )}
+                            // MenuProps={MenuProps}
+                          >
+                            {labels.map(label => (
+                              <MenuItem key={label} value={label}>
+                                {label}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                      </div>
+                    </DialogContent>
+                    <DialogActions>
+                      <Button onClick={this.toggleDialog} color="secondary">
+                        Cancel
+                      </Button>
+                      <Button onClick={this.addTodo} color="primary">
+                        Add
+                      </Button>
+                    </DialogActions>
+                  </Dialog>
                 </div>
                 {loader ? (
                   <div
@@ -271,6 +373,7 @@ export class Todo extends Component {
                 ) : (
                   this.ShowToDos()
                 )}
+                {/* Snackbar */}
               </div>
             </div>
           </div>

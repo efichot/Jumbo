@@ -4,6 +4,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import moment from 'moment';
 import IconButton from '@material-ui/core/IconButton';
 import Chip from '@material-ui/core/Chip';
+import Avatar from '@material-ui/core/Avatar';
 
 const getColor = label => {
   switch (label) {
@@ -52,6 +53,11 @@ const toDoItem = ({ todo, toggleStar, handleDelete }) => {
           ))}
         </div>
       </div>
+      <Avatar
+        alt=""
+        className="ml-auto"
+        src="https://lh5.googleusercontent.com/-lViS_WUxWAw/AAAAAAAAAAI/AAAAAAAABRA/MqPGuTKHO4Q/photo.jpg"
+      />
     </div>
   );
 };
