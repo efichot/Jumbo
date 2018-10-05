@@ -27,11 +27,21 @@ const Dragable = SortableHandle(() => (
   />
 ));
 
-const toDoItem = ({ todo, toggleStar, handleDelete }) => {
+const toDoItem = ({
+  todo,
+  toggleStar,
+  handleDelete,
+  selectToDos,
+  selectedToDos
+}) => {
   return (
     <div className="module-list-item d-flex align-items-center">
       <Dragable />
-      <Checkbox color="primary" />
+      <Checkbox
+        color="primary"
+        onClick={selectToDos(todo.id)}
+        checked={selectedToDos.indexOf(todo.id) !== -1}
+      />
       <IconButton onClick={toggleStar(todo.id)}>
         {todo.starred ? (
           <i className="zmdi zmdi-star" />
@@ -40,8 +50,10 @@ const toDoItem = ({ todo, toggleStar, handleDelete }) => {
         )}
       </IconButton>
       <div className="d-flex flex-column">
-        <h3>{todo.name}</h3>
-        <p className="text-grey">{moment.unix(todo.time.seconds).calendar()}</p>
+        <h3 className="m-0">{todo.name}</h3>
+        <small className="text-grey m-0">
+          {moment.unix(todo.time.seconds).calendar()}
+        </small>
         <div className="d-flex flex-row">
           {todo.labels.map((label, index) => (
             <Chip
@@ -53,11 +65,7 @@ const toDoItem = ({ todo, toggleStar, handleDelete }) => {
           ))}
         </div>
       </div>
-      <Avatar
-        alt=""
-        className="ml-auto"
-        src="https://lh5.googleusercontent.com/-lViS_WUxWAw/AAAAAAAAAAI/AAAAAAAABRA/MqPGuTKHO4Q/photo.jpg"
-      />
+      <Avatar alt="" className="ml-auto" src={todo.photoURL} />
     </div>
   );
 };

@@ -3,7 +3,14 @@ import { SortableContainer } from 'react-sortable-hoc';
 import ToDoItem from './ToDoItem';
 import CustomScrollbars from 'util/CustomScrollbars';
 
-const ToDoList = ({ toDos, width, toggleStar, handleDelete }) => {
+const ToDoList = ({
+  toDos,
+  width,
+  toggleStar,
+  handleDelete,
+  selectToDos,
+  selectedToDos
+}) => {
   return (
     <div className="d-flex d-column">
       <CustomScrollbars
@@ -12,13 +19,15 @@ const ToDoList = ({ toDos, width, toggleStar, handleDelete }) => {
           height: width >= 1200 ? 'calc(100vh - 265px)' : 'calc(100vh - 245px)'
         }}
       >
-        {toDos.map((todo, index) => (
+        {toDos.sort((t1, t2) => t1.order - t2.order).map((todo, index) => (
           <ToDoItem
             key={index}
             index={index}
             todo={todo}
             toggleStar={toggleStar}
             handleDelete={handleDelete}
+            selectToDos={selectToDos}
+            selectedToDos={selectedToDos}
           />
         ))}
       </CustomScrollbars>

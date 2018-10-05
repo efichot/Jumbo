@@ -104,12 +104,14 @@ class SignIn extends React.Component {
                     >
                       <IntlMessages id="appModule.signIn" />
                     </Button>
-                    <Link to="/resetpass">
-                      <IntlMessages id="signIn.resetPass" />
-                    </Link>
-                    <Link to="/signup">
-                      <IntlMessages id="signIn.signUp" />
-                    </Link>
+                    <div className="d-flex flex-column">
+                      <Link to="/resetpass">
+                        <IntlMessages id="signIn.resetPass" />
+                      </Link>
+                      <Link to="/signup">
+                        <IntlMessages id="signIn.signUp" />
+                      </Link>
+                    </div>
                   </div>
 
                   <div className="app-social-block my-1 my-sm-3">
@@ -123,7 +125,7 @@ class SignIn extends React.Component {
                             this.props.userFacebookSignIn();
                           }}
                         >
-                          <i className="zmdi zmdi-facebook" />
+                          <i className="zmdi zmdi-facebook middle" />
                         </IconButton>
                       </li>
 
@@ -135,7 +137,7 @@ class SignIn extends React.Component {
                             this.props.userTwitterSignIn();
                           }}
                         >
-                          <i className="zmdi zmdi-twitter" />
+                          <i className="zmdi zmdi-twitter middle" />
                         </IconButton>
                       </li>
 
@@ -147,7 +149,7 @@ class SignIn extends React.Component {
                             this.props.userGoogleSignIn();
                           }}
                         >
-                          <i className="zmdi zmdi-google-plus" />
+                          <i className="zmdi zmdi-google-plus middle" />
                         </IconButton>
                       </li>
 
@@ -159,7 +161,7 @@ class SignIn extends React.Component {
                             this.props.userGithubSignIn();
                           }}
                         >
-                          <i className="zmdi zmdi-github" />
+                          <i className="zmdi zmdi-github middle" />
                         </IconButton>
                       </li>
                     </ul>

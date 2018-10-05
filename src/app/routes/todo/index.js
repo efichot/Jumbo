@@ -11,7 +11,7 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import ToDoList from 'components/todo/ToDoList';
-import { db } from 'helper/firebase';
+import { db, firebase } from 'helper/firebase';
 import { arrayMove } from 'react-sortable-hoc';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -23,12 +23,13 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
 import Chip from '@material-ui/core/Chip';
+import { NotificationManager } from 'react-notifications';
 export class Todo extends Component {
   state = {
     drawer: false,
     search: '',
     toDos: [],
-    selectedToDos: 0,
+    selectedToDos: [],
     menuLabel: false,
     anchorEl: null,
     loader: true,
@@ -50,7 +51,7 @@ export class Todo extends Component {
   };
 
   ToDoSidebar = () => (
-    <div className="module-side">
+    <div className="module-side border-right">
       <div className="module-side-header">
         <div className="module-logo">
           <i className="zmdi zmdi-check-square mr-4" />
@@ -59,7 +60,7 @@ export class Todo extends Component {
           </span>
         </div>
       </div>
-      <div className="module-side-content">
+      <div className="module-side-content bg-white">
         <CustomScrollbars
           className="module-side-scroll scrollbar"
           style={{
@@ -133,9 +134,18 @@ export class Todo extends Component {
   );
 
   onSortEnd = ({ oldIndex, newIndex }) => {
-    this.setState({
-      toDos: arrayMove(this.state.toDos, oldIndex, newIndex)
+    const batch = db.batch();
+    arrayMove(this.state.toDos, oldIndex, newIndex).forEach((todo, index) => {
+      const docRef = db.collection('todos').doc(todo.id);
+      batch.update(docRef, {
+        ...todo,
+        order: index
+      });
     });
+    batch
+      .commit()
+      .then(() => NotificationManager.success('Order updated'))
+      .catch(e => NotificationManager.error(e));
   };
 
   handleDelete = (id, index) => e => {
@@ -160,8 +170,19 @@ export class Todo extends Component {
     });
   };
 
+  selectToDos = id => e => {
+    const { selectedToDos } = this.state;
+    if (selectedToDos.indexOf(id) === -1) {
+      this.setState({ selectedToDos: [...this.state.selectedToDos, id] });
+    } else {
+      this.setState({
+        selectedToDos: selectedToDos.filter(todo => todo !== id)
+      });
+    }
+  };
+
   ShowToDos = () => {
-    const { toDos } = this.state;
+    const { toDos, selectedToDos } = this.state;
     return (
       <ToDoList
         toDos={toDos}
@@ -170,6 +191,8 @@ export class Todo extends Component {
         useDragHandle={true} // only if you use a SortableHandle
         toggleStar={this.toggleStar}
         handleDelete={this.handleDelete}
+        selectToDos={this.selectToDos}
+        selectedToDos={selectedToDos}
       />
     );
   };
@@ -183,24 +206,75 @@ export class Todo extends Component {
     });
 
   onLabelMenuItemSelect = label => e => {
-    console.log('ee');
+    const { selectedToDos } = this.state;
+    const batch = db.batch();
+    selectedToDos.forEach(id => {
+      let docRef = db.collection('todos').doc(id);
+      batch.update(docRef, {
+        labels: firebase.firestore.FieldValue.arrayUnion(label)
+      });
+    });
+    batch
+      .commit()
+      .then(() => NotificationManager.success('Todos updated'))
+      .catch(e => NotificationManager.error(e));
+    this.setState({ selectedToDos: [] });
+
+    //****** Read and Write multiple documents with a single transaction *****/
+    // db.runTransaction(transaction => {
+    //   return Promise.all(
+    //     selectedToDos.map(id => {
+    //       const docRef = db.collection('todos').doc(id);
+    //       return transaction.get(docRef).then(doc => {
+    //         transaction.update(docRef, {
+    //           labels: firebase.firestore.FieldValue.arrayUnion(
+    //             doc.data().labels.length
+    //           )
+    //         });
+    //       });
+    //     })
+    //   );
+    // });
   };
 
   handleRequestClose = () => this.setState({ menuLabel: false });
 
-  toggleDialog = () => this.setState({ open: !this.state.open, name: '' });
+  toggleDialog = () =>
+    this.setState({ open: !this.state.open, name: '', labelsSelected: [] });
 
   addTodo = () => {
-    const { name } = this.state;
+    const { name, labelsSelected } = this.state;
     const { photoURL } = this.props.authUser;
 
     db.collection('todos').add({
       name,
-      labels: [],
+      labels: labelsSelected,
       time: new Date(),
       photoURL
     });
     this.toggleDialog();
+  };
+
+  selectAllToDos = e => {
+    const { toDos, selectedToDos } = this.state;
+    if (selectedToDos.length !== toDos.length) {
+      this.setState({ selectedToDos: toDos.map(todo => todo.id) });
+    } else {
+      this.setState({ selectedToDos: [] });
+    }
+  };
+
+  deleteTodos = () => {
+    const batch = db.batch();
+    this.state.selectedToDos.forEach(id => {
+      const docRef = db.collection('todos').doc(id);
+      batch.delete(docRef);
+    });
+    batch
+      .commit()
+      .then(() => NotificationManager.success('Todos deleted'))
+      .catch(e => NotificationManager.error(e));
+    this.setState({ selectedToDos: [] });
   };
 
   render() {
@@ -251,20 +325,27 @@ export class Todo extends Component {
                 />
               </div>
               <div className="module-box-content">
-                <div className="module-box-topbar module-box-topbar-todo d-flex flex-row align-items-end">
+                <div className="module-box-topbar module-box-topbar-todo d-flex flex-row">
                   <Checkbox
                     color="primary"
                     indeterminate={
-                      selectedToDos > 0 && selectedToDos < toDos.length
+                      selectedToDos.length > 0 &&
+                      selectedToDos.length < toDos.length
                     }
-                    checked={selectedToDos > 0}
-                    // onChange={this.onAllTodoSelect}
+                    checked={selectedToDos.length > 0}
+                    onChange={this.selectAllToDos}
                     value="SelectTodos"
                   />
 
-                  {selectedToDos > 0 && (
+                  {selectedToDos.length > 0 && (
                     <IconButton onClick={this.onLabelSelect}>
                       <i className="zmdi zmdi-label-alt" />
+                    </IconButton>
+                  )}
+
+                  {selectedToDos.length > 0 && (
+                    <IconButton onClick={this.deleteTodos}>
+                      <i className="zmdi zmdi-delete" />
                     </IconButton>
                   )}
 
@@ -280,18 +361,14 @@ export class Todo extends Component {
                       }
                     }}
                   >
-                    <MenuItem
-                      key="1"
-                      onClick={this.onLabelMenuItemSelect('important')}
-                    >
-                      Important
-                    </MenuItem>
-                    <MenuItem
-                      key="2"
-                      onClick={this.onLabelMenuItemSelect('useless')}
-                    >
-                      Useless
-                    </MenuItem>
+                    {labels.map((label, index) => (
+                      <MenuItem
+                        key={index}
+                        onClick={this.onLabelMenuItemSelect(label)}
+                      >
+                        {label}
+                      </MenuItem>
+                    ))}
                   </Menu>
 
                   {/* Dialog add Task */}
@@ -337,7 +414,6 @@ export class Todo extends Component {
                                 ))}
                               </div>
                             )}
-                            // MenuProps={MenuProps}
                           >
                             {labels.map(label => (
                               <MenuItem key={label} value={label}>

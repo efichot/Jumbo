@@ -187,7 +187,7 @@ class Header extends React.Component {
                 </DropdownMenu>
               </Dropdown>
             </li>
-            <li className="list-inline-item">
+            <li className="list-inline-item p-0">
               <Dropdown
                 className="quick-menu"
                 isOpen={this.state.langSwitcher}
@@ -198,9 +198,9 @@ class Header extends React.Component {
                   tag="span"
                   data-toggle="dropdown"
                 >
-                  <div className="d-flex align-items-center pointer pt-1">
+                  <IconButton className="icon-btn font-size-20">
                     <i className={`flag flag-24 flag-${locale.icon}`} />
-                  </div>
+                  </IconButton>
                 </DropdownToggle>
 
                 <DropdownMenu right className="w-50">
@@ -211,7 +211,7 @@ class Header extends React.Component {
                 </DropdownMenu>
               </Dropdown>
             </li>
-            <li className="list-inline-item app-tour">
+            <li className="list-inline-item app-tour p-0">
               <Dropdown
                 className="quick-menu"
                 isOpen={this.state.appNotification}
@@ -222,7 +222,7 @@ class Header extends React.Component {
                   tag="span"
                   data-toggle="dropdown"
                 >
-                  <IconButton className="icon-btn size-20 font-size-20">
+                  <IconButton className="icon-btn font-size-20">
                     <i className="zmdi zmdi-notifications-active icon-alert animated swing" />
                   </IconButton>
                 </DropdownToggle>
@@ -236,7 +236,7 @@ class Header extends React.Component {
                 </DropdownMenu>
               </Dropdown>
             </li>
-            <li className="list-inline-item mail-tour">
+            <li className="list-inline-item mail-tour p-0">
               <Dropdown
                 className="quick-menu"
                 isOpen={this.state.mailNotification}
@@ -247,7 +247,7 @@ class Header extends React.Component {
                   tag="span"
                   data-toggle="dropdown"
                 >
-                  <IconButton className="icon-btn size-20 font-size-20">
+                  <IconButton className="icon-btn font-size-20">
                     <i
                       className={`zmdi zmdi-comment-alt-text zmdi-hc-fw animated ${
                         messages.length ? 'icon-alert swing' : ''

@@ -137,7 +137,7 @@ class SignUp extends React.Component {
                           this.props.userFacebookSignIn();
                         }}
                       >
-                        <i className="zmdi zmdi-facebook" />
+                        <i className="zmdi zmdi-facebook middle" />
                       </IconButton>
                     </li>
 
@@ -149,7 +149,7 @@ class SignUp extends React.Component {
                           this.props.userTwitterSignIn();
                         }}
                       >
-                        <i className="zmdi zmdi-twitter" />
+                        <i className="zmdi zmdi-twitter middle" />
                       </IconButton>
                     </li>
 
@@ -161,7 +161,7 @@ class SignUp extends React.Component {
                           this.props.userGoogleSignIn();
                         }}
                       >
-                        <i className="zmdi zmdi-google-plus" />
+                        <i className="zmdi zmdi-google-plus middle" />
                       </IconButton>
                     </li>
 
@@ -173,7 +173,7 @@ class SignUp extends React.Component {
                           this.props.userGithubSignIn();
                         }}
                       >
-                        <i className="zmdi zmdi-github" />
+                        <i className="zmdi zmdi-github middle" />
                       </IconButton>
                     </li>
                   </ul>

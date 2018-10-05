@@ -117,6 +117,10 @@
     @include border-radius(50%);
     color: $app-primary;
 
+    & .middle {
+      margin-top: -9px;
+    }
+
     &:hover,
     &:focus {
       color: $white;

@@ -12582,10 +12582,6 @@ div[tabindex="-1"] {
   font-size: 20px !important;
 }
 
-.zmdi {
-  margin-top: -9px;
-}
-
 .zmdi-settings {
   margin-top: -4px;
 }
@@ -16611,6 +16607,9 @@ label {
   border-radius: 50%;
   color: #3f51b5;
 }
+.app-social-block .social-link button .middle {
+  margin-top: -9px;
+}
 .app-social-block .social-link button:hover, .app-social-block .social-link button:focus {
   color: #fff;
   background-color: #3f51b5;
@@ -17702,6 +17701,8 @@ label {
 
 .module-box-topbar-todo {
   padding-left: 64px;
+  -webkit-align-items: center;
+  align-items: center;
 }
 @media screen and (max-width: 575px) {
   .module-box-topbar-todo {
