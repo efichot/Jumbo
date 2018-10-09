@@ -22,13 +22,86 @@ app.use(cors({ origin: true }));
 
 /////////* EXPRESS EndPoints */////////////
 
-app.get('/test', (req, res) => {
-  res.send('Hello from firebase cloud functions!');
+app.post('/subscribeToTopic', (req, res) => {
+  const { token, topic } = req.body;
+  admin
+    .messaging()
+    .subscribeToTopic(token, topic)
+    .then(() => {
+      console.log(`Subscribe to topic:${topic}`);
+      res.send({ done: true, message: `Subscribe to topic:${topic}` });
+    })
+    .catch(e => {
+      console.log(e);
+      res.send({ done: false, message: e });
+    });
+});
+
+app.post('/UnsubscribeFromTopic', (req, res) => {
+  const { token, topic } = req.body;
+  admin
+    .messaging()
+    .unsubscribeFromTopic(token, topic)
+    .then(() => {
+      console.log(`Unsubscribe from topic:${topic}`);
+      res.send({ done: true, message: `Subscribe to topic:${topic}` });
+    })
+    .catch(e => {
+      console.log(e);
+      res.send({ done: false, message: e });
+    });
+});
+
+app.post('/sendPushMessageToTopic', (req, res) => {
+  const { topic } = req.body;
+
+  const notification: admin.messaging.Notification = {
+    title: 'Notification push',
+    body: `Notif push for the topic: ${topic} 😍`
+  };
+  const payload: admin.messaging.Message = {
+    notification,
+    webpush: {
+      notification: {
+        vibrate: [200, 100, 200],
+        icon:
+          'http://icons.iconarchive.com/icons/cjdowner/cryptocurrency/512/IOTA-icon.png',
+        actions: [
+          {
+            action: 'like',
+            title: 'Like 😍'
+          }
+        ]
+      }
+    },
+    topic: topic
+  };
+  return admin
+    .messaging()
+    .send(payload)
+    .then(() => console.log('Notification push send!'))
+    .catch(e => console.log(e));
 });
 
 const api = functions.https.onRequest(app);
 
 /////////* FIRESTORE Functions */////////////
+
+const deleteTodo = functions.firestore
+  .document('todos/{todoId}')
+  .onDelete((snap, context) => {
+    db.collection('trash')
+      .add({
+        ...snap.data(),
+        id: context.params.todoId
+      })
+      .then(docRef => {
+        console.log(
+          `Todo ${docRef.id} deleted, and add to the trash collection`
+        );
+      })
+      .catch(e => console.log(e));
+  });
 
 //////////* AUTH Functions */////////////////
 
@@ -60,5 +133,6 @@ const userDelete = functions.auth.user().onDelete(user => {
 module.exports = {
   api,
   userCreate,
-  userDelete
+  userDelete,
+  deleteTodo
 };

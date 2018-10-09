@@ -29,7 +29,10 @@ export class Todo extends Component {
     drawer: false,
     search: '',
     toDos: [],
+    toDosFilter: [],
     selectedToDos: [],
+    toDosTrash: [],
+    deletedPage: false,
     menuLabel: false,
     anchorEl: null,
     loader: true,
@@ -43,11 +46,55 @@ export class Todo extends Component {
       this.setState({ toDos: [] });
       docs.forEach(doc =>
         this.setState({
-          toDos: [...this.state.toDos, { ...doc.data(), id: doc.id }]
+          toDos: [...this.state.toDos, { ...doc.data(), id: doc.id }],
+          toDosFilter: [...this.state.toDos, { ...doc.data(), id: doc.id }]
         })
       );
       this.setState({ loader: false });
     });
+  };
+
+  filterAll = () =>
+    this.setState({ deletedPage: false, toDosFilter: this.state.toDos });
+
+  filterStar = () =>
+    this.setState({
+      deletedPage: false,
+      toDosFilter: this.state.toDos.filter(todo => todo.starred)
+    });
+
+  filterDone = () =>
+    this.setState({
+      deletedPage: false,
+      toDosFilter: this.state.toDos.filter(todo => todo.done)
+    });
+
+  filterOnImportant = () =>
+    this.setState({
+      deletedPage: false,
+      toDosFilter: this.state.toDos.filter(
+        todo => todo.labels.indexOf('Important') !== -1
+      )
+    });
+
+  filterOnUseless = () =>
+    this.setState({
+      deletedPage: false,
+      toDosFilter: this.state.toDos.filter(
+        todo => todo.labels.indexOf('Useless') !== -1
+      )
+    });
+
+  onDelete = () => {
+    db.collection('trash')
+      .get()
+      .then(docs => {
+        let toDosTrash = [];
+        docs.forEach(doc => {
+          toDosTrash = [...toDosTrash, doc.data()];
+        });
+        this.setState({ toDosTrash, deletedPage: true });
+      });
   };
 
   ToDoSidebar = () => (
@@ -81,7 +128,7 @@ export class Todo extends Component {
             </Button>
           </div>
           <ul className="module-nav">
-            <li>
+            <li onClick={this.filterAll}>
               <a href="javascript:void(0)">
                 <i className="zmdi zmdi-menu" />
                 <span>
@@ -93,19 +140,19 @@ export class Todo extends Component {
             <li className="module-nav-label">
               <IntlMessages id="todo.filters" />
             </li>
-            <li>
+            <li onClick={this.filterStar}>
               <a href="javascript:void(0)">
                 <i className="zmdi zmdi-star" />
                 <span>Starred</span>
               </a>
             </li>
-            <li>
+            <li onClick={this.filterDone}>
               <a href="javascript:void(0)">
                 <i className="zmdi zmdi-check" />
                 <span>Done</span>
               </a>
             </li>
-            <li>
+            <li onClick={this.onDelete}>
               <a href="javascript:void(0)">
                 <i className="zmdi zmdi-delete" />
                 <span>Deleted</span>
@@ -115,13 +162,13 @@ export class Todo extends Component {
             <li className="module-nav-label">
               <IntlMessages id="todo.labels" />
             </li>
-            <li>
+            <li onClick={this.filterOnImportant}>
               <a href="javascript:void(0)">
                 <i className="zmdi zmdi-circle text-red lighten-1 animated tada infinite" />
                 <span>Important</span>
               </a>
             </li>
-            <li>
+            <li onClick={this.filterOnUseless}>
               <a href="javascript:void(0)">
                 <i className="zmdi zmdi-circle text-orange darken-2 animated tada infinite" />
                 <span>Useless</span>
@@ -138,7 +185,6 @@ export class Todo extends Component {
     arrayMove(this.state.toDos, oldIndex, newIndex).forEach((todo, index) => {
       const docRef = db.collection('todos').doc(todo.id);
       batch.update(docRef, {
-        ...todo,
         order: index
       });
     });
@@ -182,10 +228,10 @@ export class Todo extends Component {
   };
 
   ShowToDos = () => {
-    const { toDos, selectedToDos } = this.state;
+    const { toDosFilter, selectedToDos, deletedPage, toDosTrash } = this.state;
     return (
       <ToDoList
-        toDos={toDos}
+        toDos={!deletedPage ? toDosFilter : toDosTrash}
         width={this.props.width}
         onSortEnd={this.onSortEnd}
         useDragHandle={true} // only if you use a SortableHandle
@@ -205,6 +251,22 @@ export class Todo extends Component {
       menuLabel: !this.state.menuLabel
     });
 
+  onDoneSelect = () => {
+    const { selectedToDos } = this.state;
+    db.runTransaction(transaction => {
+      return Promise.all(
+        selectedToDos.map(id => {
+          const docRef = db.collection('todos').doc(id);
+          return transaction.get(docRef).then(doc => {
+            transaction.update(docRef, {
+              done: !doc.data().done
+            });
+          });
+        })
+      );
+    });
+  };
+
   onLabelMenuItemSelect = label => e => {
     const { selectedToDos } = this.state;
     const batch = db.batch();
@@ -219,22 +281,6 @@ export class Todo extends Component {
       .then(() => NotificationManager.success('Todos updated'))
       .catch(e => NotificationManager.error(e));
     this.setState({ selectedToDos: [] });
-
-    //****** Read and Write multiple documents with a single transaction *****/
-    // db.runTransaction(transaction => {
-    //   return Promise.all(
-    //     selectedToDos.map(id => {
-    //       const docRef = db.collection('todos').doc(id);
-    //       return transaction.get(docRef).then(doc => {
-    //         transaction.update(docRef, {
-    //           labels: firebase.firestore.FieldValue.arrayUnion(
-    //             doc.data().labels.length
-    //           )
-    //         });
-    //       });
-    //     })
-    //   );
-    // });
   };
 
   handleRequestClose = () => this.setState({ menuLabel: false });
@@ -243,14 +289,16 @@ export class Todo extends Component {
     this.setState({ open: !this.state.open, name: '', labelsSelected: [] });
 
   addTodo = () => {
-    const { name, labelsSelected } = this.state;
+    const { name, labelsSelected, toDos } = this.state;
     const { photoURL } = this.props.authUser;
 
     db.collection('todos').add({
       name,
       labels: labelsSelected,
       time: new Date(),
-      photoURL
+      photoURL,
+      order: toDos.length,
+      done: false
     });
     this.toggleDialog();
   };
@@ -272,9 +320,31 @@ export class Todo extends Component {
     });
     batch
       .commit()
-      .then(() => NotificationManager.success('Todos deleted'))
+      .then(() => {
+        db.collection('todos')
+          .get()
+          .then(docs => {
+            docs.docs.forEach((doc, index) => {
+              const docRef = db.collection('todos').doc(doc.id);
+              docRef.update({
+                order: index
+              });
+            });
+          });
+        NotificationManager.success('Todos deleted');
+      })
       .catch(e => NotificationManager.error(e));
     this.setState({ selectedToDos: [] });
+  };
+
+  searchChange = e => {
+    this.setState({
+      [e.target.name]: e.target.value,
+      toDosFilter: this.state.toDos.filter(todo => {
+        const rgx = new RegExp(e.target.value.toLowerCase());
+        return rgx.test(todo.name.toLowerCase());
+      })
+    });
   };
 
   render() {
@@ -316,9 +386,7 @@ export class Todo extends Component {
                 <AppModuleHeader
                   placeholder="Search To Do"
                   user={authUser}
-                  onChange={e =>
-                    this.setState({ [e.target.name]: e.target.value })
-                  }
+                  onChange={this.searchChange}
                   value={search}
                   notification={false}
                   apps={false}
@@ -340,6 +408,12 @@ export class Todo extends Component {
                   {selectedToDos.length > 0 && (
                     <IconButton onClick={this.onLabelSelect}>
                       <i className="zmdi zmdi-label-alt" />
+                    </IconButton>
+                  )}
+
+                  {selectedToDos.length > 0 && (
+                    <IconButton onClick={this.onDoneSelect}>
+                      <i className="zmdi zmdi-check" />
                     </IconButton>
                   )}
 

@@ -50,7 +50,9 @@ const toDoItem = ({
         )}
       </IconButton>
       <div className="d-flex flex-column">
-        <h3 className="m-0">{todo.name}</h3>
+        <h3 className="m-0">
+          {todo.done ? <del>{todo.name}</del> : todo.name}
+        </h3>
         <small className="text-grey m-0">
           {moment.unix(todo.time.seconds).calendar()}
         </small>
