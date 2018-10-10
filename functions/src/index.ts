@@ -22,44 +22,70 @@ app.use(cors({ origin: true }));
 
 /////////* EXPRESS EndPoints */////////////
 
-app.post('/subscribeToTopic', (req, res) => {
-  const { token, topic } = req.body;
-  admin
+app.get('/hello', (req, res) => {
+  res.send('Hello from firebase!');
+});
+
+const api = functions.https.onRequest(app);
+
+/////////* CALLABLE FUNCTIONS */////////////
+
+const subscribeToTopic = functions.https.onCall((data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError(
+      'failed-precondition',
+      'The function must be called while authenticated'
+    );
+  }
+  const { token, topic } = data;
+  return admin
     .messaging()
     .subscribeToTopic(token, topic)
     .then(() => {
       console.log(`Subscribe to topic:${topic}`);
-      res.send({ done: true, message: `Subscribe to topic:${topic}` });
+      return { done: true, message: `Subscribe to topic:${topic}` };
     })
     .catch(e => {
       console.log(e);
-      res.send({ done: false, message: e });
+      return { done: false, message: e };
     });
 });
 
-app.post('/UnsubscribeFromTopic', (req, res) => {
-  const { token, topic } = req.body;
-  admin
+const unsubscribeFromTopic = functions.https.onCall((data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError(
+      'failed-precondition',
+      'The function must be called while authenticated'
+    );
+  }
+  const { token, topic } = data;
+  return admin
     .messaging()
     .unsubscribeFromTopic(token, topic)
     .then(() => {
       console.log(`Unsubscribe from topic:${topic}`);
-      res.send({ done: true, message: `Subscribe to topic:${topic}` });
+      return { done: true, message: `Subscribe to topic:${topic}` };
     })
     .catch(e => {
       console.log(e);
-      res.send({ done: false, message: e });
+      return { done: false, message: e };
     });
 });
 
-app.post('/sendPushMessageToTopic', (req, res) => {
-  const { topic } = req.body;
+const sendPushMessageToTopic = functions.https.onCall((data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError(
+      'failed-precondition',
+      'The function must be called while authenticated'
+    );
+  }
 
-  const notification: admin.messaging.Notification = {
+  const { topic } = data;
+  const notification = {
     title: 'Notification push',
     body: `Notif push for the topic: ${topic} 😍`
   };
-  const payload: admin.messaging.Message = {
+  const payload = {
     notification,
     webpush: {
       notification: {
@@ -76,14 +102,19 @@ app.post('/sendPushMessageToTopic', (req, res) => {
     },
     topic: topic
   };
+
   return admin
     .messaging()
     .send(payload)
-    .then(() => console.log('Notification push send!'))
-    .catch(e => console.log(e));
+    .then(() => {
+      console.log('Notification push send!');
+      return { done: true, message: `Notification push send!` };
+    })
+    .catch(e => {
+      console.log(e);
+      return { done: false, message: e };
+    });
 });
-
-const api = functions.https.onRequest(app);
 
 /////////* FIRESTORE Functions */////////////
 
@@ -134,5 +165,8 @@ module.exports = {
   api,
   userCreate,
   userDelete,
-  deleteTodo
+  deleteTodo,
+  subscribeToTopic,
+  unsubscribeFromTopic,
+  sendPushMessageToTopic
 };

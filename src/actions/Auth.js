@@ -15,7 +15,8 @@ import {
   SIGNUP_USER,
   RESET_PASS,
   USER_SEND_MAIL_SUCCESS,
-  UPDATE_ACCOUNT
+  UPDATE_ACCOUNT,
+  SAVE_TOKEN_FCM
 } from 'constants/ActionTypes';
 
 export const userSignUp = user => {
@@ -121,5 +122,12 @@ export const updateAccount = modif => {
   return {
     type: UPDATE_ACCOUNT,
     payload: modif
+  };
+};
+
+export const saveTokenFCM = token => {
+  return {
+    type: SAVE_TOKEN_FCM,
+    payload: token
   };
 };

@@ -4,6 +4,7 @@ import 'firebase/auth';
 import 'firebase/storage';
 import 'firebase/firestore';
 import 'firebase/messaging';
+import 'firebase/functions';
 
 // Initialize Firebase
 const config = {
@@ -18,6 +19,7 @@ const config = {
 firebase.initializeApp(config);
 const auth = firebase.auth();
 const storage = firebase.storage();
+const functions = firebase.functions();
 
 const googleAuthProvider = new firebase.auth.GoogleAuthProvider();
 const facebookAuthProvider = new firebase.auth.FacebookAuthProvider();
@@ -37,7 +39,9 @@ messaging
     console.log('Have Permission');
     return messaging.getToken();
   })
-  .then(token => console.log(token))
+  .then(token => {
+    console.log(token);
+  })
   .catch(console.log('Error Occured'));
 
 messaging.onMessage(function(payload) {
@@ -50,6 +54,8 @@ export {
   db,
   auth,
   storage,
+  messaging,
+  functions,
   googleAuthProvider,
   githubAuthProvider,
   facebookAuthProvider,

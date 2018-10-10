@@ -12,10 +12,12 @@ class CardHeader extends React.Component {
           <h3 className="card-heading">{heading}</h3>
           {subHeading && <p className="sub-heading">{subHeading}</p>}
         </div>
-        <Chip
-          label={<IntlMessages id="popup.clearData" />}
-          onClick={clearData}
-        />
+        {clearData && (
+          <Chip
+            label={<IntlMessages id="popup.clearData" />}
+            onClick={clearData}
+          />
+        )}
       </div>
     );
   }

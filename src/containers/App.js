@@ -46,12 +46,13 @@ import ResetPass from './ResetPass';
 import {
   setInitUrl,
   userSignInSuccess,
-  userSignOutSuccess
+  userSignOutSuccess,
+  saveTokenFCM
 } from '../actions/Auth';
 import RTL from 'util/RTL';
 import asyncComponent from 'util/asyncComponent';
 import { NotificationContainer } from 'react-notifications';
-import { auth } from 'helper/firebase';
+import { auth, messaging } from 'helper/firebase';
 
 window.$ = window.jQuery = require('jquery');
 
@@ -82,6 +83,12 @@ class App extends Component {
       if (user) {
         console.log('User sign in');
         this.props.userSignInSuccess(user);
+        messaging
+          .getToken()
+          .then(token => {
+            this.props.saveTokenFCM(token);
+          })
+          .catch(e => console.log('Impossible to get tokenFCM'));
       } else {
         console.log('User not sign in');
         this.props.userSignOutSuccess();
@@ -253,5 +260,5 @@ const mapStateToProps = ({ settings, auth }) => {
 
 export default connect(
   mapStateToProps,
-  { setInitUrl, userSignInSuccess, userSignOutSuccess }
+  { setInitUrl, userSignInSuccess, userSignOutSuccess, saveTokenFCM }
 )(App);

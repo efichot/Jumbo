@@ -7,7 +7,8 @@ import {
   SIGNIN_USER_SUCCESS,
   SIGNOUT_USER_SUCCESS,
   USER_SEND_MAIL_SUCCESS,
-  UPDATE_ACCOUNT
+  UPDATE_ACCOUNT,
+  SAVE_TOKEN_FCM
 } from 'constants/ActionTypes';
 
 const INIT_STATE = {
@@ -98,6 +99,15 @@ export default (state = INIT_STATE, action) => {
           displayName: action.payload.name,
           email: action.payload.email,
           photoURL: action.payload.photoURL
+        }
+      };
+    }
+    case SAVE_TOKEN_FCM: {
+      return {
+        ...state,
+        authUser: {
+          ...state.authUser,
+          tokenFCM: action.payload
         }
       };
     }

@@ -57,6 +57,7 @@ export const INIT_URL = 'init_url';
 export const RESET_PASS = 'reset_pass';
 export const USER_SEND_MAIL_SUCCESS = 'user_send_mail_success';
 export const UPDATE_ACCOUNT = 'update_account';
+export const SAVE_TOKEN_FCM = 'save_token_fcm';
 
 // Chat Module const
 
