@@ -4,17 +4,27 @@ import { withRouter } from 'react-router-dom';
 import Drawer from '@material-ui/core/Drawer';
 import SidenavContent from './SidenavContent';
 import UserInfo from 'components/UserInfo';
+import IconButton from '@material-ui/core/IconButton';
 import {
   COLLAPSED_DRAWER,
   FIXED_DRAWER,
   HORIZONTAL_NAVIGATION
 } from 'constants/ActionTypes';
-import { toggleCollapsedNav, updateWindowWidth } from 'actions/Setting';
+import {
+  toggleCollapsedNav,
+  updateWindowWidth,
+  setDrawerType
+} from 'actions/Setting';
 
 class SideNav extends React.PureComponent {
   onToggleCollapsedNav = e => {
     const val = !this.props.navCollapsed;
     this.props.toggleCollapsedNav(val);
+  };
+
+  setDrawerType = drawerType => e => {
+    if (drawerType === 'mini_drawer') this.props.setDrawerType('fixed_drawer');
+    else this.props.setDrawerType('mini_drawer');
   };
 
   componentDidMount() {
@@ -24,7 +34,13 @@ class SideNav extends React.PureComponent {
   }
 
   render() {
-    const { navCollapsed, drawerType, width, navigationStyle } = this.props;
+    const {
+      navCollapsed,
+      drawerType,
+      width,
+      navigationStyle,
+      themeColor
+    } = this.props;
     let drawerStyle = drawerType.includes(FIXED_DRAWER)
       ? 'd-xl-flex'
       : drawerType.includes(COLLAPSED_DRAWER)
@@ -42,6 +58,8 @@ class SideNav extends React.PureComponent {
       drawerStyle = '';
       type = 'temporary';
     }
+    const color = themeColor.startsWith('dark') ? '#161616' : 'white';
+
     return (
       <div className={`app-sidebar d-none ${drawerStyle}`}>
         <Drawer
@@ -55,6 +73,19 @@ class SideNav extends React.PureComponent {
         >
           <UserInfo />
           <SidenavContent />
+          <div
+            style={{ backgroundColor: color }}
+            className="d-flex pointer"
+            onClick={this.setDrawerType(drawerType)}
+          >
+            <IconButton className="ml-auto mr-4 mb-2">
+              {drawerType === 'mini_drawer' ? (
+                <i className="zmdi zmdi-chevron-right text-grey lighten-2" />
+              ) : (
+                <i className="zmdi zmdi-chevron-left text-grey lighten-2" />
+              )}
+            </IconButton>
+          </div>
         </Drawer>
       </div>
     );
@@ -62,13 +93,19 @@ class SideNav extends React.PureComponent {
 }
 
 const mapStateToProps = ({ settings }) => {
-  const { navCollapsed, drawerType, width, navigationStyle } = settings;
-  return { navCollapsed, drawerType, width, navigationStyle };
+  const {
+    navCollapsed,
+    drawerType,
+    width,
+    navigationStyle,
+    themeColor
+  } = settings;
+  return { navCollapsed, drawerType, width, navigationStyle, themeColor };
 };
 
 export default withRouter(
   connect(
     mapStateToProps,
-    { toggleCollapsedNav, updateWindowWidth }
+    { toggleCollapsedNav, updateWindowWidth, setDrawerType }
   )(SideNav)
 );

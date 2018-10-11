@@ -179,7 +179,7 @@ export class Profile extends Component {
             <div className="col-12 col-md-7 mb-3">
               <Card>
                 <CardContent>
-                  <ResponsiveContainer width="100%" height={192}>
+                  <ResponsiveContainer width="100%" height={240}>
                     <AreaChart
                       data={this.state.chartData}
                       margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
@@ -195,12 +195,12 @@ export class Profile extends Component {
                         }}
                       />
                       <XAxis dataKey="name" />
-                      {/* <YAxis /> */}
+                      <YAxis />
                       <Tooltip />
                       <Area
                         type="monotone"
                         dataKey="Expanse"
-                        stroke="#f3b439"
+                        stroke="#af8228"
                         fillOpacity={0.8}
                         fill="#f3b439"
                       />
