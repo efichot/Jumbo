@@ -78,6 +78,14 @@ export class Settings extends Component {
       .delete()
       .then(() => console.log('User account delete'))
       .catch(e => this.props.showAuthMessage(e.message));
+    if (user.photoURL) {
+      storage
+        .ref()
+        .child(`userPhoto/${user.uid}`)
+        .delete()
+        .then(() => console.log('Photo deleted inside the bucket'))
+        .catch(e => console.log(e));
+    }
     this.toggleWarning();
   };
 

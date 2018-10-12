@@ -5,9 +5,15 @@ const admin = require("firebase-admin");
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-/////////* DB config */////////////
-admin.initializeApp(functions.config().firebase);
+/////////* Admin SDK config */////////////
+const serviceAccount = require('../adminSDK.json');
+admin.initializeApp( /*{
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: 'https://jumbo-react-2e67a.firebaseio.com'
+}*/);
 const db = admin.firestore();
+const storage = admin.storage();
+console.log(storage);
 const settings = { timestampsInSnapshots: true };
 db.settings(settings);
 /////////* EXPRESS config */////////////

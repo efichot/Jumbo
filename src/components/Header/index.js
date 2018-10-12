@@ -43,7 +43,8 @@ class Header extends React.Component {
     db.collection('users')
       .doc(uid)
       .onSnapshot(doc => {
-        this.setState({ messages: Object.values(doc.data().messages) });
+        if (doc.exists)
+          this.setState({ messages: Object.values(doc.data().messages) });
       });
   };
 

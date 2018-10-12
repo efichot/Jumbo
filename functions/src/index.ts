@@ -4,9 +4,8 @@ import * as express from 'express';
 import * as bodyParser from 'body-parser';
 import * as cors from 'cors';
 
-/////////* DB config */////////////
-
-admin.initializeApp(functions.config().firebase);
+/////////* Admin SDK config */////////////
+admin.initializeApp();
 
 const db = admin.firestore();
 const settings = { timestampsInSnapshots: true };
