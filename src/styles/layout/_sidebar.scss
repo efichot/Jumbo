@@ -144,7 +144,7 @@ ul.nav-menu li ul > li > ul > li > ul > li > ul > li > a {
 
 ul.nav-menu li.menu > a:before {
   color: $sidebar-text-color;
-  content: "\f2fb";
+  content: '\f2fb';
   display: inline-block;
   float: right;
   font: {
@@ -198,10 +198,6 @@ ul.nav-menu li.menu .sub-menu li > a:hover:before {
       display: none;
     }
 
-    & .nav-menu .menu.open > .sub-menu {
-      display: none !important;
-    }
-
     & .nav-header {
       padding: 10px;
     }
@@ -230,64 +226,6 @@ ul.nav-menu li.menu .sub-menu li > a:hover:before {
   }
 }
 
-.app-container.mini-drawer {
-  & .side-nav:hover {
-    width: $side-nav-width;
-
-    & .nav-menu li span.nav-text,
-    & .user-profile .user-detail {
-      display: inline-block !important;
-    }
-
-    & .nav-menu .menu.open > .sub-menu {
-      display: block !important;
-    }
-
-    & .nav-header {
-      padding: 10px 20px;
-    }
-
-    & .customizer {
-      display: flex !important;
-    }
-
-    & ul.nav-menu {
-      & li {
-        text-align: left;
-        & i {
-          margin-right: 16px;
-        }
-
-        & a {
-          padding: 16px 20px;
-        }
-      }
-
-      & ul.sub-menu li a {
-        padding-left: 56px;
-      }
-
-      ul.sub-menu > li > ul > li > a {
-        padding-left: 76px;
-      }
-
-      ul.sub-menu > li > ul > li > ul > li > a {
-        padding-left: 96px;
-      }
-
-      ul.sub-menu > li > ul > li > ul > li > ul > li > a {
-        padding-left: 116px;
-      }
-    }
-
-    & ul.nav-menu > li > a {
-      &:before {
-        display: block;
-      }
-    }
-  }
-}
-
 .customizer {
   padding: 20px 35px;
   & img {
@@ -303,6 +241,3 @@ ul.nav-menu li.menu .sub-menu li > a:hover:before {
     }
   }
 }
-
-
-

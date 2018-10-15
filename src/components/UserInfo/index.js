@@ -30,6 +30,7 @@ class UserInfo extends React.Component {
           alt="..."
           src={authUser.photoURL || defaultPhoto}
           className="user-avatar "
+          onClick={this.handleClick}
         />
         <div className="user-detail">
           <h4 className="user-name" onClick={this.handleClick}>

@@ -12983,9 +12983,6 @@ ul.nav-menu li.menu .sub-menu li > a:hover:before {
 .app-container.mini-drawer .side-nav .nav-menu li span.nav-text, .app-container.mini-drawer .side-nav .user-profile .user-detail, .app-container.mini-drawer .side-nav .customizer {
   display: none;
 }
-.app-container.mini-drawer .side-nav .nav-menu .menu.open > .sub-menu {
-  display: none !important;
-}
 .app-container.mini-drawer .side-nav .nav-header {
   padding: 10px;
 }
@@ -13003,46 +13000,6 @@ ul.nav-menu li.menu .sub-menu li > a:hover:before {
 }
 .app-container.mini-drawer .side-nav ul.nav-menu > li > a:before {
   display: none;
-}
-
-.app-container.mini-drawer .side-nav:hover {
-  width: 280px;
-}
-.app-container.mini-drawer .side-nav:hover .nav-menu li span.nav-text, .app-container.mini-drawer .side-nav:hover .user-profile .user-detail {
-  display: inline-block !important;
-}
-.app-container.mini-drawer .side-nav:hover .nav-menu .menu.open > .sub-menu {
-  display: block !important;
-}
-.app-container.mini-drawer .side-nav:hover .nav-header {
-  padding: 10px 20px;
-}
-.app-container.mini-drawer .side-nav:hover .customizer {
-  display: flex !important;
-}
-.app-container.mini-drawer .side-nav:hover ul.nav-menu li {
-  text-align: left;
-}
-.app-container.mini-drawer .side-nav:hover ul.nav-menu li i {
-  margin-right: 16px;
-}
-.app-container.mini-drawer .side-nav:hover ul.nav-menu li a {
-  padding: 16px 20px;
-}
-.app-container.mini-drawer .side-nav:hover ul.nav-menu ul.sub-menu li a {
-  padding-left: 56px;
-}
-.app-container.mini-drawer .side-nav:hover ul.nav-menu ul.sub-menu > li > ul > li > a {
-  padding-left: 76px;
-}
-.app-container.mini-drawer .side-nav:hover ul.nav-menu ul.sub-menu > li > ul > li > ul > li > a {
-  padding-left: 96px;
-}
-.app-container.mini-drawer .side-nav:hover ul.nav-menu ul.sub-menu > li > ul > li > ul > li > ul > li > a {
-  padding-left: 116px;
-}
-.app-container.mini-drawer .side-nav:hover ul.nav-menu > li > a:before {
-  display: block;
 }
 
 .customizer {

@@ -72,7 +72,7 @@ class SideNav extends React.PureComponent {
           }}
         >
           <UserInfo />
-          <SidenavContent />
+          <SidenavContent drawerType={drawerType} />
           <div
             style={{ backgroundColor: color }}
             className="d-flex pointer"

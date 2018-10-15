@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { NavLink, withRouter } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
-
 import IntlMessages from 'util/IntlMessages';
 import CustomScrollbars from 'util/CustomScrollbars';
+import Tooltip from '@material-ui/core/Tooltip';
 
 class SidenavContent extends Component {
   componentDidMount() {
@@ -80,6 +80,9 @@ class SidenavContent extends Component {
   }
 
   render() {
+    const { drawerType } = this.props;
+    const toolTip = drawerType === 'mini_drawer';
+
     return (
       <CustomScrollbars className=" scrollbar">
         <ul className="nav-menu">
@@ -88,12 +91,24 @@ class SidenavContent extends Component {
             <IntlMessages id="sidebar.main" />
           </li>
           <li className="menu no-arrow">
-            <NavLink to="/app/dashboard">
-              <i className="zmdi zmdi-view-dashboard" />
-              <span className="nav-text">
-                <IntlMessages id="sidebar.dashboard" />
-              </span>
-            </NavLink>
+            {toolTip && (
+              <Tooltip
+                title={<IntlMessages id="sidebar.dashboard" />}
+                placement="right"
+              >
+                <NavLink to="/app/dashboard">
+                  <i className="zmdi zmdi-view-dashboard" />
+                </NavLink>
+              </Tooltip>
+            )}
+            {!toolTip && (
+              <NavLink to="/app/dashboard">
+                <i className="zmdi zmdi-view-dashboard" />
+                <span className="nav-text">
+                  <IntlMessages id="sidebar.dashboard" />
+                </span>
+              </NavLink>
+            )}
           </li>
 
           {/* Modules */}
@@ -101,20 +116,44 @@ class SidenavContent extends Component {
             <IntlMessages id="sidebar.modules" />
           </li>
           <li className="menu no-arrow">
-            <NavLink to="/app/chat">
-              <i className="zmdi zmdi-comments" />
-              <span className="nav-text">
-                <IntlMessages id="sidebar.appModule.chat" />
-              </span>
-            </NavLink>
+            {toolTip && (
+              <Tooltip
+                title={<IntlMessages id="sidebar.appModule.chat" />}
+                placement="right"
+              >
+                <NavLink to="/app/chat">
+                  <i className="zmdi zmdi-comments" />
+                </NavLink>
+              </Tooltip>
+            )}
+            {!toolTip && (
+              <NavLink to="/app/chat">
+                <i className="zmdi zmdi-comments" />
+                <span className="nav-text">
+                  <IntlMessages id="sidebar.appModule.chat" />
+                </span>
+              </NavLink>
+            )}
           </li>
           <li className="menu no-arrow">
-            <NavLink to="/app/todo">
-              <i className="zmdi zmdi-check-square" />
-              <span className="nav-text">
-                <IntlMessages id="sidebar.appModule.toDo" />
-              </span>
-            </NavLink>
+            {toolTip && (
+              <Tooltip
+                title={<IntlMessages id="sidebar.appModule.toDo" />}
+                placement="right"
+              >
+                <NavLink to="/app/todo">
+                  <i className="zmdi zmdi-check-square" />
+                </NavLink>
+              </Tooltip>
+            )}
+            {!toolTip && (
+              <NavLink to="/app/todo">
+                <i className="zmdi zmdi-check-square" />
+                <span className="nav-text">
+                  <IntlMessages id="sidebar.appModule.toDo" />
+                </span>
+              </NavLink>
+            )}
           </li>
 
           {/* Extras */}
@@ -130,20 +169,44 @@ class SidenavContent extends Component {
             </Button>
             <ul className="sub-menu">
               <li>
-                <NavLink to="/app/link1">
-                  <i className="zmdi zmdi-n-1-square" />
-                  <span className="nav-text">
-                    <IntlMessages id="sidebar.menuLevels.level1" />
-                  </span>
-                </NavLink>
+                {toolTip && (
+                  <Tooltip
+                    title={<IntlMessages id="sidebar.menuLevels.level1" />}
+                    placement="right"
+                  >
+                    <NavLink to="/app/link1">
+                      <i className="zmdi zmdi-n-1-square" />
+                    </NavLink>
+                  </Tooltip>
+                )}
+                {!toolTip && (
+                  <NavLink to="/app/link1">
+                    <i className="zmdi zmdi-n-1-square" />
+                    <span className="nav-text">
+                      <IntlMessages id="sidebar.menuLevels.level1" />
+                    </span>
+                  </NavLink>
+                )}
               </li>
               <li>
-                <NavLink to="/app/link2">
-                  <i className="zmdi zmdi-n-2-square" />
-                  <span className="nav-text">
-                    <IntlMessages id="sidebar.menuLevels.level2" />
-                  </span>
-                </NavLink>
+                {toolTip && (
+                  <Tooltip
+                    title={<IntlMessages id="sidebar.menuLevels.level2" />}
+                    placement="right"
+                  >
+                    <NavLink to="/app/link2">
+                      <i className="zmdi zmdi-n-2-square" />
+                    </NavLink>
+                  </Tooltip>
+                )}
+                {!toolTip && (
+                  <NavLink to="/app/link2">
+                    <i className="zmdi zmdi-n-2-square" />
+                    <span className="nav-text">
+                      <IntlMessages id="sidebar.menuLevels.level2" />
+                    </span>
+                  </NavLink>
+                )}
               </li>
             </ul>
           </li>
