@@ -3,13 +3,19 @@ import * as admin from 'firebase-admin';
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
 import * as cors from 'cors';
+import * as algoliasearch from 'algoliasearch';
 
 /////////* Admin SDK config */////////////
 admin.initializeApp();
+const env = functions.config();
 
 const db = admin.firestore();
 const settings = { timestampsInSnapshots: true };
 db.settings(settings);
+
+/////////* Algolia config *///////////////
+const client = algoliasearch(env.algolia.appid, env.algolia.apikey);
+const index = client.initIndex('jumbo');
 
 /////////* EXPRESS config */////////////
 
@@ -117,9 +123,21 @@ const sendPushMessageToTopic = functions.https.onCall((data, context) => {
 
 /////////* FIRESTORE Functions */////////////
 
+const addTodo = functions.firestore
+  .document('todos/{todoId}')
+  .onCreate((snap, context) => {
+    // add document to algolia
+    return index.addObject({
+      ...snap.data(),
+      objectID: snap.id
+    });
+  });
+
 const deleteTodo = functions.firestore
   .document('todos/{todoId}')
   .onDelete((snap, context) => {
+    // delete from algolia
+    index.deleteObject(snap.id);
     db.collection('trash')
       .add({
         ...snap.data(),
@@ -165,6 +183,7 @@ module.exports = {
   userCreate,
   userDelete,
   deleteTodo,
+  addTodo,
   subscribeToTopic,
   unsubscribeFromTopic,
   sendPushMessageToTopic

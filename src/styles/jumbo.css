@@ -12680,6 +12680,7 @@ h6, .h6 {
   -ms-flex-wrap: nowrap;
   flex-wrap: nowrap;
   width: 100%;
+  height: inherit;
 }
 
 .app-sidebar {
@@ -12735,6 +12736,12 @@ h6, .h6 {
   width: 100%;
   overflow-x: hidden;
   overflow-y: auto;
+}
+
+.ais-InstantSearch__root {
+  display: "flex";
+  width: inherit;
+  height: inherit;
 }
 
 .app-container.fixed-drawer .app-main-header {
@@ -13311,6 +13318,23 @@ ul.nav-menu li.menu .sub-menu li > a:hover:before {
 }
 .user-nav .quick-menu .user-profile .user-avatar {
   margin-right: 0;
+}
+
+.ais-Hits {
+  background-color: white;
+  position: absolute;
+  width: 100%;
+  top: 50px;
+}
+
+.ais-Hits-item {
+  background-color: white;
+  width: 100%;
+  margin-top: 0px;
+}
+
+.algoliaLogo {
+  position: absolute;
 }
 
 /*Main Content Styles*/

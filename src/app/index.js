@@ -21,7 +21,7 @@ import Settings from './routes/settings';
 import Profile from './routes/profile';
 import Chat from './routes/chat';
 import Todo from './routes/todo';
-
+import { InstantSearch } from 'react-instantsearch-dom';
 class App extends React.Component {
   render() {
     const {
@@ -44,59 +44,65 @@ class App extends React.Component {
     }
 
     return (
-      <div className={`app-container ${drawerStyle}`}>
-        <Tour />
+      <InstantSearch
+        appId={process.env.REACT_APP_ALGOLIA_APP_ID}
+        apiKey={process.env.REACT_APP_ALGOLIA_API_KEY}
+        indexName="jumbo"
+      >
+        <div className={`app-container ${drawerStyle}`}>
+          <Tour />
 
-        <Sidebar />
-        <div className="app-main-container">
-          <div
-            className={`app-header ${
-              navigationStyle === HORIZONTAL_NAVIGATION
-                ? 'app-header-horizontal'
-                : ''
-            }`}
-          >
-            {navigationStyle === HORIZONTAL_NAVIGATION &&
-              horizontalNavPosition === ABOVE_THE_HEADER && (
-                <TopNav styleName="app-top-header" />
-              )}
-            <Header />
-            {navigationStyle === HORIZONTAL_NAVIGATION &&
-              horizontalNavPosition === BELOW_THE_HEADER && <TopNav />}
-          </div>
-
-          <main className="app-main-content-wrapper">
-            <div className="app-main-content">
-              <Switch>
-                <Route
-                  exact
-                  path={`${match.url}/dashboard`}
-                  component={Dashboard}
-                />
-                <Route
-                  exact
-                  path={`${match.url}/settings`}
-                  component={Settings}
-                />
-                <Route
-                  exact
-                  path={`${match.url}/profile`}
-                  component={Profile}
-                />
-                <Route exact path={`${match.url}/chat`} component={Chat} />
-                <Route exact path={`${match.url}/todo`} component={Todo} />
-                <Route
-                  component={asyncComponent(() =>
-                    import('app/routes/extraPages/routes/404')
-                  )}
-                />
-              </Switch>
+          <Sidebar />
+          <div className="app-main-container">
+            <div
+              className={`app-header ${
+                navigationStyle === HORIZONTAL_NAVIGATION
+                  ? 'app-header-horizontal'
+                  : ''
+              }`}
+            >
+              {navigationStyle === HORIZONTAL_NAVIGATION &&
+                horizontalNavPosition === ABOVE_THE_HEADER && (
+                  <TopNav styleName="app-top-header" />
+                )}
+              <Header />
+              {navigationStyle === HORIZONTAL_NAVIGATION &&
+                horizontalNavPosition === BELOW_THE_HEADER && <TopNav />}
             </div>
-            <Footer />
-          </main>
+
+            <main className="app-main-content-wrapper">
+              <div className="app-main-content">
+                <Switch>
+                  <Route
+                    exact
+                    path={`${match.url}/dashboard`}
+                    component={Dashboard}
+                  />
+                  <Route
+                    exact
+                    path={`${match.url}/settings`}
+                    component={Settings}
+                  />
+                  <Route
+                    exact
+                    path={`${match.url}/profile`}
+                    component={Profile}
+                  />
+                  <Route exact path={`${match.url}/chat`} component={Chat} />
+                  <Route exact path={`${match.url}/todo`} component={Todo} />
+                  <Route
+                    component={asyncComponent(() =>
+                      import('app/routes/extraPages/routes/404')
+                    )}
+                  />
+                </Switch>
+              </div>
+              <Footer />
+            </main>
+          </div>
+          <ColorOption />
         </div>
-        <ColorOption />
-      </div>
+      </InstantSearch>
     );
   }
 }

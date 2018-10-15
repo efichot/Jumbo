@@ -5,17 +5,16 @@ const admin = require("firebase-admin");
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const algoliasearch = require("algoliasearch");
 /////////* Admin SDK config */////////////
-const serviceAccount = require('../adminSDK.json');
-admin.initializeApp( /*{
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: 'https://jumbo-react-2e67a.firebaseio.com'
-}*/);
+admin.initializeApp();
+const env = functions.config();
 const db = admin.firestore();
-const storage = admin.storage();
-console.log(storage);
 const settings = { timestampsInSnapshots: true };
 db.settings(settings);
+/////////* Algolia config *///////////////
+const client = algoliasearch(env.algolia.appid, env.algolia.apikey);
+const index = client.initIndex('jumbo');
 /////////* EXPRESS config */////////////
 const app = express();
 app.use(bodyParser.json());
@@ -99,9 +98,17 @@ const sendPushMessageToTopic = functions.https.onCall((data, context) => {
     });
 });
 /////////* FIRESTORE Functions */////////////
+const addTodo = functions.firestore
+    .document('todos/{todoId}')
+    .onCreate((snap, context) => {
+    // add document to algolia
+    return index.addObject(Object.assign({}, snap.data(), { objectID: snap.id }));
+});
 const deleteTodo = functions.firestore
     .document('todos/{todoId}')
     .onDelete((snap, context) => {
+    // delete from algolia
+    index.deleteObject(snap.id);
     db.collection('trash')
         .add(Object.assign({}, snap.data(), { id: context.params.todoId }))
         .then(docRef => {
@@ -138,6 +145,7 @@ module.exports = {
     userCreate,
     userDelete,
     deleteTodo,
+    addTodo,
     subscribeToTopic,
     unsubscribeFromTopic,
     sendPushMessageToTopic

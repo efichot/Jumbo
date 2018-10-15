@@ -89,12 +89,6 @@ class Header extends React.Component {
     this.props.toggleCollapsedNav(val);
   };
 
-  updateSearchText(evt) {
-    this.setState({
-      searchText: evt.target.value
-    });
-  }
-
   clearMessages = () => {
     const { uid } = this.props.authUser;
     db.collection('users')
@@ -152,12 +146,7 @@ class Header extends React.Component {
             <img src={iota} alt="Jambo" title="Jambo" />
           </Link>
 
-          <SearchBox
-            styleName="d-none d-md-block"
-            placeholder=""
-            onChange={this.updateSearchText.bind(this)}
-            value={this.state.searchText}
-          />
+          <SearchBox styleName="d-none d-md-block" placeholder="" />
           {navigationStyle === HORIZONTAL_NAVIGATION &&
             horizontalNavPosition === INSIDE_THE_HEADER && <Menu />}
 
@@ -173,18 +162,13 @@ class Header extends React.Component {
                   tag="span"
                   data-toggle="dropdown"
                 >
-                  <IconButton className="icon-btn size-30">
+                  <IconButton className="icon-btn">
                     <i className="zmdi zmdi-search zmdi-hc-fw" />
                   </IconButton>
                 </DropdownToggle>
 
                 <DropdownMenu right className="p-0">
-                  <SearchBox
-                    styleName="search-dropdown"
-                    placeholder=""
-                    onChange={this.updateSearchText.bind(this)}
-                    value={this.state.searchText}
-                  />
+                  <SearchBox styleName="search-dropdown" placeholder="" />
                 </DropdownMenu>
               </Dropdown>
             </li>

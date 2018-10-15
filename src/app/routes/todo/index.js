@@ -43,7 +43,7 @@ export class Todo extends Component {
 
   componentDidMount = () => {
     db.collection('todos').onSnapshot(docs => {
-      this.setState({ toDos: [] });
+      this.setState({ toDos: [], toDosFilter: [] });
       docs.forEach(doc =>
         this.setState({
           toDos: [...this.state.toDos, { ...doc.data(), id: doc.id }],

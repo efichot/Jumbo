@@ -10,6 +10,7 @@
 .app-container {
   @include display-flex(flex, row, nowrap);
   width: 100%;
+  height: inherit;
 }
 
 .app-sidebar {
@@ -35,6 +36,12 @@
   width: 100%;
   overflow-x: hidden;
   overflow-y: auto;
+}
+
+.ais-InstantSearch__root {
+  display: 'flex';
+  width: inherit;
+  height: inherit;
 }
 
 .app-container {
@@ -84,7 +91,11 @@
     right: auto !important;
 
     & + .app-top-nav {
-      @include box-shadow(0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12));
+      @include box-shadow(
+        0px 2px 4px -1px rgba(0, 0, 0, 0.2),
+        0px 4px 5px 0px rgba(0, 0, 0, 0.14),
+        0px 1px 10px 0px rgba(0, 0, 0, 0.12)
+      );
     }
   }
 
