@@ -17,7 +17,7 @@ db.settings(settings);
 const client = algoliasearch(env.algolia.appid, env.algolia.apikey);
 const index = client.initIndex('jumbo');
 
-/////////* EXPRESS config */////////////
+// /////////* EXPRESS config */////////////
 
 const app = express();
 
@@ -25,7 +25,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors({ origin: true }));
 
-/////////* EXPRESS EndPoints */////////////
+// /////////* EXPRESS EndPoints */////////////
 
 app.get('/hello', (req, res) => {
   res.send('Hello from firebase!');

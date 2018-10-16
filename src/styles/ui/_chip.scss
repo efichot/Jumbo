@@ -3,3 +3,20 @@
   background-color: transparent !important;
   border: 1px solid $gray-500 !important;
 }
+
+.chip-xs {
+  padding: $btn-padding-xs !important;
+  font-size: $btn-font-size-xs !important;
+  height: 28px !important;
+  & span {
+    padding: 0;
+    margin-right: 7px;
+  }
+  & svg {
+    padding: 0;
+    margin: 0;
+  }
+  & i {
+    font-size: $btn-font-size-xs !important;
+  }
+}

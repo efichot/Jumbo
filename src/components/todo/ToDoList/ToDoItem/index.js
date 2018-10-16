@@ -60,7 +60,7 @@ const toDoItem = ({
           {todo.labels.map((label, index) => (
             <Chip
               label={label}
-              className={`bg-${getColor(label)} text-white m-1`}
+              className={`bg-${getColor(label)} text-white m-1 chip-xs`}
               onDelete={handleDelete(todo.id, index)}
               key={index}
             />

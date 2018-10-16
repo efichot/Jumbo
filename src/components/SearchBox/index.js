@@ -15,7 +15,9 @@ function Product({ hit }) {
           <Chip
             label={label}
             key={label}
-            className={`${label === 'Important' ? 'bg-red' : 'bg-orange'}`}
+            className={`chip-xs ${
+              label === 'Important' ? 'bg-red' : 'bg-orange'
+            }`}
           />
         ))}
       </div>
@@ -53,7 +55,7 @@ class SearchBox extends React.Component {
               alt="algolia logo"
               src={AlgoliaLogo}
               className="rounded"
-              style={{ width: '50%', marginLeft: '-4px' }}
+              style={{ width: '50%', marginLeft: '-4px', height: '33px' }}
             />
           )}
           <button className="search-icon">
