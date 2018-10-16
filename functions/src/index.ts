@@ -4,6 +4,7 @@ import * as express from 'express';
 import * as bodyParser from 'body-parser';
 import * as cors from 'cors';
 import * as algoliasearch from 'algoliasearch';
+import { ApolloServer, gql } from 'apollo-server-express';
 
 /////////* Admin SDK config */////////////
 admin.initializeApp();
@@ -17,7 +18,7 @@ db.settings(settings);
 const client = algoliasearch(env.algolia.appid, env.algolia.apikey);
 const index = client.initIndex('jumbo');
 
-// /////////* EXPRESS config */////////////
+/////////* EXPRESS config */////////////
 
 const app = express();
 
@@ -25,11 +26,34 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors({ origin: true }));
 
-// /////////* EXPRESS EndPoints */////////////
+/////////* EXPRESS EndPoints */////////////
 
 app.get('/hello', (req, res) => {
   res.send('Hello from firebase!');
 });
+
+/////////* APOLLO SERVER */////////////
+
+const typeDefs = gql`
+  type Query {
+    hello: String
+  }
+`;
+
+const resolvers = {
+  Query: {
+    hello() {
+      return 'world';
+    }
+  }
+};
+
+const server = new ApolloServer({
+  typeDefs,
+  resolvers
+});
+
+server.applyMiddleware({ app, path: '/' });
 
 const api = functions.https.onRequest(app);
 

@@ -16,95 +16,26 @@ db.settings(settings);
 /////////* Algolia config *///////////////
 const client = algoliasearch(env.algolia.appid, env.algolia.apikey);
 const index = client.initIndex('jumbo');
-// /////////* EXPRESS config */////////////
+/////////* EXPRESS config */////////////
 const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors({ origin: true }));
-// /////////* EXPRESS EndPoints */////////////
+/////////* EXPRESS EndPoints */////////////
 app.get('/hello', (req, res) => {
     res.send('Hello from firebase!');
 });
-/////////* APOLLO-SERVER CONFIG */////////////
+/////////* APOLLO SERVER */////////////
 const typeDefs = apollo_server_express_1.gql `
-  # type Auteur {
-  #   name: String!
-  #   id: ID!
-  #   books: [Book]!
-  # }
-
-  type Book {
-    title: String!
-    auteurId: ID!
-    id: ID!
-    # auteur: Auteur!
-  }
-
   type Query {
-    # auteur(id: String!): Auteur
-    book: String
+    hello: String
   }
 `;
 const resolvers = {
-    // Auteur: {
-    //   async books(user) {
-    //     try {
-    //       const auteurBooks = await db
-    //         .collection('books')
-    //         .where('auteurId', '==', user.id)
-    //         .get();
-    //       return auteurBooks.docs.map(doc => doc.data());
-    //     } catch (error) {
-    //       throw error;
-    //     }
-    //   }
-    // },
-    // Book: {
-    //   async auteur(book) {
-    //     try {
-    //       const auteurDoc = await db
-    //         .collection('auteurs')
-    //         .doc(book.auteurID)
-    //         .get();
-    //       return auteurDoc.data();
-    //     } catch (error) {
-    //       throw error;
-    //     }
-    //   }
-    // },
     Query: {
-        book() {
-            return db
-                .collection('books')
-                .get()
-                .then(docs => docs.forEach(doc => {
-                console.log(doc);
-                console.log(doc.data());
-                doc.data().title;
-            }))
-                .catch(e => {
-                throw e;
-            });
+        hello() {
+            return 'world';
         }
-        // async book() {
-        //   try {
-        //     const bookDocs = await db.collection('books').get();
-        //     return bookDocs.docs.map(doc => doc.data());
-        //   } catch (error) {
-        //     throw error;
-        //   }
-        // },
-        // async auteur(_, args) {
-        //   try {
-        //     const auteurDoc = await db
-        //       .collection('auteur')
-        //       .doc(args.id)
-        //       .get();
-        //     return auteurDoc.data();
-        //   } catch (error) {
-        //     throw error;
-        //   }
-        // }
     }
 };
 const server = new apollo_server_express_1.ApolloServer({
