@@ -27,14 +27,63 @@ app.get('/hello', (req, res) => {
 });
 /////////* APOLLO SERVER */////////////
 const typeDefs = apollo_server_express_1.gql `
+  type Book {
+    auteurId: ID!
+    id: ID!
+    title: String!
+    auteur: Auteur!
+  }
+
+  type Auteur {
+    id: ID!
+    name: String!
+    books: [Book]
+  }
+
   type Query {
-    hello: String
+    books: [Book]!
+    auteur(name: String!): Auteur
   }
 `;
 const resolvers = {
+    Book: {
+        auteur(book) {
+            return db
+                .collection('auteurs')
+                .doc(book.auteurId)
+                .get()
+                .then(doc => doc.data())
+                .catch(e => console.log(e));
+        }
+    },
+    Auteur: {
+        books(user) {
+            return db
+                .collection('books')
+                .where('auteurId', '==', user.id)
+                .get()
+                .then(docs => docs.docs.map(doc => doc.data()))
+                .catch(e => console.log(e));
+        }
+    },
     Query: {
-        hello() {
-            return 'world';
+        books() {
+            return db
+                .collection('books')
+                .get()
+                .then(docs => docs.docs.map(doc => {
+                console.log(doc.data());
+                return doc.data();
+            }))
+                .catch(e => console.log(e));
+        },
+        auteur(_, args) {
+            return db
+                .collection('auteurs')
+                .where('name', '==', args.name)
+                .get()
+                .then(docs => docs.docs[0].data())
+                .catch(e => console.log(e));
         }
     }
 };

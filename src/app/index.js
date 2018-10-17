@@ -47,7 +47,7 @@ class App extends React.Component {
       <InstantSearch
         appId={process.env.REACT_APP_ALGOLIA_APP_ID}
         apiKey={process.env.REACT_APP_ALGOLIA_API_KEY}
-        indexName="jumbo"
+        indexName={process.env.REACT_APP_ALGOLIA_INDICE}
       >
         <div className={`app-container ${drawerStyle}`}>
           <Tour />
