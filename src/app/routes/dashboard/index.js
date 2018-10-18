@@ -59,11 +59,13 @@ export class Dashboard extends Component {
             <div>
               <h1>{data.auteur.name}</h1>
               <p className="text-grey">{data.auteur.id}</p>
-              {data.auteur.books.map((book, index) => (
-                <small key={index} className="text-grey">
-                  {book.title}
-                </small>
-              ))}
+              <div className="d-flex flex-column">
+                {data.auteur.books.map((book, index) => (
+                  <small key={index} className="text-grey">
+                    {book.title}
+                  </small>
+                ))}
+              </div>
             </div>
           );
         } else {
@@ -93,7 +95,12 @@ export class Dashboard extends Component {
                       id="outlined-name"
                       label="Auteur"
                       value={this.state.auteur}
-                      onChange={e => this.setState({ auteur: e.target.value })}
+                      onChange={e =>
+                        this.setState({
+                          auteur: e.target.value,
+                          buttonClicked: false
+                        })
+                      }
                       margin="normal"
                       variant="outlined"
                     />

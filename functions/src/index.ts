@@ -56,43 +56,53 @@ const typeDefs = gql`
 
 const resolvers = {
   Book: {
-    auteur(book) {
-      return db
-        .collection('auteurs')
-        .doc(book.auteurId)
-        .get()
-        .then(doc => doc.data())
-        .catch(e => console.log(e));
+    async auteur(book) {
+      try {
+        const doc = await db
+          .collection('auteurs')
+          .doc(book.auteurId)
+          .get();
+        return doc.data();
+      } catch (e) {
+        console.log(e);
+      }
     }
   },
 
   Auteur: {
-    books(user) {
-      return db
-        .collection('books')
-        .where('auteurId', '==', user.id)
-        .get()
-        .then(docs => docs.docs.map(doc => doc.data()))
-        .catch(e => console.log(e));
+    async books(user) {
+      try {
+        const docs = await db
+          .collection('books')
+          .where('auteurId', '==', user.id)
+          .get();
+        return docs.docs.map(doc => doc.data());
+      } catch (e) {
+        console.log(e);
+      }
     }
   },
 
   Query: {
-    books() {
-      return db
-        .collection('books')
-        .get()
-        .then(docs => docs.docs.map(doc => doc.data()))
-        .catch(e => console.log(e));
+    async books() {
+      try {
+        const docs = await db.collection('books').get();
+        return docs.docs.map(doc => doc.data());
+      } catch (e) {
+        console.log(e);
+      }
     },
 
-    auteur(_, args) {
-      return db
-        .collection('auteurs')
-        .where('name', '==', args.name)
-        .get()
-        .then(docs => docs.docs[0].data())
-        .catch(e => console.log(e));
+    async auteur(_, args) {
+      try {
+        const docs = await db
+          .collection('auteurs')
+          .where('name', '==', args.name)
+          .get();
+        return docs.docs[0].data();
+      } catch (e) {
+        console.log(e);
+      }
     }
   }
 };
