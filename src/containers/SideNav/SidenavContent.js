@@ -6,17 +6,19 @@ import CustomScrollbars from 'util/CustomScrollbars';
 import Tooltip from '@material-ui/core/Tooltip';
 
 class SidenavContent extends Component {
+  componentDidUpdate = (prevProps, prevState) => {
+    const subMenuLi = document.querySelectorAll('.sub-menu > li');
+    for (let i = 0; i < subMenuLi.length; i++) {
+      if (subMenuLi[i].firstChild.classList[0] === 'active') {
+        subMenuLi[i].parentElement.parentElement.classList.add('open');
+      }
+    }
+  };
+
   componentDidMount() {
     const { history } = this.props;
     const that = this;
-    const pathname = `#${history.location.pathname}`; // get current path
-
-    const subMenuLi = document.querySelectorAll('.sub-menu > li');
-    for (let i = 0; i < subMenuLi.length; i++) {
-      subMenuLi[i].onclick = function(event) {
-        event.stopPropagation();
-      };
-    }
+    const pathname = `${history.location.pathname}`; // get current path
 
     const menuLi = document.getElementsByClassName('menu');
     for (let i = 0; i < menuLi.length; i++) {
@@ -31,7 +33,6 @@ class SidenavContent extends Component {
           }
         }
         this.classList.toggle('open');
-        event.stopPropagation();
       };
     }
 
@@ -160,7 +161,7 @@ class SidenavContent extends Component {
           <li className="nav-header">
             <IntlMessages id="sidebar.extras" />
           </li>
-          <li className="menu">
+          <li className="menu arrow">
             <Button href="javascript:void(0)">
               <i className="zmdi zmdi-chevron-down" />
               <span className="nav-text">

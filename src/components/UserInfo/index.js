@@ -29,7 +29,7 @@ class UserInfo extends React.Component {
         <Avatar
           alt="..."
           src={authUser.photoURL || defaultPhoto}
-          className="user-avatar "
+          className="user-avatar pointer"
           onClick={this.handleClick}
         />
         <div className="user-detail">

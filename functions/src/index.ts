@@ -109,7 +109,8 @@ const resolvers = {
 
 const server = new ApolloServer({
   typeDefs,
-  resolvers
+  resolvers,
+  introspection: true
 });
 
 server.applyMiddleware({ app, path: '/' });

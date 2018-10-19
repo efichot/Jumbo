@@ -17,9 +17,9 @@ const getDisplayString = sub => {
 };
 const getUrlString = (path, sub, index) => {
   if (index === 0) {
-    return '#/';
+    return '/';
   } else {
-    return '#/' + path.split(sub)[0] + sub;
+    return '/' + path.split(sub)[0] + sub;
   }
 };
 

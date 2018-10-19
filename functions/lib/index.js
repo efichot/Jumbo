@@ -100,7 +100,8 @@ const resolvers = {
 };
 const server = new apollo_server_express_1.ApolloServer({
     typeDefs,
-    resolvers
+    resolvers,
+    introspection: true
 });
 server.applyMiddleware({ app, path: '/' });
 const api = functions.https.onRequest(app);

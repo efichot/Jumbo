@@ -6,7 +6,7 @@ class Menu extends Component {
   componentDidMount() {
     const { history } = this.props;
 
-    const pathname = `#${history.location.pathname}`; // get current path
+    const pathname = `${history.location.pathname}`; // get current path
     const mainMenu = document.getElementsByClassName('nav-item');
     for (let i = 0; i < mainMenu.length; i++) {
       mainMenu[i].onclick = function() {

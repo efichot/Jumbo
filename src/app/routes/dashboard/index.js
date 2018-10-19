@@ -10,6 +10,7 @@ import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { NotificationManager } from 'react-notifications';
+import client from 'helper/graphql';
 
 const GET_AUTEUR_AND_BOOKS = gql`
   query($auteurName: String!) {
@@ -28,6 +29,18 @@ export class Dashboard extends Component {
     buttonClicked: false
   };
 
+  componentDidMount = async () => {
+    const { data } = await client.query({
+      query: gql`
+        {
+          key @client
+        }
+      `
+    });
+
+    console.log(data);
+  };
+
   andleClick = () => {
     this.setState({ open: true });
   };
@@ -39,42 +52,6 @@ export class Dashboard extends Component {
 
     this.setState({ open: false });
   };
-
-  Results = () => (
-    <Query
-      query={GET_AUTEUR_AND_BOOKS}
-      variables={{ auteurName: this.state.auteur }}
-    >
-      {({ loading, error, data }) => {
-        if (loading)
-          return (
-            <div className="d-flex justify-content-center">
-              <CircularProgress />
-            </div>
-          );
-        if (error) NotificationManager.error(error);
-        console.log(data);
-        if (data.auteur) {
-          return (
-            <div>
-              <h1>{data.auteur.name}</h1>
-              <p className="text-grey">{data.auteur.id}</p>
-              <div className="d-flex flex-column">
-                {data.auteur.books.map((book, index) => (
-                  <small key={index} className="text-grey">
-                    {book.title}
-                  </small>
-                ))}
-              </div>
-            </div>
-          );
-        } else {
-          NotificationManager.error('No writer find with this name');
-          return <h1> </h1>;
-        }
-      }}
-    </Query>
-  );
 
   render() {
     const { buttonClicked } = this.state;
@@ -113,8 +90,56 @@ export class Dashboard extends Component {
                       <i className="zmdi zmdi-search zmdi-hc-fw" />
                       <span>Search</span>
                     </Button>
+                    <Button
+                      className="jr-btn"
+                      color="secondary"
+                      variant="contained"
+                      onClick={() => {
+                        client.writeData({
+                          data: { key: this.state.auteur }
+                        });
+                      }}
+                    >
+                      <i className="zmdi zmdi-format-valign-bottom" />
+                      <span>Change Cache</span>
+                    </Button>
                   </div>
-                  {buttonClicked && this.Results()}
+                  {buttonClicked && (
+                    <Query
+                      query={GET_AUTEUR_AND_BOOKS}
+                      variables={{ auteurName: this.state.auteur }}
+                    >
+                      {({ loading, error, data }) => {
+                        if (loading)
+                          return (
+                            <div className="d-flex justify-content-center">
+                              <CircularProgress />
+                            </div>
+                          );
+                        if (error) NotificationManager.error(error);
+                        if (data.auteur) {
+                          return (
+                            <div>
+                              <h1>{data.auteur.name}</h1>
+                              <p className="text-grey">{data.auteur.id}</p>
+                              <div className="d-flex flex-column">
+                                {data.auteur.books.map((book, index) => (
+                                  <small key={index} className="text-grey">
+                                    {book.title}
+                                  </small>
+                                ))}
+                              </div>
+                            </div>
+                          );
+                        } else {
+                          NotificationManager.error(
+                            'No writer find with this name'
+                          );
+                          return <h1> </h1>;
+                        }
+                      }}
+                    </Query>
+                  )}
                 </CardContent>
               </Card>
             </div>
