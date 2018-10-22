@@ -7,6 +7,7 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const algoliasearch = require("algoliasearch");
 const apollo_server_express_1 = require("apollo-server-express");
+const Stripe = require("stripe");
 /////////* Admin SDK config */////////////
 admin.initializeApp();
 const env = functions.config();
@@ -16,6 +17,8 @@ db.settings(settings);
 /////////* Algolia config *///////////////
 const client = algoliasearch(env.algolia.appid, env.algolia.apikey);
 const index = client.initIndex('jumbo');
+////////* Stripe config */////////////////
+const stripe = new Stripe(functions.config().stripe.secret);
 /////////* EXPRESS config */////////////
 const app = express();
 app.use(bodyParser.json());
@@ -177,6 +180,31 @@ const sendPushMessageToTopic = functions.https.onCall((data, context) => {
         return { done: false, message: e };
     });
 });
+const saveStripeTokenAndCreateStripeUser = functions.https.onCall(async (data, context) => {
+    if (!context.auth) {
+        throw new functions.https.HttpsError('failed-precondition', 'The function must be called while authenticated');
+    }
+    const { token } = data;
+    try {
+        const customer = await stripe.customers.create({
+            metadata: { firebaseUID: context.auth.uid }
+        });
+        return db
+            .collection('users')
+            .doc(context.auth.uid)
+            .update({
+            stripeId: customer.id,
+            stripeToken: token
+        })
+            .then(() => ({
+            done: true,
+            message: 'user document updated with stripeId and token'
+        }));
+    }
+    catch (e) {
+        return { done: false, message: e };
+    }
+});
 /////////* FIRESTORE Functions */////////////
 const addTodo = functions.firestore
     .document('todos/{todoId}')
@@ -228,6 +256,7 @@ module.exports = {
     addTodo,
     subscribeToTopic,
     unsubscribeFromTopic,
-    sendPushMessageToTopic
+    sendPushMessageToTopic,
+    saveStripeTokenAndCreateStripeUser
 };
 //# sourceMappingURL=index.js.map

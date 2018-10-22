@@ -11,6 +11,10 @@ import gql from 'graphql-tag';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { NotificationManager } from 'react-notifications';
 import client from 'helper/graphql';
+import StripeCheckout from 'react-stripe-checkout';
+import { CardActions } from '@material-ui/core';
+import { functions } from 'helper/firebase';
+import CustomScrollbars from 'util/CustomScrollbars';
 
 const GET_AUTEUR_AND_BOOKS = gql`
   query($auteurName: String!) {
@@ -41,16 +45,29 @@ export class Dashboard extends Component {
     console.log(data);
   };
 
-  andleClick = () => {
-    this.setState({ open: true });
+  onToken = async token => {
+    try {
+      const res = await functions.httpsCallable(
+        'saveStripeTokenAndCreateStripeUser'
+      )({ token });
+      const { done, message } = res.data;
+      if (!done) {
+        NotificationManager.error(message);
+      } else {
+        console.log(message);
+      }
+    } catch (e) {
+      NotificationManager.error(e);
+    }
   };
 
-  handleClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-
-    this.setState({ open: false });
+  handleClickRandomPosition = () => {
+    const { scrollbars } = this.refs.scrollbars.refs;
+    scrollbars.view.scroll({
+      top: 0,
+      left: 0,
+      behavior: 'smooth'
+    });
   };
 
   render() {
@@ -63,7 +80,7 @@ export class Dashboard extends Component {
             title={<IntlMessages id="sidebar.dashboard" />}
           />
           <div className="row">
-            <div className="col-12 col-md-5 mb-3">
+            <div className="col-12 col-md-7 mb-3">
               <Card>
                 <CardContent>
                   <h4>Retrieve a Book by writer on the Graphql end point</h4>
@@ -143,7 +160,72 @@ export class Dashboard extends Component {
                 </CardContent>
               </Card>
             </div>
+            <div className="col-12 col-md-5 mb-3">
+              <Card>
+                <CardContent className="d-flex justify-content-center">
+                  <h4>
+                    Payment with STRIPE{' '}
+                    <span role="img" aria-label="card">
+                      💳
+                    </span>
+                  </h4>
+                </CardContent>
+                <CardActions className="d-flex justify-content-center">
+                  <StripeCheckout
+                    token={this.onToken}
+                    className="d-flex justify-content-center"
+                    stripeKey={process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY}
+                  />
+                </CardActions>
+              </Card>
+            </div>
           </div>
+          <CustomScrollbars
+            className="scrollbar"
+            style={{
+              height: 'calc(100vh - 459px)'
+            }}
+            ref="scrollbars"
+          >
+            ke <br />
+            ke <br />
+            ke <br />
+            ke <br />
+            ke <br />
+            ke <br />
+            ke <br />
+            ke <br />
+            ke <br />
+            ke <br />
+            ke <br />
+            ke <br />
+            ke <br />
+            ke <br />
+            ke <br />
+            ke <br />
+            ke <br />
+            ke <br />
+            ke <br />
+            ke <br />
+            ke <br />
+            ke <br />
+            ke <br />
+            ke <br />
+            ke <br />
+            ke <br />
+            ke <br />
+            ke <br />
+            ke <br />
+            ke <br />
+            ke <br />
+            ke <br />
+            ke <br />
+            ke <br />
+            ke <br />
+            <button onClick={this.handleClickRandomPosition}>
+              Scroll to top
+            </button>
+          </CustomScrollbars>
         </div>
       </div>
     );

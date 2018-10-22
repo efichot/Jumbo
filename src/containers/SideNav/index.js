@@ -78,11 +78,11 @@ class SideNav extends React.PureComponent {
             className="d-flex pointer"
             onClick={this.setDrawerType(drawerType)}
           >
-            <IconButton className="ml-auto mr-4 mb-2">
+            <IconButton className="ml-auto mr-4 mb-2 mt-1">
               {drawerType === 'mini_drawer' ? (
-                <i className="zmdi zmdi-chevron-right text-grey lighten-2" />
+                <i className="zmdi zmdi-chevron-right text-grey" />
               ) : (
-                <i className="zmdi zmdi-chevron-left text-grey lighten-2" />
+                <i className="zmdi zmdi-chevron-left text-grey" />
               )}
             </IconButton>
           </div>

@@ -35,7 +35,7 @@ class UserInfo extends React.Component {
         <div className="user-detail">
           <h4 className="user-name" onClick={this.handleClick}>
             {authUser.displayName}{' '}
-            <i className="zmdi zmdi-caret-down zmdi-hc-fw align-middle" />
+            <i className="zmdi zmdi-chevron-down zmdi-hc-lg ml-2" />
           </h4>
         </div>
         <Menu

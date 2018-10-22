@@ -5,6 +5,7 @@ import * as bodyParser from 'body-parser';
 import * as cors from 'cors';
 import * as algoliasearch from 'algoliasearch';
 import { ApolloServer, gql } from 'apollo-server-express';
+import * as Stripe from 'stripe';
 
 /////////* Admin SDK config */////////////
 admin.initializeApp();
@@ -17,6 +18,9 @@ db.settings(settings);
 /////////* Algolia config *///////////////
 const client = algoliasearch(env.algolia.appid, env.algolia.apikey);
 const index = client.initIndex('jumbo');
+
+////////* Stripe config */////////////////
+const stripe = new Stripe(functions.config().stripe.secret);
 
 /////////* EXPRESS config */////////////
 
@@ -205,6 +209,36 @@ const sendPushMessageToTopic = functions.https.onCall((data, context) => {
     });
 });
 
+const saveStripeTokenAndCreateStripeUser = functions.https.onCall(
+  async (data, context) => {
+    if (!context.auth) {
+      throw new functions.https.HttpsError(
+        'failed-precondition',
+        'The function must be called while authenticated'
+      );
+    }
+    const { token } = data;
+    try {
+      const customer = await stripe.customers.create({
+        metadata: { firebaseUID: context.auth.uid }
+      });
+      return db
+        .collection('users')
+        .doc(context.auth.uid)
+        .update({
+          stripeId: customer.id,
+          stripeToken: token
+        })
+        .then(() => ({
+          done: true,
+          message: 'user document updated with stripeId and token'
+        }));
+    } catch (e) {
+      return { done: false, message: e };
+    }
+  }
+);
+
 /////////* FIRESTORE Functions */////////////
 
 const addTodo = functions.firestore
@@ -270,5 +304,6 @@ module.exports = {
   addTodo,
   subscribeToTopic,
   unsubscribeFromTopic,
-  sendPushMessageToTopic
+  sendPushMessageToTopic,
+  saveStripeTokenAndCreateStripeUser
 };

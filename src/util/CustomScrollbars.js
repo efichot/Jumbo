@@ -1,18 +1,21 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { Scrollbars } from 'react-custom-scrollbars';
 
-const CustomScrollbars = props => (
-  <Scrollbars
-    {...props}
-    autoHide
-    renderTrackHorizontal={props => (
-      <div
-        {...props}
-        style={{ display: 'none' }}
-        className="track-horizontal"
+export default class CustomScrollbars extends Component {
+  render() {
+    return (
+      <Scrollbars
+        {...this.props}
+        autoHide
+        renderTrackHorizontal={props => (
+          <div
+            {...props}
+            style={{ display: 'none' }}
+            className="track-horizontal"
+          />
+        )}
+        ref="scrollbars"
       />
-    )}
-  />
-);
-
-export default CustomScrollbars;
+    );
+  }
+}

@@ -19,8 +19,6 @@ import TopNav from 'components/TopNav';
 import Dashboard from './routes/dashboard';
 import Settings from './routes/settings';
 import Profile from './routes/profile';
-import Chat from './routes/chat';
-import Todo from './routes/todo';
 import { InstantSearch } from 'react-instantsearch-dom';
 class App extends React.Component {
   render() {
@@ -88,11 +86,19 @@ class App extends React.Component {
                     path={`${match.url}/profile`}
                     component={Profile}
                   />
-                  <Route exact path={`${match.url}/chat`} component={Chat} />
-                  <Route exact path={`${match.url}/todo`} component={Todo} />
+                  <Route
+                    exact
+                    path={`${match.url}/chat`}
+                    component={asyncComponent(() => import('./routes/chat'))}
+                  />
+                  <Route
+                    exact
+                    path={`${match.url}/todo`}
+                    component={asyncComponent(() => import('./routes/todo'))}
+                  />
                   <Route
                     component={asyncComponent(() =>
-                      import('app/routes/extraPages/routes/404')
+                      import('./routes/extraPages/routes/404')
                     )}
                   />
                 </Switch>
