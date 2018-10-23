@@ -2,6 +2,7 @@
   "extends": "react-app",
   "rules": {
     "jsx-a11y/anchor-has-content": 0,
-    "no-script-url": 0
+    "no-script-url": 0,
+    "jsx-a11y/anchor-is-valid": 0
   }
 }
