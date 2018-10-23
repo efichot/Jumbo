@@ -6,19 +6,12 @@ import 'react-placeholder/lib/reactPlaceholder.css';
 
 export default function asyncComponent(importComponent) {
   class AsyncFunc extends Component {
-    constructor(props) {
-      super(props);
-      this.state = {
-        component: null
-      };
-    }
+    state = {
+      component: null
+    };
 
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
       Nprogress.start();
-    }
-
-    componentWillUnmount() {
-      this.mounted = false;
     }
 
     async componentDidMount() {

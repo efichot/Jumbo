@@ -1,7 +1,7 @@
 import React from 'react';
 import { create } from 'jss';
 import rtl from 'jss-rtl';
-import JssProvider from 'react-jss/lib/JssProvider';
+import { JssProvider } from 'react-jss';
 import { createGenerateClassName, jssPreset } from '@material-ui/core/styles';
 
 // Configure JSS

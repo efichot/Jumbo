@@ -30,19 +30,9 @@ const GET_AUTEUR_AND_BOOKS = gql`
 export class Dashboard extends Component {
   state = {
     auteur: '',
-    buttonClicked: false
-  };
-
-  componentDidMount = async () => {
-    const { data } = await client.query({
-      query: gql`
-        {
-          key @client
-        }
-      `
-    });
-
-    console.log(data);
+    buttonClicked: false,
+    loading: false,
+    store: null
   };
 
   onToken = async token => {
@@ -70,8 +60,22 @@ export class Dashboard extends Component {
     });
   };
 
+  displayStore = async () => {
+    this.setState({ loading: true });
+    const { data } = await client.query({
+      query: gql`
+        {
+          key @client
+        }
+      `
+    });
+    setTimeout(() => {
+      this.setState({ data, loading: false });
+    }, 500);
+  };
+
   render() {
-    const { buttonClicked } = this.state;
+    const { buttonClicked, loading, data } = this.state;
     return (
       <div className="app-wrapper">
         <div className="dashboard animated slideInUpTiny animation-duration-5">
@@ -126,15 +130,14 @@ export class Dashboard extends Component {
                       query={GET_AUTEUR_AND_BOOKS}
                       variables={{ auteurName: this.state.auteur }}
                     >
-                      {({ loading, error, data }) => {
+                      {({ loading, data }) => {
                         if (loading)
                           return (
                             <div className="d-flex justify-content-center">
                               <CircularProgress />
                             </div>
                           );
-                        if (error) NotificationManager.error(error);
-                        if (data.auteur) {
+                        if (data && data.auteur) {
                           return (
                             <div>
                               <h1>{data.auteur.name}</h1>
@@ -179,53 +182,85 @@ export class Dashboard extends Component {
                 </CardActions>
               </Card>
             </div>
+
+            <div className="col-12 col-md-5">
+              <Card>
+                <CardContent>
+                  <CustomScrollbars
+                    className="scrollbar"
+                    style={{
+                      height: '400px'
+                    }}
+                    ref="scrollbars"
+                  >
+                    ke <br />
+                    ke <br />
+                    ke <br />
+                    ke <br />
+                    ke <br />
+                    ke <br />
+                    ke <br />
+                    ke <br />
+                    ke <br />
+                    ke <br />
+                    ke <br />
+                    ke <br />
+                    ke <br />
+                    ke <br />
+                    ke <br />
+                    ke <br />
+                    ke <br />
+                    ke <br />
+                    ke <br />
+                    ke <br />
+                    ke <br />
+                    ke <br />
+                    ke <br />
+                    ke <br />
+                    ke <br />
+                    ke <br />
+                    ke <br />
+                    ke <br />
+                    ke <br />
+                    ke <br />
+                    ke <br />
+                    ke <br />
+                    ke <br />
+                    ke <br />
+                    ke <br />
+                    <button onClick={this.handleClickRandomPosition}>
+                      Scroll to top
+                    </button>
+                  </CustomScrollbars>
+                </CardContent>
+              </Card>
+            </div>
+            <div className="col-12 col-md-7">
+              <Card>
+                <CardContent>
+                  <h3>
+                    Mutation with graphql and access to store of apollo client
+                  </h3>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    className="jr-btn-xs"
+                    disabled={loading}
+                    onClick={this.displayStore}
+                  >
+                    Display store
+                    {loading && (
+                      <CircularProgress
+                        size={24}
+                        className="text-green position-absolute"
+                      />
+                    )}
+                  </Button>
+                </CardContent>
+                {data && <h1>{data.key}</h1>}
+              </Card>
+            </div>
           </div>
-          <CustomScrollbars
-            className="scrollbar"
-            style={{
-              height: 'calc(100vh - 459px)'
-            }}
-            ref="scrollbars"
-          >
-            ke <br />
-            ke <br />
-            ke <br />
-            ke <br />
-            ke <br />
-            ke <br />
-            ke <br />
-            ke <br />
-            ke <br />
-            ke <br />
-            ke <br />
-            ke <br />
-            ke <br />
-            ke <br />
-            ke <br />
-            ke <br />
-            ke <br />
-            ke <br />
-            ke <br />
-            ke <br />
-            ke <br />
-            ke <br />
-            ke <br />
-            ke <br />
-            ke <br />
-            ke <br />
-            ke <br />
-            ke <br />
-            ke <br />
-            ke <br />
-            ke <br />
-            ke <br />
-            ke <br />
-            ke <br />
-            ke <br />
-            <button onClick={this.handleClickRandomPosition}>
-              Scroll to top
-            </button>
-          </CustomScrollbars>
         </div>
       </div>
     );

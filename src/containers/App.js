@@ -55,6 +55,7 @@ import { NotificationContainer } from 'react-notifications';
 import { auth, messaging } from 'helper/firebase';
 
 window.$ = window.jQuery = require('jquery');
+window.__MUI_USE_NEXT_TYPOGRAPHY_VARIANTS__ = true;
 
 const RestrictedRoute = ({ component: Component, authUser, ...rest }) => (
   <Route
