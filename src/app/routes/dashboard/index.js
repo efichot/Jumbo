@@ -6,7 +6,7 @@ import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
-import { Query } from 'react-apollo'
+import { Query, Mutation } from 'react-apollo'
 import gql from 'graphql-tag'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import { NotificationManager } from 'react-notifications'
@@ -27,9 +27,21 @@ const GET_WRITER_AND_BOOKS = gql`
     }
   }
 `
+
+const ADD_BOOK = gql`
+  mutation($title: String!, $writer: String!) {
+    addBook(title: $title, writer: $writer) {
+      title
+      writerId
+    }
+  }
+`
+
 export class Dashboard extends Component {
   state = {
     writer: '',
+    title: '',
+    writer2: '',
     buttonClicked: false,
     loading: false,
     apolloStore: null
@@ -75,7 +87,7 @@ export class Dashboard extends Component {
   }
 
   render () {
-    const { buttonClicked, loading, apolloStore } = this.state
+    const { buttonClicked, loading, apolloStore, title, writer2 } = this.state
     return (
       <div className='app-wrapper'>
         <div className='dashboard animated slideInUpTiny animation-duration-5'>
@@ -141,7 +153,6 @@ export class Dashboard extends Component {
                           return (
                             <div>
                               <h1>{data.writer.name}</h1>
-                              <p className='text-grey'>{data.writer.id}</p>
                               <div className='d-flex flex-column'>
                                 {data.writer.books.map((book, index) => (
                                   <small key={index} className='text-grey'>
@@ -155,7 +166,7 @@ export class Dashboard extends Component {
                           NotificationManager.error(
                             'No writer find with this name'
                           )
-                          return <h1 />
+                          return ''
                         }
                       }}
                     </Query>}
@@ -256,6 +267,43 @@ export class Dashboard extends Component {
                   </Button>
                 </CardContent>
                 {apolloStore && <h1>{apolloStore.key}</h1>}
+                <h4 className='ml-3'>Add a book</h4>
+                <div className='d-flex justify-content-around align-items-center'>
+                  <TextField
+                    id='outlined-name'
+                    label='Writer'
+                    className=''
+                    value={this.state.writer2}
+                    onChange={e => this.setState({ writer2: e.target.value })}
+                    margin='normal'
+                    variant='outlined'
+                  />
+                  <TextField
+                    id='outlined-book'
+                    label='Title'
+                    value={this.state.title}
+                    onChange={e => this.setState({ title: e.target.value })}
+                    className=''
+                    margin='normal'
+                    variant='outlined'
+                  />
+                  <Mutation
+                    mutation={ADD_BOOK}
+                    variables={{ title, writer: writer2 }}
+                  >
+                    {mutation => (
+                      <Button
+                        variant='outlined'
+                        color='primary'
+                        className='jr-btn-xs'
+                        onClick={mutation}
+                      >
+                        Add book
+                      </Button>
+                    )}
+                  </Mutation>
+
+                </div>
               </Card>
             </div>
           </div>
