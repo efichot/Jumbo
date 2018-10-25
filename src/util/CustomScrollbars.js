@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
-import { Scrollbars } from 'react-custom-scrollbars';
+import React, { Component } from 'react'
+import { Scrollbars } from 'react-custom-scrollbars'
 
 export default class CustomScrollbars extends Component {
-  render() {
+  render () {
     return (
       <Scrollbars
         {...this.props}
@@ -11,11 +11,11 @@ export default class CustomScrollbars extends Component {
           <div
             {...props}
             style={{ display: 'none' }}
-            className="track-horizontal"
+            className='track-horizontal'
           />
         )}
-        ref="scrollbars"
+        ref='scrollbars'
       />
-    );
+    )
   }
 }

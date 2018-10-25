@@ -1,8 +1,8 @@
-import React from 'react';
-import { Breadcrumb, BreadcrumbItem } from 'reactstrap';
+import React from 'react'
+import { Breadcrumb, BreadcrumbItem } from 'reactstrap'
 
 const getDisplayString = sub => {
-  const arr = sub.split('-');
+  const arr = sub.split('-')
   if (arr.length > 1) {
     return (
       arr[0].charAt(0).toUpperCase() +
@@ -10,27 +10,27 @@ const getDisplayString = sub => {
       ' ' +
       arr[1].charAt(0).toUpperCase() +
       arr[1].slice(1)
-    );
+    )
   } else {
-    return sub.charAt(0).toUpperCase() + sub.slice(1);
+    return sub.charAt(0).toUpperCase() + sub.slice(1)
   }
-};
+}
 const getUrlString = (path, sub, index) => {
   if (index === 0) {
-    return '/';
+    return '/'
   } else {
-    return '/' + path.split(sub)[0] + sub;
+    return '/' + path.split(sub)[0] + sub
   }
-};
+}
 
 const ContainerHeader = ({ title, match }) => {
-  const path = match.path.substr(1);
-  const subPath = path.split('/');
+  const path = match.path.substr(1)
+  const subPath = path.split('/')
   return (
-    <div className="page-heading d-sm-flex justify-content-sm-between align-items-sm-center">
-      <h2 className="title mb-3 mb-sm-0">{title}</h2>
+    <div className='page-heading d-sm-flex justify-content-sm-between align-items-sm-center'>
+      <h2 className='title mb-3 mb-sm-0'>{title}</h2>
 
-      <Breadcrumb className="mb-0" tag="nav">
+      <Breadcrumb className='mb-0' tag='nav'>
         {subPath.map((sub, index) => {
           return (
             <BreadcrumbItem
@@ -41,11 +41,11 @@ const ContainerHeader = ({ title, match }) => {
             >
               {getDisplayString(sub)}
             </BreadcrumbItem>
-          );
+          )
         })}
       </Breadcrumb>
     </div>
-  );
-};
+  )
+}
 
-export default ContainerHeader;
+export default ContainerHeader

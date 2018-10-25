@@ -1,4 +1,4 @@
-import grey from '@material-ui/core/colors/grey';
+import grey from '@material-ui/core/colors/grey'
 
 export default {
   palette: {
@@ -37,14 +37,13 @@ export default {
     }
   },
   status: {
-    danger: 'orange',
+    danger: 'orange'
   },
 
   typography: {
     button: {
       fontWeight: 400,
-      textAlign:
-        'capitalize'
-    },
-  },
-};
+      textAlign: 'capitalize'
+    }
+  }
+}

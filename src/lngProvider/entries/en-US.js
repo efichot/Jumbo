@@ -1,5 +1,5 @@
-import appLocaleData from 'react-intl/locale-data/en';
-import enMessages from '../locales/en_US.json';
+import appLocaleData from 'react-intl/locale-data/en'
+import enMessages from '../locales/en_US.json'
 
 const EnLang = {
   messages: {
@@ -7,5 +7,5 @@ const EnLang = {
   },
   locale: 'en-US',
   data: appLocaleData
-};
-export default EnLang;
+}
+export default EnLang

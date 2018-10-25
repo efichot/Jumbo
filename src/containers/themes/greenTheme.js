@@ -1,5 +1,5 @@
-import green from '@material-ui/core/colors/green';
-import orange from '@material-ui/core/colors/orange';
+import green from '@material-ui/core/colors/green'
+import orange from '@material-ui/core/colors/orange'
 
 export default {
   palette: {
@@ -17,12 +17,12 @@ export default {
     }
   },
   status: {
-    danger: 'orange',
+    danger: 'orange'
   },
   typography: {
     button: {
       fontWeight: 400,
       textAlign: 'capitalize'
-    },
-  },
-};
+    }
+  }
+}

@@ -9,7 +9,7 @@ import {
   USER_SEND_MAIL_SUCCESS,
   UPDATE_ACCOUNT,
   SAVE_TOKEN_FCM
-} from 'constants/ActionTypes';
+} from 'constants/ActionTypes'
 
 const INIT_STATE = {
   loader: false,
@@ -18,7 +18,7 @@ const INIT_STATE = {
   initURL: '',
   authUser: null,
   successMessage: ''
-};
+}
 
 export default (state = INIT_STATE, action) => {
   switch (action.type) {
@@ -35,13 +35,13 @@ export default (state = INIT_STATE, action) => {
           status: 'online',
           uid: action.payload.uid
         }
-      };
+      }
     }
     case INIT_URL: {
       return {
         ...state,
         initURL: action.payload
-      };
+      }
     }
     case SIGNOUT_USER_SUCCESS: {
       return {
@@ -50,7 +50,7 @@ export default (state = INIT_STATE, action) => {
         initURL: '/app/dashboard',
         loader: false,
         status: 'offline'
-      };
+      }
     }
 
     case SHOW_MESSAGE: {
@@ -59,7 +59,7 @@ export default (state = INIT_STATE, action) => {
         alertMessage: action.payload,
         showMessage: true,
         loader: false
-      };
+      }
     }
     case HIDE_MESSAGE: {
       return {
@@ -68,19 +68,19 @@ export default (state = INIT_STATE, action) => {
         successMessage: '',
         showMessage: false,
         loader: false
-      };
+      }
     }
     case ON_SHOW_LOADER: {
       return {
         ...state,
         loader: true
-      };
+      }
     }
     case ON_HIDE_LOADER: {
       return {
         ...state,
         loader: false
-      };
+      }
     }
     case USER_SEND_MAIL_SUCCESS: {
       return {
@@ -89,7 +89,7 @@ export default (state = INIT_STATE, action) => {
         successMessage: 'Check your emails',
         showMessage: true,
         alertMessage: ''
-      };
+      }
     }
     case UPDATE_ACCOUNT: {
       return {
@@ -100,7 +100,7 @@ export default (state = INIT_STATE, action) => {
           email: action.payload.email,
           photoURL: action.payload.photoURL
         }
-      };
+      }
     }
     case SAVE_TOKEN_FCM: {
       return {
@@ -109,9 +109,9 @@ export default (state = INIT_STATE, action) => {
           ...state.authUser,
           tokenFCM: action.payload
         }
-      };
+      }
     }
     default:
-      return state;
+      return state
   }
-};
+}

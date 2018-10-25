@@ -1,5 +1,5 @@
-import appLocaleData from 'react-intl/locale-data/fr';
-import saMessages from '../locales/fr_FR.json';
+import appLocaleData from 'react-intl/locale-data/fr'
+import saMessages from '../locales/fr_FR.json'
 
 const saLang = {
   messages: {
@@ -7,5 +7,5 @@ const saLang = {
   },
   locale: 'fr-FR',
   data: appLocaleData
-};
-export default saLang;
+}
+export default saLang

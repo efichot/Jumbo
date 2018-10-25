@@ -1,5 +1,5 @@
-import deepOrange from '@material-ui/core/colors/deepOrange';
-import amber from '@material-ui/core/colors/amber';
+import deepOrange from '@material-ui/core/colors/deepOrange'
+import amber from '@material-ui/core/colors/amber'
 
 export default {
   palette: {
@@ -17,13 +17,13 @@ export default {
     }
   },
   status: {
-    danger: 'orange',
+    danger: 'orange'
   },
 
   typography: {
     button: {
       fontWeight: 400,
       textAlign: 'capitalize'
-    },
-  },
-};
+    }
+  }
+}

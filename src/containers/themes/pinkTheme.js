@@ -1,5 +1,5 @@
-import pink from '@material-ui/core/colors/pink';
-import teal from '@material-ui/core/colors/teal';
+import pink from '@material-ui/core/colors/pink'
+import teal from '@material-ui/core/colors/teal'
 
 export default {
   palette: {
@@ -17,12 +17,12 @@ export default {
     }
   },
   status: {
-    danger: 'orange',
+    danger: 'orange'
   },
   typography: {
     button: {
       fontWeight: 400,
       textAlign: 'capitalize'
-    },
-  },
-};
+    }
+  }
+}

@@ -1,10 +1,10 @@
-import firebase from 'firebase/app';
-import { NotificationManager } from 'react-notifications';
-import 'firebase/auth';
-import 'firebase/storage';
-import 'firebase/firestore';
-import 'firebase/messaging';
-import 'firebase/functions';
+import firebase from 'firebase/app'
+import { NotificationManager } from 'react-notifications'
+import 'firebase/auth'
+import 'firebase/storage'
+import 'firebase/firestore'
+import 'firebase/messaging'
+import 'firebase/functions'
 
 // Initialize Firebase
 const config = {
@@ -14,40 +14,40 @@ const config = {
   projectId: 'jumbo-react-2e67a',
   storageBucket: 'jumbo-react-2e67a.appspot.com',
   messagingSenderId: '409276958835'
-};
+}
 
-firebase.initializeApp(config);
-const auth = firebase.auth();
-const storage = firebase.storage();
-const functions = firebase.functions();
+firebase.initializeApp(config)
+const auth = firebase.auth()
+const storage = firebase.storage()
+const functions = firebase.functions()
 
-const googleAuthProvider = new firebase.auth.GoogleAuthProvider();
-const facebookAuthProvider = new firebase.auth.FacebookAuthProvider();
-const githubAuthProvider = new firebase.auth.GithubAuthProvider();
-const twitterAuthProvider = new firebase.auth.TwitterAuthProvider();
+const googleAuthProvider = new firebase.auth.GoogleAuthProvider()
+const facebookAuthProvider = new firebase.auth.FacebookAuthProvider()
+const githubAuthProvider = new firebase.auth.GithubAuthProvider()
+const twitterAuthProvider = new firebase.auth.TwitterAuthProvider()
 
-const db = firebase.firestore();
-const settings = { timestampsInSnapshots: true };
-db.settings(settings);
+const db = firebase.firestore()
+const settings = { timestampsInSnapshots: true }
+db.settings(settings)
 
 // FCM
-const messaging = firebase.messaging();
+const messaging = firebase.messaging()
 
 messaging
   .requestPermission()
   .then(() => {
-    console.log('Have Permission');
-    return messaging.getToken();
+    console.log('Have Permission')
+    return messaging.getToken()
   })
   .then(token => {
-    console.log(token);
+    console.log(token)
   })
-  .catch(console.log('Error Occured'));
+  .catch(console.log('Error Occured'))
 
-messaging.onMessage(function(payload) {
-  console.log('Message received. ', payload);
-  NotificationManager.info(payload.notification.body);
-});
+messaging.onMessage(function (payload) {
+  console.log('Message received. ', payload)
+  NotificationManager.info(payload.notification.body)
+})
 
 export {
   firebase,
@@ -60,4 +60,4 @@ export {
   githubAuthProvider,
   facebookAuthProvider,
   twitterAuthProvider
-};
+}

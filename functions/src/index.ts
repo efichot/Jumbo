@@ -1,40 +1,40 @@
-import * as functions from 'firebase-functions';
-import * as admin from 'firebase-admin';
-import * as express from 'express';
-import * as bodyParser from 'body-parser';
-import * as cors from 'cors';
-import * as algoliasearch from 'algoliasearch';
-import { ApolloServer, gql } from 'apollo-server-express';
-import * as Stripe from 'stripe';
+import * as functions from 'firebase-functions'
+import * as admin from 'firebase-admin'
+import * as express from 'express'
+import * as bodyParser from 'body-parser'
+import * as cors from 'cors'
+import * as algoliasearch from 'algoliasearch'
+import { ApolloServer, gql } from 'apollo-server-express'
+import * as Stripe from 'stripe'
 
 /////////* Admin SDK config */////////////
-admin.initializeApp();
-const env = functions.config();
+admin.initializeApp()
+const env = functions.config()
 
-const db = admin.firestore();
-const settings = { timestampsInSnapshots: true };
-db.settings(settings);
+const db = admin.firestore()
+const settings = { timestampsInSnapshots: true }
+db.settings(settings)
 
 /////////* Algolia config *///////////////
-const client = algoliasearch(env.algolia.appid, env.algolia.apikey);
-const index = client.initIndex('jumbo');
+const client = algoliasearch(env.algolia.appid, env.algolia.apikey)
+const index = client.initIndex('jumbo')
 
 ////////* Stripe config */////////////////
-const stripe = new Stripe(functions.config().stripe.secret);
+const stripe = new Stripe(functions.config().stripe.secret)
 
 /////////* EXPRESS config */////////////
 
-const app = express();
+const app = express()
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cors({ origin: true }));
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(cors({ origin: true }))
 
 /////////* EXPRESS EndPoints */////////////
 
 app.get('/hello', (req, res) => {
-  res.send('Hello from firebase!');
-});
+  res.send('Hello from firebase!')
+})
 
 /////////* APOLLO SERVER */////////////
 
@@ -56,7 +56,7 @@ const typeDefs = gql`
     books: [Book]!
     auteur(name: String!): Auteur
   }
-`;
+`
 
 const resolvers = {
   Book: {
@@ -65,10 +65,10 @@ const resolvers = {
         const doc = await db
           .collection('auteurs')
           .doc(book.auteurId)
-          .get();
-        return doc.data();
+          .get()
+        return doc.data()
       } catch (e) {
-        console.log(e);
+        console.log(e)
       }
     }
   },
@@ -79,10 +79,10 @@ const resolvers = {
         const docs = await db
           .collection('books')
           .where('auteurId', '==', user.id)
-          .get();
-        return docs.docs.map(doc => doc.data());
+          .get()
+        return docs.docs.map(doc => doc.data())
       } catch (e) {
-        console.log(e);
+        console.log(e)
       }
     }
   },
@@ -90,10 +90,10 @@ const resolvers = {
   Query: {
     async books() {
       try {
-        const docs = await db.collection('books').get();
-        return docs.docs.map(doc => doc.data());
+        const docs = await db.collection('books').get()
+        return docs.docs.map(doc => doc.data())
       } catch (e) {
-        console.log(e);
+        console.log(e)
       }
     },
 
@@ -102,24 +102,24 @@ const resolvers = {
         const docs = await db
           .collection('auteurs')
           .where('name', '==', args.name)
-          .get();
-        return docs.docs[0].data();
+          .get()
+        return docs.docs[0].data()
       } catch (e) {
-        console.log(e);
+        console.log(e)
       }
     }
   }
-};
+}
 
 const server = new ApolloServer({
   typeDefs,
   resolvers,
   introspection: true
-});
+})
 
-server.applyMiddleware({ app, path: '/' });
+server.applyMiddleware({ app, path: '/' })
 
-const api = functions.https.onRequest(app);
+const api = functions.https.onRequest(app)
 
 /////////* CALLABLE FUNCTIONS */////////////
 
@@ -128,56 +128,56 @@ const subscribeToTopic = functions.https.onCall((data, context) => {
     throw new functions.https.HttpsError(
       'failed-precondition',
       'The function must be called while authenticated'
-    );
+    )
   }
-  const { token, topic } = data;
+  const { token, topic } = data
   return admin
     .messaging()
     .subscribeToTopic(token, topic)
     .then(() => {
-      console.log(`Subscribe to topic:${topic}`);
-      return { done: true, message: `Subscribe to topic:${topic}` };
+      console.log(`Subscribe to topic:${topic}`)
+      return { done: true, message: `Subscribe to topic:${topic}` }
     })
     .catch(e => {
-      console.log(e);
-      return { done: false, message: e };
-    });
-});
+      console.log(e)
+      return { done: false, message: e }
+    })
+})
 
 const unsubscribeFromTopic = functions.https.onCall((data, context) => {
   if (!context.auth) {
     throw new functions.https.HttpsError(
       'failed-precondition',
       'The function must be called while authenticated'
-    );
+    )
   }
-  const { token, topic } = data;
+  const { token, topic } = data
   return admin
     .messaging()
     .unsubscribeFromTopic(token, topic)
     .then(() => {
-      console.log(`Unsubscribe from topic:${topic}`);
-      return { done: true, message: `Subscribe to topic:${topic}` };
+      console.log(`Unsubscribe from topic:${topic}`)
+      return { done: true, message: `Subscribe to topic:${topic}` }
     })
     .catch(e => {
-      console.log(e);
-      return { done: false, message: e };
-    });
-});
+      console.log(e)
+      return { done: false, message: e }
+    })
+})
 
 const sendPushMessageToTopic = functions.https.onCall((data, context) => {
   if (!context.auth) {
     throw new functions.https.HttpsError(
       'failed-precondition',
       'The function must be called while authenticated'
-    );
+    )
   }
 
-  const { topic } = data;
+  const { topic } = data
   const notification = {
     title: 'Notification push',
     body: `Notif push for the topic: ${topic} 😍`
-  };
+  }
   const payload = {
     notification,
     webpush: {
@@ -194,20 +194,20 @@ const sendPushMessageToTopic = functions.https.onCall((data, context) => {
       }
     },
     topic: topic
-  };
+  }
 
   return admin
     .messaging()
     .send(payload)
     .then(() => {
-      console.log('Notification push send!');
-      return { done: true, message: `Notification push send!` };
+      console.log('Notification push send!')
+      return { done: true, message: `Notification push send!` }
     })
     .catch(e => {
-      console.log(e);
-      return { done: false, message: e };
-    });
-});
+      console.log(e)
+      return { done: false, message: e }
+    })
+})
 
 const saveStripeTokenAndCreateStripeUser = functions.https.onCall(
   async (data, context) => {
@@ -215,13 +215,13 @@ const saveStripeTokenAndCreateStripeUser = functions.https.onCall(
       throw new functions.https.HttpsError(
         'failed-precondition',
         'The function must be called while authenticated'
-      );
+      )
     }
-    const { token } = data;
+    const { token } = data
     try {
       const customer = await stripe.customers.create({
         metadata: { firebaseUID: context.auth.uid }
-      });
+      })
       return db
         .collection('users')
         .doc(context.auth.uid)
@@ -232,12 +232,12 @@ const saveStripeTokenAndCreateStripeUser = functions.https.onCall(
         .then(() => ({
           done: true,
           message: 'user document updated with stripeId and token'
-        }));
+        }))
     } catch (e) {
-      return { done: false, message: e };
+      return { done: false, message: e }
     }
   }
-);
+)
 
 /////////* FIRESTORE Functions */////////////
 
@@ -248,14 +248,14 @@ const addTodo = functions.firestore
     return index.addObject({
       ...snap.data(),
       objectID: snap.id
-    });
-  });
+    })
+  })
 
 const deleteTodo = functions.firestore
   .document('todos/{todoId}')
   .onDelete((snap, context) => {
     // delete from algolia
-    index.deleteObject(snap.id);
+    index.deleteObject(snap.id)
     db.collection('trash')
       .add({
         ...snap.data(),
@@ -264,10 +264,10 @@ const deleteTodo = functions.firestore
       .then(docRef => {
         console.log(
           `Todo ${docRef.id} deleted, and add to the trash collection`
-        );
+        )
       })
-      .catch(e => console.log(e));
-  });
+      .catch(e => console.log(e))
+  })
 
 //////////* AUTH Functions */////////////////
 
@@ -285,16 +285,16 @@ const userCreate = functions.auth.user().onCreate(user => {
       chats: {}
     })
     .then(() => console.log('User added to the users collection'))
-    .catch(e => console.log(e));
-});
+    .catch(e => console.log(e))
+})
 
 const userDelete = functions.auth.user().onDelete(user => {
   db.collection('users')
     .doc(user.uid)
     .delete()
     .then(() => console.log('User deleted to the users collection'))
-    .catch(e => console.log(e));
-});
+    .catch(e => console.log(e))
+})
 
 module.exports = {
   api,
@@ -306,4 +306,4 @@ module.exports = {
   unsubscribeFromTopic,
   sendPushMessageToTopic,
   saveStripeTokenAndCreateStripeUser
-};
+}

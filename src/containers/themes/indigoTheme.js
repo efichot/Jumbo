@@ -1,5 +1,5 @@
-import indigo from '@material-ui/core/colors/indigo';
-import pink from '@material-ui/core/colors/pink';
+import indigo from '@material-ui/core/colors/indigo'
+import pink from '@material-ui/core/colors/pink'
 
 export default {
   palette: {
@@ -17,12 +17,12 @@ export default {
     }
   },
   status: {
-    danger: 'orange',
+    danger: 'orange'
   },
   typography: {
     button: {
       fontWeight: 400,
       textAlign: 'capitalize'
-    },
-  },
-};
+    }
+  }
+}

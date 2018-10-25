@@ -1,5 +1,5 @@
-import ApolloClient from 'apollo-boost';
-import gql from 'graphql-tag';
+import ApolloClient from 'apollo-boost'
+import gql from 'graphql-tag'
 
 const client = new ApolloClient({
   uri: process.env.REACT_APP_GRAPHQL_ENDPOINT,
@@ -14,6 +14,6 @@ const client = new ApolloClient({
       }
     `
   }
-});
+})
 
-export default client;
+export default client

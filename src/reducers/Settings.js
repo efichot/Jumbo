@@ -11,10 +11,10 @@ import {
   TOGGLE_COLLAPSED_NAV,
   VERTICAL_NAVIGATION,
   WINDOW_WIDTH
-} from 'constants/ActionTypes';
-import { DARK_INDIGO } from 'constants/ThemeColors';
+} from 'constants/ActionTypes'
+import { DARK_INDIGO } from 'constants/ThemeColors'
 
-const rltLocale = ['ar'];
+const rltLocale = ['ar']
 const initialSettings = {
   navCollapsed: false,
   drawerType: FIXED_DRAWER,
@@ -30,7 +30,7 @@ const initialSettings = {
     name: 'English',
     icon: 'us'
   }
-};
+}
 
 const settings = (state = initialSettings, action) => {
   switch (action.type) {
@@ -38,60 +38,60 @@ const settings = (state = initialSettings, action) => {
       return {
         ...state,
         navCollapsed: false
-      };
+      }
     case TOGGLE_COLLAPSED_NAV:
       return {
         ...state,
         navCollapsed: action.isNavCollapsed
-      };
+      }
     case DRAWER_TYPE:
       return {
         ...state,
         drawerType: action.drawerType
-      };
+      }
     case WINDOW_WIDTH:
       return {
         ...state,
         width: action.width
-      };
+      }
     case THEME_COLOR:
       return {
         ...state,
         darkTheme: false,
         themeColor: action.color
-      };
+      }
     case DARK_THEME:
       return {
         ...state,
         darkTheme: !state.darkTheme
-      };
+      }
     case SWITCH_LANGUAGE:
       return {
         ...state,
         locale: action.payload,
         isDirectionRTL: rltLocale.includes(action.payload.locale)
-      };
+      }
     case CHANGE_DIRECTION:
       return {
         ...state,
         isDirectionRTL: !state.isDirectionRTL
-      };
+      }
 
     case CHANGE_NAVIGATION_STYLE:
       return {
         ...state,
         navigationStyle: action.payload
-      };
+      }
 
     case HORIZONTAL_MENU_POSITION:
       return {
         ...state,
         horizontalNavPosition: action.payload
-      };
+      }
 
     default:
-      return state;
+      return state
   }
-};
+}
 
-export default settings;
+export default settings

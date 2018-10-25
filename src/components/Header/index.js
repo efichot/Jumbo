@@ -1,30 +1,30 @@
-import React from 'react';
-import { Link, withRouter } from 'react-router-dom';
-import { connect } from 'react-redux';
-import AppBar from '@material-ui/core/AppBar';
-import Avatar from '@material-ui/core/Avatar';
-import Toolbar from '@material-ui/core/Toolbar';
-import IconButton from '@material-ui/core/IconButton';
-import { Dropdown, DropdownMenu, DropdownToggle } from 'reactstrap';
+import React from 'react'
+import { Link, withRouter } from 'react-router-dom'
+import { connect } from 'react-redux'
+import AppBar from '@material-ui/core/AppBar'
+import Avatar from '@material-ui/core/Avatar'
+import Toolbar from '@material-ui/core/Toolbar'
+import IconButton from '@material-ui/core/IconButton'
+import { Dropdown, DropdownMenu, DropdownToggle } from 'reactstrap'
 import {
   BELOW_THE_HEADER,
   COLLAPSED_DRAWER,
   FIXED_DRAWER,
   HORIZONTAL_NAVIGATION,
   INSIDE_THE_HEADER
-} from 'constants/ActionTypes';
-import SearchBox from 'components/SearchBox';
-import MailNotification from '../MailNotification/index';
-import AppNotification from '../AppNotification/index';
-import CardHeader from 'components/dashboard/Common/CardHeader/index';
-import { switchLanguage, toggleCollapsedNav } from 'actions/Setting';
-import IntlMessages from 'util/IntlMessages';
-import LanguageSwitcher from 'components/LanguageSwitcher/index';
-import Menu from 'components/TopNav/Menu';
-import UserInfoPopup from 'components/UserInfo/UserInfoPopup';
-import iota from 'assets/images/iota_light.svg';
-import defaultPhoto from 'assets/images/placeholder.jpg';
-import { db } from 'helper/firebase';
+} from 'constants/ActionTypes'
+import SearchBox from 'components/SearchBox'
+import MailNotification from '../MailNotification/index'
+import AppNotification from '../AppNotification/index'
+import CardHeader from 'components/dashboard/Common/CardHeader/index'
+import { switchLanguage, toggleCollapsedNav } from 'actions/Setting'
+import IntlMessages from 'util/IntlMessages'
+import LanguageSwitcher from 'components/LanguageSwitcher/index'
+import Menu from 'components/TopNav/Menu'
+import UserInfoPopup from 'components/UserInfo/UserInfoPopup'
+import iota from 'assets/images/iota_light.svg'
+import defaultPhoto from 'assets/images/placeholder.jpg'
+import { db } from 'helper/firebase'
 
 class Header extends React.Component {
   state = {
@@ -36,44 +36,41 @@ class Header extends React.Component {
     langSwitcher: false,
     appNotification: false,
     messages: []
-  };
+  }
 
   componentDidMount = () => {
-    const { uid } = this.props.authUser;
-    db.collection('users')
-      .doc(uid)
-      .onSnapshot(doc => {
-        if (doc.exists)
-          this.setState({ messages: Object.values(doc.data().messages) });
-      });
-  };
+    const { uid } = this.props.authUser
+    db.collection('users').doc(uid).onSnapshot(doc => {
+      if (doc.exists) { this.setState({ messages: Object.values(doc.data().messages) }) }
+    })
+  }
 
   onAppNotificationSelect = () => {
     this.setState({
       appNotification: !this.state.appNotification
-    });
-  };
+    })
+  }
   onMailNotificationSelect = () => {
     this.setState({
       mailNotification: !this.state.mailNotification
-    });
-  };
+    })
+  }
   onLangSwitcherSelect = event => {
     this.setState({
       langSwitcher: !this.state.langSwitcher,
       anchorEl: event.currentTarget
-    });
-  };
+    })
+  }
   onSearchBoxSelect = () => {
     this.setState({
       searchBox: !this.state.searchBox
-    });
-  };
+    })
+  }
   onUserInfoSelect = () => {
     this.setState({
       userInfo: !this.state.userInfo
-    });
-  };
+    })
+  }
   handleRequestClose = () => {
     this.setState({
       langSwitcher: false,
@@ -81,114 +78,104 @@ class Header extends React.Component {
       mailNotification: false,
       appNotification: false,
       searchBox: false
-    });
-  };
+    })
+  }
 
   onToggleCollapsedNav = e => {
-    const val = !this.props.navCollapsed;
-    this.props.toggleCollapsedNav(val);
-  };
+    const val = !this.props.navCollapsed
+    this.props.toggleCollapsedNav(val)
+  }
 
   clearMessages = () => {
-    const { uid } = this.props.authUser;
-    db.collection('users')
-      .doc(uid)
-      .update({
-        messages: {}
-      });
-  };
+    const { uid } = this.props.authUser
+    db.collection('users').doc(uid).update({
+      messages: {}
+    })
+  }
 
-  render() {
+  render () {
     const {
       drawerType,
       locale,
       navigationStyle,
       horizontalNavPosition,
       authUser
-    } = this.props;
-    const { messages } = this.state;
+    } = this.props
+    const { messages } = this.state
     const drawerStyle = drawerType.includes(FIXED_DRAWER)
       ? 'd-block d-xl-none'
-      : drawerType.includes(COLLAPSED_DRAWER)
-        ? 'd-block'
-        : 'd-none';
+      : drawerType.includes(COLLAPSED_DRAWER) ? 'd-block' : 'd-none'
 
     return (
       <AppBar
-        className={`app-main-header ${
-          navigationStyle === HORIZONTAL_NAVIGATION &&
-          horizontalNavPosition === BELOW_THE_HEADER
-            ? 'app-main-header-top'
-            : ''
-        }`}
+        className={`app-main-header ${navigationStyle === HORIZONTAL_NAVIGATION && horizontalNavPosition === BELOW_THE_HEADER ? 'app-main-header-top' : ''}`}
       >
-        <Toolbar className="app-toolbar" disableGutters={false}>
-          {navigationStyle === HORIZONTAL_NAVIGATION ? (
-            <div
-              className="d-block d-md-none pointer mr-3"
+        <Toolbar className='app-toolbar' disableGutters={false}>
+          {navigationStyle === HORIZONTAL_NAVIGATION
+            ? <div
+              className='d-block d-md-none pointer mr-3'
               onClick={this.onToggleCollapsedNav}
-            >
-              <span className="jr-menu-icon">
-                <span className="menu-icon" />
+              >
+              <span className='jr-menu-icon'>
+                <span className='menu-icon' />
               </span>
             </div>
-          ) : (
-            <IconButton
+            : <IconButton
               className={`jr-menu-icon mr-3 ${drawerStyle}`}
-              aria-label="Menu"
+              aria-label='Menu'
               onClick={this.onToggleCollapsedNav}
-            >
-              <span className="menu-icon" />
-            </IconButton>
-          )}
+              >
+              <span className='menu-icon' />
+            </IconButton>}
 
-          <Link className="app-logo mr-2 d-none d-sm-block" to="/">
-            <img src={iota} alt="Jambo" title="Jambo" />
+          <Link className='app-logo mr-2 d-none d-sm-block' to='/'>
+            <img src={iota} alt='Jambo' title='Jambo' />
           </Link>
 
-          <SearchBox styleName="d-none d-md-block" placeholder="" />
+          <SearchBox styleName='d-none d-md-block' placeholder='' />
           {navigationStyle === HORIZONTAL_NAVIGATION &&
-            horizontalNavPosition === INSIDE_THE_HEADER && <Menu />}
+            horizontalNavPosition === INSIDE_THE_HEADER &&
+            <Menu />}
 
-          <ul className="header-notifications list-inline ml-auto">
-            <li className="d-inline-block d-md-none list-inline-item">
+          <ul className='header-notifications list-inline ml-auto'>
+            <li className='d-inline-block d-md-none list-inline-item'>
               <Dropdown
-                className="quick-menu nav-searchbox"
+                className='quick-menu nav-searchbox'
                 isOpen={this.state.searchBox}
                 toggle={this.onSearchBoxSelect.bind(this)}
               >
                 <DropdownToggle
-                  className="d-inline-block"
-                  tag="span"
-                  data-toggle="dropdown"
+                  className='d-inline-block'
+                  tag='span'
+                  data-toggle='dropdown'
                 >
-                  <IconButton className="icon-btn">
-                    <i className="zmdi zmdi-search zmdi-hc-fw" />
+                  <IconButton className='icon-btn'>
+                    <i className='zmdi zmdi-search zmdi-hc-fw' />
                   </IconButton>
                 </DropdownToggle>
 
-                <DropdownMenu right className="p-0">
-                  <SearchBox styleName="search-dropdown" placeholder="" />
+                <DropdownMenu right className='p-0'>
+                  <SearchBox styleName='search-dropdown' placeholder='' />
                 </DropdownMenu>
               </Dropdown>
             </li>
-            <li className="list-inline-item p-0">
+            <li className='list-inline-item p-0'>
               <Dropdown
-                className="quick-menu"
+                className='quick-menu'
                 isOpen={this.state.langSwitcher}
                 toggle={this.onLangSwitcherSelect.bind(this)}
               >
                 <DropdownToggle
-                  className="d-inline-block"
-                  tag="span"
-                  data-toggle="dropdown"
+                  className='d-inline-block'
+                  tag='span'
+                  data-toggle='dropdown'
                 >
-                  <IconButton className="icon-btn font-size-20">
+                  <IconButton className='icon-btn font-size-20'>
                     <i className={`flag flag-24 flag-${locale.icon}`} />
                   </IconButton>
                 </DropdownToggle>
 
-                <DropdownMenu right className="w-50">
+                <DropdownMenu right className='w-50'>
                   <LanguageSwitcher
                     switchLanguage={this.props.switchLanguage}
                     handleRequestClose={this.handleRequestClose}
@@ -196,55 +183,53 @@ class Header extends React.Component {
                 </DropdownMenu>
               </Dropdown>
             </li>
-            <li className="list-inline-item app-tour p-0">
+            <li className='list-inline-item app-tour p-0'>
               <Dropdown
-                className="quick-menu"
+                className='quick-menu'
                 isOpen={this.state.appNotification}
                 toggle={this.onAppNotificationSelect.bind(this)}
               >
                 <DropdownToggle
-                  className="d-inline-block"
-                  tag="span"
-                  data-toggle="dropdown"
+                  className='d-inline-block'
+                  tag='span'
+                  data-toggle='dropdown'
                 >
-                  <IconButton className="icon-btn font-size-20">
-                    <i className="zmdi zmdi-notifications-active icon-alert animated swing" />
+                  <IconButton className='icon-btn font-size-20'>
+                    <i className='zmdi zmdi-notifications-active icon-alert animated swing' />
                   </IconButton>
                 </DropdownToggle>
 
                 <DropdownMenu right>
                   <CardHeader
-                    styleName="align-items-center"
-                    heading={<IntlMessages id="appNotification.title" />}
+                    styleName='align-items-center'
+                    heading={<IntlMessages id='appNotification.title' />}
                   />
                   <AppNotification />
                 </DropdownMenu>
               </Dropdown>
             </li>
-            <li className="list-inline-item mail-tour p-0">
+            <li className='list-inline-item mail-tour p-0'>
               <Dropdown
-                className="quick-menu"
+                className='quick-menu'
                 isOpen={this.state.mailNotification}
                 toggle={this.onMailNotificationSelect.bind(this)}
               >
                 <DropdownToggle
-                  className="d-inline-block"
-                  tag="span"
-                  data-toggle="dropdown"
+                  className='d-inline-block'
+                  tag='span'
+                  data-toggle='dropdown'
                 >
-                  <IconButton className="icon-btn font-size-20">
+                  <IconButton className='icon-btn font-size-20'>
                     <i
-                      className={`zmdi zmdi-comment-alt-text zmdi-hc-fw animated ${
-                        messages.length ? 'icon-alert swing' : ''
-                      }`}
+                      className={`zmdi zmdi-comment-alt-text zmdi-hc-fw animated ${messages.length ? 'icon-alert swing' : ''}`}
                     />
                   </IconButton>
                 </DropdownToggle>
 
                 <DropdownMenu right>
                   <CardHeader
-                    styleName="align-items-center"
-                    heading={<IntlMessages id="mailNotification.title" />}
+                    styleName='align-items-center'
+                    heading={<IntlMessages id='mailNotification.title' />}
                     clearData={this.clearMessages}
                   />
                   <MailNotification messages={messages} />
@@ -252,23 +237,23 @@ class Header extends React.Component {
               </Dropdown>
             </li>
 
-            {navigationStyle === HORIZONTAL_NAVIGATION && (
-              <li className="list-inline-item user-nav">
+            {navigationStyle === HORIZONTAL_NAVIGATION &&
+              <li className='list-inline-item user-nav'>
                 <Dropdown
-                  className="quick-menu"
+                  className='quick-menu'
                   isOpen={this.state.userInfo}
                   toggle={this.onUserInfoSelect.bind(this)}
                 >
                   <DropdownToggle
-                    className="d-inline-block"
-                    tag="span"
-                    data-toggle="dropdown"
+                    className='d-inline-block'
+                    tag='span'
+                    data-toggle='dropdown'
                   >
-                    <IconButton className="icon-btn size-30">
+                    <IconButton className='icon-btn size-30'>
                       <Avatar
-                        alt="..."
+                        alt='...'
                         src={authUser.photoURL || defaultPhoto}
-                        className="size-30"
+                        className='size-30'
                       />
                     </IconButton>
                   </DropdownToggle>
@@ -277,12 +262,11 @@ class Header extends React.Component {
                     <UserInfoPopup />
                   </DropdownMenu>
                 </Dropdown>
-              </li>
-            )}
+              </li>}
           </ul>
         </Toolbar>
       </AppBar>
-    );
+    )
   }
 }
 
@@ -292,20 +276,17 @@ const mapStateToProps = ({ settings, auth }) => {
     locale,
     navigationStyle,
     horizontalNavPosition
-  } = settings;
-  const { authUser } = auth;
+  } = settings
+  const { authUser } = auth
   return {
     drawerType,
     locale,
     navigationStyle,
     horizontalNavPosition,
     authUser
-  };
-};
+  }
+}
 
 export default withRouter(
-  connect(
-    mapStateToProps,
-    { toggleCollapsedNav, switchLanguage }
-  )(Header)
-);
+  connect(mapStateToProps, { toggleCollapsedNav, switchLanguage })(Header)
+)

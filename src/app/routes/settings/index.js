@@ -1,31 +1,31 @@
-import React, { Component, Fragment } from 'react';
-import { connect } from 'react-redux';
-import ContainerHeader from 'components/ContainerHeader/index';
-import IntlMessages from 'util/IntlMessages';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import CardActions from '@material-ui/core/CardActions';
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-import Switch from '@material-ui/core/Switch';
-import Dropzone from 'react-dropzone';
-import { db, auth, storage } from 'helper/firebase';
-import { updateAccount, showAuthMessage, hideMessage } from 'actions/Auth';
-import { NotificationManager } from 'react-notifications';
-import SweetAlert from 'react-bootstrap-sweetalert';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import FormControl from '@material-ui/core/FormControl';
-import Input from '@material-ui/core/Input';
-import InputLabel from '@material-ui/core/InputLabel';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import Visibility from '@material-ui/icons/Visibility';
-import VisibilityOff from '@material-ui/icons/VisibilityOff';
-import IconButton from '@material-ui/core/IconButton';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import DialogContentText from '@material-ui/core/DialogContentText';
+import React, { Component, Fragment } from 'react'
+import { connect } from 'react-redux'
+import ContainerHeader from 'components/ContainerHeader/index'
+import IntlMessages from 'util/IntlMessages'
+import Card from '@material-ui/core/Card'
+import CardContent from '@material-ui/core/CardContent'
+import CardActions from '@material-ui/core/CardActions'
+import Button from '@material-ui/core/Button'
+import TextField from '@material-ui/core/TextField'
+import Switch from '@material-ui/core/Switch'
+import Dropzone from 'react-dropzone'
+import { db, auth, storage } from 'helper/firebase'
+import { updateAccount, showAuthMessage, hideMessage } from 'actions/Auth'
+import { NotificationManager } from 'react-notifications'
+import SweetAlert from 'react-bootstrap-sweetalert'
+import CircularProgress from '@material-ui/core/CircularProgress'
+import FormControl from '@material-ui/core/FormControl'
+import Input from '@material-ui/core/Input'
+import InputLabel from '@material-ui/core/InputLabel'
+import InputAdornment from '@material-ui/core/InputAdornment'
+import Visibility from '@material-ui/icons/Visibility'
+import VisibilityOff from '@material-ui/icons/VisibilityOff'
+import IconButton from '@material-ui/core/IconButton'
+import Dialog from '@material-ui/core/Dialog'
+import DialogActions from '@material-ui/core/DialogActions'
+import DialogContent from '@material-ui/core/DialogContent'
+import DialogTitle from '@material-ui/core/DialogTitle'
+import DialogContentText from '@material-ui/core/DialogContentText'
 export class Settings extends Component {
   state = {
     name: '',
@@ -41,103 +41,95 @@ export class Settings extends Component {
     showConfirmPassword: false,
     match: false,
     success: false
-  };
+  }
 
-  componentDidUpdate() {
+  componentDidUpdate () {
     if (this.props.showMessage) {
       setTimeout(() => {
-        this.props.hideMessage();
-      }, 100);
+        this.props.hideMessage()
+      }, 100)
     }
   }
 
   componentDidMount = () => {
     this.props.authUser.emailVerified &&
-      this.setState({ verified: this.props.authUser.emailVerified });
+      this.setState({ verified: this.props.authUser.emailVerified })
     this.props.authUser.displayName &&
-      this.setState({ name: this.props.authUser.displayName });
+      this.setState({ name: this.props.authUser.displayName })
     this.props.authUser.email &&
-      this.setState({ email: this.props.authUser.email });
-  };
+      this.setState({ email: this.props.authUser.email })
+  }
 
   toggleWarning = () => {
-    this.setState({ warning: !this.state.warning });
-  };
+    this.setState({ warning: !this.state.warning })
+  }
 
   togglePass = () => {
     this.setState({
       pass: !this.state.pass,
       password: '',
       confirmPassword: ''
-    });
-  };
+    })
+  }
 
   deleteAccount = () => {
-    const user = auth.currentUser;
+    const user = auth.currentUser
     user
       .delete()
       .then(() => console.log('User account delete'))
-      .catch(e => this.props.showAuthMessage(e.message));
+      .catch(e => this.props.showAuthMessage(e.message))
     if (user.photoURL) {
       storage
         .ref()
         .child(`userPhoto/${user.uid}`)
         .delete()
         .then(() => console.log('Photo deleted inside the bucket'))
-        .catch(e => console.log(e));
+        .catch(e => console.log(e))
     }
-    this.toggleWarning();
-  };
+    this.toggleWarning()
+  }
 
   updateAccount = () => {
-    const { name, email, file } = this.state;
-    const user = auth.currentUser;
-    this.setState({ loading: true });
+    const { name, email, file } = this.state
+    const user = auth.currentUser
+    this.setState({ loading: true })
     file &&
       storage
         .ref()
         .child(`userPhoto/${user.uid}`)
         .put(file)
         .then(() =>
-          storage
-            .ref()
-            .child(`userPhoto/${user.uid}`)
-            .getDownloadURL()
+          storage.ref().child(`userPhoto/${user.uid}`).getDownloadURL()
         )
         .then(url => {
-          db.collection('users')
-            .doc(user.uid)
-            .update({
-              displayName: name,
-              photoURL: url
-            });
+          db.collection('users').doc(user.uid).update({
+            displayName: name,
+            photoURL: url
+          })
           return user.updateProfile({
             displayName: name,
             photoURL: url
-          });
+          })
         })
         .then(() => user.updateEmail(email))
         .then(() =>
-          db
-            .collection('users')
-            .doc(user.uid)
-            .update({
-              email
-            })
+          db.collection('users').doc(user.uid).update({
+            email
+          })
         )
         .then(() => {
-          console.log('Account updated');
+          console.log('Account updated')
           this.props.updateAccount({
             name: user.displayName,
             email: user.email,
             photoURL: user.photoURL
-          });
-          this.setState({ file: null, loading: false });
+          })
+          this.setState({ file: null, loading: false })
         })
         .catch(e => {
-          this.props.showAuthMessage(e.message);
-          this.setState({ loading: false });
-        });
+          this.props.showAuthMessage(e.message)
+          this.setState({ loading: false })
+        })
 
     !file &&
       user
@@ -145,58 +137,52 @@ export class Settings extends Component {
           displayName: name
         })
         .then(() =>
-          db
-            .collection('users')
-            .doc(user.uid)
-            .update({
-              displayName: name
-            })
+          db.collection('users').doc(user.uid).update({
+            displayName: name
+          })
         )
         .then(() => user.updateEmail(email))
         .then(() =>
-          db
-            .collection('users')
-            .doc(user.uid)
-            .update({
-              email
-            })
+          db.collection('users').doc(user.uid).update({
+            email
+          })
         )
         .then(() => {
-          console.log('Account updated');
+          console.log('Account updated')
           this.props.updateAccount({
             name: user.displayName,
             email: user.email,
             photoURL: user.photoURL
-          });
-          this.setState({ loading: false, success: true });
+          })
+          this.setState({ loading: false, success: true })
         })
-        .catch(e => this.props.showAuthMessage(e.message));
-  };
+        .catch(e => this.props.showAuthMessage(e.message))
+  }
 
   handleClickShowPassword = () => {
-    this.setState(state => ({ showPassword: !state.showPassword }));
-  };
+    this.setState(state => ({ showPassword: !state.showPassword }))
+  }
 
   handleClickShowConfirmPassword = () => {
     this.setState(state => ({
       showConfirmPassword: !state.showConfirmPassword
-    }));
-  };
+    }))
+  }
 
   changePass = () => {
-    const user = auth.currentUser;
-    this.setState({ loading: true });
+    const user = auth.currentUser
+    this.setState({ loading: true })
 
     user
       .updatePassword(this.state.password)
       .then(() => {
-        console.log('Password updated');
-        this.setState({ success: true, pass: false, loading: false });
+        console.log('Password updated')
+        this.setState({ success: true, pass: false, loading: false })
       })
-      .catch(e => this.props.showAuthMessage(e.message));
-  };
+      .catch(e => this.props.showAuthMessage(e.message))
+  }
 
-  render() {
+  render () {
     const {
       file,
       warning,
@@ -207,152 +193,146 @@ export class Settings extends Component {
       showPassword,
       showConfirmPassword,
       success
-    } = this.state;
-    const { authUser, showMessage, alertMessage } = this.props;
+    } = this.state
+    const { authUser, showMessage, alertMessage } = this.props
     return (
-      <div className="app-wrapper">
-        <div className="dashboard animated slideInUpTiny animation-duration-3">
+      <div className='app-wrapper'>
+        <div className='dashboard animated slideInUpTiny animation-duration-3'>
           <ContainerHeader
             match={this.props.match}
-            title={<IntlMessages id="popup.setting" />}
+            title={<IntlMessages id='popup.setting' />}
           />
           <Card>
             <CardContent>
-              <div className="container">
-                <div className="row">
-                  <div className="col-3 align-self-end">
+              <div className='container'>
+                <div className='row'>
+                  <div className='col-3 align-self-end'>
                     <h3>
-                      <IntlMessages id="settings.changeName" />:
+                      <IntlMessages id='settings.changeName' />:
                     </h3>
                   </div>
-                  <div className="col">
+                  <div className='col'>
                     <TextField
-                      type="text"
-                      label="Name"
+                      type='text'
+                      label='Name'
                       onChange={event =>
-                        this.setState({ name: event.target.value })
-                      }
+                        this.setState({ name: event.target.value })}
                       fullWidth
                       defaultValue={authUser.displayName}
-                      margin="normal"
-                      className="mt-0 mb-2"
+                      margin='normal'
+                      className='mt-0 mb-2'
                     />
                   </div>
                 </div>
-                <div className="row">
-                  <div className="col-3 align-self-end">
+                <div className='row'>
+                  <div className='col-3 align-self-end'>
                     <h3>
-                      <IntlMessages id="settings.changeEmail" />:
+                      <IntlMessages id='settings.changeEmail' />:
                     </h3>
                   </div>
-                  <div className="col">
+                  <div className='col'>
                     <TextField
-                      type="email"
+                      type='email'
                       onChange={event =>
-                        this.setState({ email: event.target.value })
-                      }
-                      label={<IntlMessages id="appModule.email" />}
+                        this.setState({ email: event.target.value })}
+                      label={<IntlMessages id='appModule.email' />}
                       fullWidth
                       defaultValue={authUser.email}
-                      margin="normal"
-                      className="mt-0 mb-2"
+                      margin='normal'
+                      className='mt-0 mb-2'
                     />
                   </div>
                 </div>
-                <div className="row">
-                  <div className="col-3 align-self-end">
+                <div className='row'>
+                  <div className='col-3 align-self-end'>
                     <h4>
-                      <IntlMessages id="settings.emailVerified" />:
+                      <IntlMessages id='settings.emailVerified' />:
                     </h4>
                   </div>
-                  <div className="col">
+                  <div className='col'>
                     <Switch
                       checked={authUser.emailVerified}
-                      value="verified"
-                      color="primary"
+                      value='verified'
+                      color='primary'
                     />
                   </div>
                 </div>
-                <div className="row">
-                  <div className="col-3  align-self-center">
+                <div className='row'>
+                  <div className='col-3  align-self-center'>
                     <h4>
-                      <IntlMessages id="settings.changePhoto" />:
+                      <IntlMessages id='settings.changePhoto' />:
                     </h4>
                   </div>
-                  <div className="col">
-                    <div className="dropzone-card">
-                      <div className="dropzone">
+                  <div className='col'>
+                    <div className='dropzone-card'>
+                      <div className='dropzone'>
                         <Dropzone
-                          accept="image/jpeg, image/png"
+                          accept='image/jpeg, image/png'
                           onDrop={(accepted, rejected) => {
-                            this.setState({ file: accepted[0] });
+                            this.setState({ file: accepted[0] })
                           }}
                         >
-                          {file ? (
-                            <img
+                          {file
+                            ? <img
                               src={file.preview}
-                              alt="preview"
+                              alt='preview'
                               style={{ height: '150px' }}
-                            />
-                          ) : (
-                            <Fragment>
+                              />
+                            : <Fragment>
                               <p>
-                                Try dropping some files here, or click to select
-                                files to upload.
-                              </p>
-                              <p className="mb-0">
-                                Only *.jpeg and *.png images will be accepted
-                              </p>
-                            </Fragment>
-                          )}
+                                  Try dropping some files here, or click to select
+                                  files to upload.
+                                </p>
+                              <p className='mb-0'>
+                                  Only *.jpeg and *.png images will be accepted
+                                </p>
+                            </Fragment>}
                         </Dropzone>
                       </div>
                     </div>
                   </div>
                 </div>
-                <div className="row">
-                  <div className="col-5 align-self-center">
+                <div className='row'>
+                  <div className='col-5 align-self-center'>
                     <h4>
-                      <IntlMessages id="settings.changePass" />:
+                      <IntlMessages id='settings.changePass' />:
                     </h4>
                   </div>
-                  <div className="col">
+                  <div className='col'>
                     <Button
-                      variant="contained"
-                      size="small"
-                      color="default"
-                      className="m-2"
+                      variant='contained'
+                      size='small'
+                      color='default'
+                      className='m-2'
                       onClick={this.togglePass}
                     >
-                      <IntlMessages id="settings.updatePass" />
+                      <IntlMessages id='settings.updatePass' />
                     </Button>
                   </div>
                 </div>
               </div>
             </CardContent>
             <CardActions>
-              <div className="mx-auto">
+              <div className='mx-auto'>
                 <Button
-                  variant="contained"
-                  size="small"
-                  color="secondary"
-                  className="m-2"
+                  variant='contained'
+                  size='small'
+                  color='secondary'
+                  className='m-2'
                   onClick={this.toggleWarning}
                 >
-                  <IntlMessages id="settings.deleteAccount" />
+                  <IntlMessages id='settings.deleteAccount' />
                 </Button>
                 <Button
-                  variant="contained"
-                  size="small"
-                  color="primary"
-                  className="m-2"
+                  variant='contained'
+                  size='small'
+                  color='primary'
+                  className='m-2'
                   onClick={this.updateAccount}
                 >
-                  {!loading ? (
-                    <IntlMessages id="settings.updateAccount" />
-                  ) : (
-                    <CircularProgress size={18} style={{ color: 'green' }} />
-                  )}
+                  {!loading
+                    ? <IntlMessages id='settings.updateAccount' />
+                    : <CircularProgress size={18} style={{ color: 'green' }} />}
                 </Button>
               </div>
             </CardActions>
@@ -362,40 +342,39 @@ export class Settings extends Component {
             show={warning}
             warning
             showCancel
-            confirmBtnText={<IntlMessages id="sweetAlerts.yesDeleteIt" />}
-            confirmBtnBsStyle="danger"
-            cancelBtnBsStyle="default"
-            title={<IntlMessages id="sweetAlerts.areYouSure" />}
+            confirmBtnText={<IntlMessages id='sweetAlerts.yesDeleteIt' />}
+            confirmBtnBsStyle='danger'
+            cancelBtnBsStyle='default'
+            title={<IntlMessages id='sweetAlerts.areYouSure' />}
             onConfirm={this.deleteAccount}
             onCancel={this.toggleWarning}
           >
-            <IntlMessages id="sweetAlerts.youWillNotAble" />
+            <IntlMessages id='sweetAlerts.youWillNotAble' />
           </SweetAlert>
 
           <Dialog open={pass} onClose={this.togglePass}>
             <DialogTitle>
-              <IntlMessages id="setting.dialog.pass" />
+              <IntlMessages id='setting.dialog.pass' />
             </DialogTitle>
             <DialogContent>
               <DialogContentText>
-                <IntlMessages id="setting.dialog.passText" />
+                <IntlMessages id='setting.dialog.passText' />
               </DialogContentText>
               <FormControl fullWidth>
-                <InputLabel htmlFor="password">
-                  <IntlMessages id="setting.dialog.passInput" />
+                <InputLabel htmlFor='password'>
+                  <IntlMessages id='setting.dialog.passInput' />
                 </InputLabel>
                 <Input
-                  id="password"
+                  id='password'
                   type={this.state.showPassword ? 'text' : 'password'}
                   value={password}
-                  name="password"
+                  name='password'
                   onChange={e =>
-                    this.setState({ [e.target.name]: e.target.value })
-                  }
+                    this.setState({ [e.target.name]: e.target.value })}
                   endAdornment={
-                    <InputAdornment position="end">
+                    <InputAdornment position='end'>
                       <IconButton
-                        aria-label="Toggle password visibility"
+                        aria-label='Toggle password visibility'
                         onClick={this.handleClickShowPassword}
                       >
                         {showPassword ? <VisibilityOff /> : <Visibility />}
@@ -405,28 +384,25 @@ export class Settings extends Component {
                 />
               </FormControl>
               <FormControl fullWidth>
-                <InputLabel htmlFor="confirmPassword">
-                  <IntlMessages id="setting.dialog.confirmPassInput" />
+                <InputLabel htmlFor='confirmPassword'>
+                  <IntlMessages id='setting.dialog.confirmPassInput' />
                 </InputLabel>
                 <Input
-                  id="confirmPassword"
+                  id='confirmPassword'
                   type={this.state.showConfirmPassword ? 'text' : 'password'}
                   value={confirmPassword}
-                  name="confirmPassword"
+                  name='confirmPassword'
                   onChange={e =>
-                    this.setState({ [e.target.name]: e.target.value })
-                  }
+                    this.setState({ [e.target.name]: e.target.value })}
                   endAdornment={
-                    <InputAdornment position="end">
+                    <InputAdornment position='end'>
                       <IconButton
-                        aria-label="Toggle confirm password visibility"
+                        aria-label='Toggle confirm password visibility'
                         onClick={this.handleClickShowConfirmPassword}
                       >
-                        {showConfirmPassword ? (
-                          <VisibilityOff />
-                        ) : (
-                          <Visibility />
-                        )}
+                        {showConfirmPassword
+                          ? <VisibilityOff />
+                          : <Visibility />}
                       </IconButton>
                     </InputAdornment>
                   }
@@ -434,19 +410,17 @@ export class Settings extends Component {
               </FormControl>
             </DialogContent>
             <DialogActions>
-              <Button onClick={this.togglePass} color="secondary">
-                <IntlMessages id="dialog.cancel" />
+              <Button onClick={this.togglePass} color='secondary'>
+                <IntlMessages id='dialog.cancel' />
               </Button>
               <Button
                 onClick={this.changePass}
-                color="primary"
+                color='primary'
                 disabled={password.length >= 8 && password !== confirmPassword}
               >
-                {!loading ? (
-                  <IntlMessages id="dialog.confirm" />
-                ) : (
-                  <CircularProgress size={18} style={{ color: 'green' }} />
-                )}
+                {!loading
+                  ? <IntlMessages id='dialog.confirm' />
+                  : <CircularProgress size={18} style={{ color: 'green' }} />}
               </Button>
             </DialogActions>
           </Dialog>
@@ -454,24 +428,25 @@ export class Settings extends Component {
           <SweetAlert
             show={success}
             success
-            title={<IntlMessages id="sweetAlerts.goodJob" />}
+            title={<IntlMessages id='sweetAlerts.goodJob' />}
             onConfirm={() => this.setState({ success: false })}
           >
-            <IntlMessages id="sweetAlerts.accountUpdated" />
+            <IntlMessages id='sweetAlerts.accountUpdated' />
           </SweetAlert>
         </div>
         {showMessage && NotificationManager.error(alertMessage)}
       </div>
-    );
+    )
   }
 }
 
 const mapStateToProps = ({ auth }) => {
-  const { authUser, showMessage, alertMessage } = auth;
-  return { authUser, showMessage, alertMessage };
-};
+  const { authUser, showMessage, alertMessage } = auth
+  return { authUser, showMessage, alertMessage }
+}
 
-export default connect(
-  mapStateToProps,
-  { updateAccount, showAuthMessage, hideMessage }
-)(Settings);
+export default connect(mapStateToProps, {
+  updateAccount,
+  showAuthMessage,
+  hideMessage
+})(Settings)
