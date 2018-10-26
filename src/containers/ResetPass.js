@@ -86,7 +86,7 @@ class ResetPass extends React.Component {
                         showAuthLoader()
                         resetPass({ email })
                       }}
-                      variant='raised'
+                      variant='contained'
                       color='primary'
                     >
                       <IntlMessages id='appModule.resetPass' />

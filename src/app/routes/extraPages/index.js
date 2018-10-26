@@ -1,6 +1,14 @@
-import React from 'react'
+import React, { Suspense } from 'react'
 import { Redirect, Route, Switch } from 'react-router-dom'
-import asyncComponent from '../../../util/asyncComponent'
+import LinearProgress from '@material-ui/core/LinearProgress'
+
+const AboutUs = React.lazy(() => import('./routes/aboutUs'))
+const ContactUs = React.lazy(() => import('./routes/contactUs'))
+const Blog = React.lazy(() => import('./routes/blog'))
+const Faq = React.lazy(() => import('./routes/faq'))
+const Portfolio = React.lazy(() => import('./routes/portfolio'))
+const NotFound = React.lazy(() => import('./routes/404'))
+const ServerError = React.lazy(() => import('./routes/500'))
 
 const Pages = ({ match }) => (
   <div className='app-wrapper'>
@@ -8,35 +16,65 @@ const Pages = ({ match }) => (
       <Redirect exact from={`${match.url}/`} to={`${match.url}/about-us`} />
       <Route
         path={`${match.url}/about-us`}
-        component={asyncComponent(() => import('./routes/aboutUs'))}
+        render={() => (
+          <Suspense fallback={<LinearProgress color='secondary' />}>
+            <AboutUs />
+          </Suspense>
+        )}
       />
       <Route
         path={`${match.url}/contact-us`}
-        component={asyncComponent(() => import('./routes/contactUs'))}
+        render={() => (
+          <Suspense fallback={<LinearProgress color='secondary' />}>
+            <ContactUs />
+          </Suspense>
+        )}
       />
       <Route
         path={`${match.url}/blog`}
-        component={asyncComponent(() => import('./routes/blog'))}
+        render={() => (
+          <Suspense fallback={<LinearProgress color='secondary' />}>
+            <Blog />
+          </Suspense>
+        )}
       />
       <Route
         path={`${match.url}/faq`}
-        component={asyncComponent(() => import('./routes/faq'))}
+        render={() => (
+          <Suspense fallback={<LinearProgress color='secondary' />}>
+            <Faq />
+          </Suspense>
+        )}
       />
       <Route
         path={`${match.url}/portfolio`}
-        component={asyncComponent(() => import('./routes/portfolio'))}
+        render={() => (
+          <Suspense fallback={<LinearProgress color='secondary' />}>
+            <Portfolio />
+          </Suspense>
+        )}
       />
       <Route
         path={`${match.url}/error-404`}
-        component={asyncComponent(() => import('./routes/404'))}
+        render={() => (
+          <Suspense fallback={<LinearProgress color='secondary' />}>
+            <NotFound />
+          </Suspense>
+        )}
       />
       <Route
         path={`${match.url}/error-500`}
-        component={asyncComponent(() => import('./routes/500'))}
+        render={() => (
+          <Suspense fallback={<LinearProgress color='secondary' />}>
+            <ServerError />
+          </Suspense>
+        )}
       />
       <Route
-        component={asyncComponent(() =>
-          import('app/routes/extraPages/routes/404')
+        render={() => (
+          <Suspense fallback={<LinearProgress color='secondary' />}>
+            <NotFound />
+          </Suspense>
         )}
       />
     </Switch>

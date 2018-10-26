@@ -41,7 +41,9 @@ class Header extends React.Component {
   componentDidMount = () => {
     const { uid } = this.props.authUser
     db.collection('users').doc(uid).onSnapshot(doc => {
-      if (doc.exists) { this.setState({ messages: Object.values(doc.data().messages) }) }
+      if (doc.exists) {
+        this.setState({ messages: Object.values(doc.data().messages) })
+      }
     })
   }
 
@@ -249,13 +251,11 @@ class Header extends React.Component {
                     tag='span'
                     data-toggle='dropdown'
                   >
-                    <IconButton className='icon-btn size-30'>
-                      <Avatar
-                        alt='...'
-                        src={authUser.photoURL || defaultPhoto}
-                        className='size-30'
-                      />
-                    </IconButton>
+                    <Avatar
+                      alt='...'
+                      src={authUser.photoURL || defaultPhoto}
+                      className='size-30 pointer'
+                    />
                   </DropdownToggle>
 
                   <DropdownMenu right>

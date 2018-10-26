@@ -94,7 +94,7 @@ class SignIn extends React.Component {
                         this.props.showAuthLoader()
                         this.props.userSignIn({ email, password })
                       }}
-                      variant='raised'
+                      variant='contained'
                       color='primary'
                     >
                       <IntlMessages id='appModule.signIn' />

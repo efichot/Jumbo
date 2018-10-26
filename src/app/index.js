@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Suspense } from 'react'
 import { Route, Switch, withRouter } from 'react-router-dom'
 import { connect } from 'react-redux'
 import Header from 'components/Header/index'
@@ -14,13 +14,25 @@ import {
 } from 'constants/ActionTypes'
 import ColorOption from 'containers/Customizer/ColorOption'
 import { isIOS, isMobile } from 'react-device-detect'
-import asyncComponent from '../util/asyncComponent'
 import TopNav from 'components/TopNav'
 import Dashboard from './routes/dashboard'
 import Settings from './routes/settings'
 import Profile from './routes/profile'
 import { InstantSearch } from 'react-instantsearch-dom'
+import LinearProgress from '@material-ui/core/LinearProgress'
+import authContext from 'context/auth.js'
+
+const Chat = React.lazy(() => import('./routes/chat'))
+const ToDo = React.lazy(() => import('./routes/todo'))
+const NotFound = React.lazy(() => import('./routes/extraPages/routes/404'))
 class App extends React.Component {
+  state = {
+    isAuth: false,
+    toggleAuth: () => {}
+  }
+
+  toggleAuth = () => this.setState({ isAuth: !this.state.isAuth })
+
   render () {
     const {
       match,
@@ -47,63 +59,83 @@ class App extends React.Component {
         apiKey={process.env.REACT_APP_ALGOLIA_API_KEY}
         indexName={process.env.REACT_APP_ALGOLIA_INDICE}
       >
-        <div className={`app-container ${drawerStyle}`}>
-          <Tour />
+        <authContext.Provider
+          value={{ isAuth: false, toggleAuth: this.toggleAuth }}
+        >
+          <div className={`app-container ${drawerStyle}`}>
+            <Tour />
 
-          <Sidebar />
-          <div className='app-main-container'>
-            <div
-              className={`app-header ${navigationStyle === HORIZONTAL_NAVIGATION ? 'app-header-horizontal' : ''}`}
-            >
-              {navigationStyle === HORIZONTAL_NAVIGATION &&
-                horizontalNavPosition === ABOVE_THE_HEADER &&
-                <TopNav styleName='app-top-header' />}
-              <Header />
-              {navigationStyle === HORIZONTAL_NAVIGATION &&
-                horizontalNavPosition === BELOW_THE_HEADER &&
-                <TopNav />}
-            </div>
-
-            <main className='app-main-content-wrapper'>
-              <div className='app-main-content'>
-                <Switch>
-                  <Route
-                    exact
-                    path={`${match.url}/dashboard`}
-                    component={Dashboard}
-                  />
-                  <Route
-                    exact
-                    path={`${match.url}/settings`}
-                    component={Settings}
-                  />
-                  <Route
-                    exact
-                    path={`${match.url}/profile`}
-                    component={Profile}
-                  />
-                  <Route
-                    exact
-                    path={`${match.url}/chat`}
-                    component={asyncComponent(() => import('./routes/chat'))}
-                  />
-                  <Route
-                    exact
-                    path={`${match.url}/todo`}
-                    component={asyncComponent(() => import('./routes/todo'))}
-                  />
-                  <Route
-                    component={asyncComponent(() =>
-                      import('./routes/extraPages/routes/404')
-                    )}
-                  />
-                </Switch>
+            <Sidebar />
+            <div className='app-main-container'>
+              <div
+                className={`app-header ${navigationStyle === HORIZONTAL_NAVIGATION ? 'app-header-horizontal' : ''}`}
+              >
+                {navigationStyle === HORIZONTAL_NAVIGATION &&
+                  horizontalNavPosition === ABOVE_THE_HEADER &&
+                  <TopNav styleName='app-top-header' />}
+                <Header />
+                {navigationStyle === HORIZONTAL_NAVIGATION &&
+                  horizontalNavPosition === BELOW_THE_HEADER &&
+                  <TopNav />}
               </div>
-              <Footer />
-            </main>
+
+              <main className='app-main-content-wrapper'>
+                <div className='app-main-content'>
+                  <Switch>
+                    <Route
+                      exact
+                      path={`${match.url}/dashboard`}
+                      component={Dashboard}
+                    />
+                    <Route
+                      exact
+                      path={`${match.url}/settings`}
+                      component={Settings}
+                    />
+                    <Route
+                      exact
+                      path={`${match.url}/profile`}
+                      component={Profile}
+                    />
+                    <Route
+                      exact
+                      path={`${match.url}/chat`}
+                      render={() => (
+                        <Suspense
+                          fallback={<LinearProgress color='secondary' />}
+                        >
+                          <Chat />
+                        </Suspense>
+                      )}
+                    />
+                    <Route
+                      exact
+                      path={`${match.url}/todo`}
+                      render={() => (
+                        <Suspense
+                          fallback={<LinearProgress color='secondary' />}
+                        >
+                          <ToDo />
+                        </Suspense>
+                      )}
+                    />
+                    <Route
+                      render={() => (
+                        <Suspense
+                          fallback={<LinearProgress color='secondary' />}
+                        >
+                          <NotFound />
+                        </Suspense>
+                      )}
+                    />
+                  </Switch>
+                </div>
+                <Footer />
+              </main>
+            </div>
+            <ColorOption />
           </div>
-          <ColorOption />
-        </div>
+        </authContext.Provider>
       </InstantSearch>
     )
   }

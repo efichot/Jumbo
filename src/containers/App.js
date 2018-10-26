@@ -1,8 +1,7 @@
-import React, { Component } from 'react'
+import React, { Component, Suspense } from 'react'
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles'
 import MomentUtils from 'material-ui-pickers/utils/moment-utils'
-import MuiPickersUtilsProvider
-  from 'material-ui-pickers/utils/MuiPickersUtilsProvider'
+import { MuiPickersUtilsProvider } from 'material-ui-pickers'
 import { Redirect, Route, Switch } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { IntlProvider } from 'react-intl'
@@ -51,12 +50,14 @@ import {
   saveTokenFCM
 } from '../actions/Auth'
 import RTL from 'util/RTL'
-import asyncComponent from 'util/asyncComponent'
 import { NotificationContainer } from 'react-notifications'
 import { auth, messaging } from 'helper/firebase'
+import LinearProgress from '@material-ui/core/LinearProgress'
 
 window.$ = window.jQuery = require('jquery')
 window.__MUI_USE_NEXT_TYPOGRAPHY_VARIANTS__ = true
+
+const NotFound = React.lazy(() => import('app/routes/extraPages/routes/404'))
 
 const RestrictedRoute = ({ component: Component, authUser, ...rest }) => (
   <Route
@@ -222,8 +223,10 @@ class App extends Component {
                   <Route path='/signup' component={SignUp} />
                   <Route path='/resetpass' component={ResetPass} />
                   <Route
-                    component={asyncComponent(() =>
-                      import('app/routes/extraPages/routes/404')
+                    render={() => (
+                      <Suspense fallback={<LinearProgress color='secondary' />}>
+                        <NotFound />
+                      </Suspense>
                     )}
                   />
                 </Switch>

@@ -15,6 +15,7 @@ import StripeCheckout from 'react-stripe-checkout'
 import { CardActions } from '@material-ui/core'
 import { functions } from 'helper/firebase'
 import CustomScrollbars from 'util/CustomScrollbars'
+import authContext from 'context/auth.js'
 
 const GET_WRITER_AND_BOOKS = gql`
   query($writerName: String!) {
@@ -45,6 +46,12 @@ export class Dashboard extends Component {
     buttonClicked: false,
     loading: false,
     apolloStore: null
+  }
+
+  static contextType = authContext
+
+  componentDidMount = () => {
+    console.log(this.context)
   }
 
   onToken = async token => {
