@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import { connect } from 'react-redux'
 import Drawer from '@material-ui/core/Drawer'
 import SearchBox from 'components/SearchBox/index'
 import AppBar from '@material-ui/core/AppBar'
@@ -31,8 +30,11 @@ import InputLabel from '@material-ui/core/InputLabel'
 import MenuItem from '@material-ui/core/MenuItem'
 import FormControl from '@material-ui/core/FormControl'
 import _ from 'lodash'
+import Context from 'context'
 
 export class Chat extends Component {
+  static contextType = Context
+
   state = {
     drawerState: false,
     userState: 1,
@@ -57,7 +59,7 @@ export class Chat extends Component {
   }
 
   componentDidMount = () => {
-    const { uid } = this.props.authUser
+    const { uid } = this.context.auth.authUser
 
     db.collection('users').doc(uid).onSnapshot(doc => {
       this.setState({
@@ -166,7 +168,7 @@ export class Chat extends Component {
   }
 
   addContact = contactUid => e => {
-    const { uid } = this.props.authUser
+    const { uid } = this.context.auth.authUser
     db
       .collection('users')
       .doc(uid)
@@ -180,7 +182,7 @@ export class Chat extends Component {
 
   onSelectUser = user => {
     const idChat = this.state.chats[user.uid]
-    const { uid } = this.props.authUser
+    const { uid } = this.context.auth.authUser
 
     this.setState({
       loader: true,
@@ -221,7 +223,8 @@ export class Chat extends Component {
   }
 
   ChatUsers = () => {
-    const { displayName, photoURL, email } = this.props.authUser
+    const { displayName, photoURL, email, uid } = this.context.auth.authUser
+    const { width } = this.context.settings
     const { allContacts, dialogAddContact, status } = this.state
     return (
       <div className='chat-sidenav-main'>
@@ -288,7 +291,7 @@ export class Chat extends Component {
             <CustomScrollbars
               className='chat-sidenav-scroll scrollbar'
               style={{
-                height: this.props.width >= 1200
+                height: width >= 1200
                   ? 'calc(100vh - 328px)'
                   : 'calc(100vh - 202px)'
               }}
@@ -299,14 +302,14 @@ export class Chat extends Component {
                   chatUsers={this.state.chatListSearch}
                   selectedSectionId={this.state.selectedSectionId}
                   onSelectUser={this.onSelectUser}
-                  uid={this.props.authUser.uid}
+                  uid={uid}
                   />}
             </CustomScrollbars>
 
             <CustomScrollbars
               className='chat-sidenav-scroll scrollbar'
               style={{
-                height: this.props.width >= 1200
+                height: width >= 1200
                   ? 'calc(100vh - 328px)'
                   : 'calc(100vh - 202px)'
               }}
@@ -368,7 +371,7 @@ export class Chat extends Component {
   }
 
   submitMood = () => {
-    const { uid } = this.props.authUser
+    const { uid } = this.context.auth.authUser
     db
       .collection('users')
       .doc(uid)
@@ -386,9 +389,10 @@ export class Chat extends Component {
   }
 
   handleChangeStatus = e => {
+    const { uid } = this.context.auth.authUser
     db
       .collection('users')
-      .doc(this.props.authUser.uid)
+      .doc(uid)
       .update({
         status: e.target.value
       })
@@ -400,7 +404,9 @@ export class Chat extends Component {
   }
 
   AppUsersInfo = () => {
-    const { displayName, photoURL } = this.props.authUser
+    const { displayName, photoURL } =  this.context.auth.authUser
+    const { width } = this.context.settings
+
     return (
       <div className='chat-sidenav-main'>
         <div className='bg-grey lighten-5 chat-sidenav-header'>
@@ -433,7 +439,7 @@ export class Chat extends Component {
           <CustomScrollbars
             className='chat-sidenav-scroll scrollbar'
             style={{
-              height: this.props.width >= 1200
+              height: width >= 1200
                 ? 'calc(100vh - 328px)'
                 : 'calc(100vh - 162px)'
             }}
@@ -480,7 +486,7 @@ export class Chat extends Component {
   }
 
   submitComment = () => {
-    const { uid, photoURL, displayName } = this.props.authUser
+    const { uid, photoURL, displayName } = this.context.auth.authUser
     const { message, userSelected, currentChat, idChat } = this.state
 
     if (!currentChat.length) {
@@ -586,6 +592,8 @@ export class Chat extends Component {
   }
 
   communication = () => {
+    const { authUser } = this.context.auth
+    const { width } = this.context.settings
     const { userSelected, message, currentChat } = this.state
     return (
       <div className='chat-main'>
@@ -616,7 +624,7 @@ export class Chat extends Component {
         <CustomScrollbars
           className='chat-list-scroll scrollbar'
           style={{
-            height: this.props.width >= 1200
+            height: width >= 1200
               ? 'calc(100vh - 300px)'
               : 'calc(100vh - 280px)'
           }}
@@ -624,7 +632,7 @@ export class Chat extends Component {
           <Conversation
             conversationData={currentChat}
             userSelected={userSelected}
-            user={this.props.authUser}
+            user={authUser}
           />
         </CustomScrollbars>
         <div className='chat-main-footer'>
@@ -715,10 +723,4 @@ export class Chat extends Component {
   }
 }
 
-const mapStateToProps = ({ auth, settings }) => {
-  const { authUser } = auth
-  const { width } = settings
-  return { authUser, width }
-}
-
-export default connect(mapStateToProps, {})(Chat)
+export default (Chat)

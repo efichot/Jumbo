@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import { connect } from 'react-redux'
 import ContainerHeader from 'components/ContainerHeader/index'
 import IntlMessages from 'util/IntlMessages'
 import Card from '@material-ui/core/Card'
@@ -22,8 +21,10 @@ import {
   XAxis,
   YAxis
 } from 'recharts'
+import Context from 'context'
 
 export class Profile extends Component {
+  static contextType = Context
   state = {
     topic: '',
     loader: false,
@@ -41,6 +42,7 @@ export class Profile extends Component {
 
   render () {
     const { loader } = this.state
+    const { authUser } = this.context.auth
     const topics = [
       { name: 'Foot', decription: 'Topics on europeen leagues', photo: Foot },
       {
@@ -84,7 +86,7 @@ export class Profile extends Component {
                               functions
                                 .httpsCallable('subscribeToTopic')({
                                   topic: topic.name,
-                                  token: this.props.authUser.tokenFCM
+                                  token: authUser.tokenFCM
                                 })
                                 .then(res => {
                                   const { done, message } = res.data
@@ -107,7 +109,7 @@ export class Profile extends Component {
                               functions
                                 .httpsCallable('unsubscribeFromTopic')({
                                   topic: topic.name,
-                                  token: this.props.authUser.tokenFCM
+                                  token: authUser.tokenFCM
                                 })
                                 .then(res => {
                                   const { done, message } = res.data
@@ -220,9 +222,4 @@ export class Profile extends Component {
   }
 }
 
-const mapStateToProps = ({ auth }) => {
-  const { authUser } = auth
-  return { authUser }
-}
-
-export default connect(mapStateToProps, {})(Profile)
+export default Profile

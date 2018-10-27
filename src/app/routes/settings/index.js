@@ -1,5 +1,4 @@
 import React, { Component, Fragment } from 'react'
-import { connect } from 'react-redux'
 import ContainerHeader from 'components/ContainerHeader/index'
 import IntlMessages from 'util/IntlMessages'
 import Card from '@material-ui/core/Card'
@@ -10,7 +9,6 @@ import TextField from '@material-ui/core/TextField'
 import Switch from '@material-ui/core/Switch'
 import Dropzone from 'react-dropzone'
 import { db, auth, storage } from 'helper/firebase'
-import { updateAccount, showAuthMessage, hideMessage } from 'actions/Auth'
 import { NotificationManager } from 'react-notifications'
 import SweetAlert from 'react-bootstrap-sweetalert'
 import CircularProgress from '@material-ui/core/CircularProgress'
@@ -26,7 +24,10 @@ import DialogActions from '@material-ui/core/DialogActions'
 import DialogContent from '@material-ui/core/DialogContent'
 import DialogTitle from '@material-ui/core/DialogTitle'
 import DialogContentText from '@material-ui/core/DialogContentText'
+import Context from 'context'
 export class Settings extends Component {
+  static contextType = Context
+
   state = {
     name: '',
     email: '',
@@ -43,21 +44,11 @@ export class Settings extends Component {
     success: false
   }
 
-  componentDidUpdate () {
-    if (this.props.showMessage) {
-      setTimeout(() => {
-        this.props.hideMessage()
-      }, 100)
-    }
-  }
-
   componentDidMount = () => {
-    this.props.authUser.emailVerified &&
-      this.setState({ verified: this.props.authUser.emailVerified })
-    this.props.authUser.displayName &&
-      this.setState({ name: this.props.authUser.displayName })
-    this.props.authUser.email &&
-      this.setState({ email: this.props.authUser.email })
+    const { emailVerified, displayName, email } = this.context.auth.authUser
+    emailVerified && this.setState({ verified: emailVerified })
+    displayName && this.setState({ name: displayName })
+    email && this.setState({ email })
   }
 
   toggleWarning = () => {
@@ -77,7 +68,7 @@ export class Settings extends Component {
     user
       .delete()
       .then(() => console.log('User account delete'))
-      .catch(e => this.props.showAuthMessage(e.message))
+      .catch(e => NotificationManager.error(e.message))
     if (user.photoURL) {
       storage
         .ref()
@@ -119,15 +110,15 @@ export class Settings extends Component {
         )
         .then(() => {
           console.log('Account updated')
-          this.props.updateAccount({
-            name: user.displayName,
-            email: user.email,
-            photoURL: user.photoURL
-          })
-          this.setState({ file: null, loading: false })
+          this.context.auth.updateAccount(
+            user.displayName,
+            user.email,
+            user.photoURL
+          )
+          this.setState({ file: null, loading: false, success: true })
         })
         .catch(e => {
-          this.props.showAuthMessage(e.message)
+          NotificationManager.error(e.message)
           this.setState({ loading: false })
         })
 
@@ -149,14 +140,14 @@ export class Settings extends Component {
         )
         .then(() => {
           console.log('Account updated')
-          this.props.updateAccount({
-            name: user.displayName,
-            email: user.email,
-            photoURL: user.photoURL
-          })
+          this.context.auth.updateAccount(
+            user.displayName,
+            user.email,
+            user.photoURL
+          )
           this.setState({ loading: false, success: true })
         })
-        .catch(e => this.props.showAuthMessage(e.message))
+        .catch(e => NotificationManager.error(e.message))
   }
 
   handleClickShowPassword = () => {
@@ -179,7 +170,10 @@ export class Settings extends Component {
         console.log('Password updated')
         this.setState({ success: true, pass: false, loading: false })
       })
-      .catch(e => this.props.showAuthMessage(e.message))
+      .catch(e => {
+        NotificationManager.error(e.message)
+        this.setState({ loading: false })
+      })
   }
 
   render () {
@@ -194,7 +188,8 @@ export class Settings extends Component {
       showConfirmPassword,
       success
     } = this.state
-    const { authUser, showMessage, alertMessage } = this.props
+    const { authUser, showMessage, alertMessage } = this.context.auth
+
     return (
       <div className='app-wrapper'>
         <div className='dashboard animated slideInUpTiny animation-duration-3'>
@@ -329,10 +324,14 @@ export class Settings extends Component {
                   color='primary'
                   className='m-2'
                   onClick={this.updateAccount}
+                  disabled={loading}
                 >
-                  {!loading
-                    ? <IntlMessages id='settings.updateAccount' />
-                    : <CircularProgress size={18} style={{ color: 'green' }} />}
+                  <IntlMessages id='settings.updateAccount' />
+                  {loading &&
+                    <CircularProgress
+                      size={24}
+                      className='text-green position-absolute'
+                    />}
                 </Button>
               </div>
             </CardActions>
@@ -440,13 +439,4 @@ export class Settings extends Component {
   }
 }
 
-const mapStateToProps = ({ auth }) => {
-  const { authUser, showMessage, alertMessage } = auth
-  return { authUser, showMessage, alertMessage }
-}
-
-export default connect(mapStateToProps, {
-  updateAccount,
-  showAuthMessage,
-  hideMessage
-})(Settings)
+export default Settings

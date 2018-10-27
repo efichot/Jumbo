@@ -141,6 +141,18 @@ class MainApp extends React.Component {
           this.state.auth.showAlertMessage(error.message)
         }
       },
+      updateAccount: async (displayName, email, photoURL) =>
+        this.setState({
+          auth: {
+            ...this.state.auth,
+            authUser: {
+              ...this.state.auth.authUser,
+              displayName,
+              email,
+              photoURL
+            }
+          }
+        }),
       userSignOut: async () => {
         try {
           const signOutUser = auth.signOut()
