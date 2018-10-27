@@ -2,11 +2,9 @@ import React from 'react'
 import Drawer from '@material-ui/core/Drawer'
 import Switch from '@material-ui/core/Switch'
 import IconButton from '@material-ui/core/IconButton'
-import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
-
+import Context from 'context'
 import SideNavOption from './SideNavOption'
-import { changeDirection, setDarkTheme, setThemeColor } from 'actions/index'
 import {
   AMBER,
   BLUE,
@@ -27,6 +25,13 @@ import {
 } from 'constants/ThemeColors'
 
 class ColorOption extends React.Component {
+  static contextType = Context
+  state = { drawerStatus: false }
+
+  componentDidMount () {
+    document.body.classList.add(this.context.settings.themeColor)
+  }
+
   toggleCustomizer = () => {
     this.setState({ drawerStatus: !this.state.drawerStatus })
   }
@@ -34,40 +39,31 @@ class ColorOption extends React.Component {
     this.setState({ drawerStatus: false })
   }
   handleThemeColor = colorCode => {
-    this.props.setThemeColor(colorCode)
+    this.context.settings.setThemeColor(colorCode)
     const body = document.body.classList
-    body.remove(this.props.themeColor)
+    body.remove(this.context.settings.themeColor)
     body.remove('dark-theme')
     body.add(colorCode)
   }
   handleDarkTheme = () => {
-    this.props.setDarkTheme()
+    this.context.settings.setDarkTheme()
     const body = document.body.classList
-    body.toggle(this.props.themeColor)
+    body.toggle(this.context.settings.themeColor)
     body.toggle('dark-theme')
   }
 
-  constructor () {
-    super()
-    this.state = { drawerStatus: false }
-  }
-
-  componentDidMount () {
-    document.body.classList.add(this.props.themeColor)
-  }
-
   render () {
-    const { themeColor, darkTheme, isDirectionRTL } = this.props
+    const { settings: { themeColor, darkTheme, isDirectionRTL } } = this.context
     return (
       <div className='theme-option'>
-        <IconButton onClick={this.toggleCustomizer.bind(this)}>
+        <IconButton onClick={this.toggleCustomizer}>
           <i className='zmdi zmdi-settings zmdi-hc-spin text-white' />
         </IconButton>
         <Drawer
           className='app-sidebar-content right-sidebar'
           anchor='right'
           open={this.state.drawerStatus}
-          onClose={this.closeCustomizer.bind(this)}
+          onClose={this.closeCustomizer}
         >
           <div className='color-theme'>
             <div className='color-theme-header'>
@@ -204,7 +200,7 @@ class ColorOption extends React.Component {
                   <Switch
                     color='primary'
                     checked={isDirectionRTL}
-                    onChange={this.props.changeDirection}
+                    onChange={this.context.settings.changeDirection}
                   />
                 </div>
                 <div className='col-6'>
@@ -227,13 +223,4 @@ class ColorOption extends React.Component {
   }
 }
 
-const mapStateToProps = ({ settings }) => {
-  const { themeColor, darkTheme, isDirectionRTL } = settings
-  return { themeColor, darkTheme, isDirectionRTL }
-}
-
-export default withRouter(
-  connect(mapStateToProps, { setThemeColor, setDarkTheme, changeDirection })(
-    ColorOption
-  )
-)
+export default withRouter(ColorOption)

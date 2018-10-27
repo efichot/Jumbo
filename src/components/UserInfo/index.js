@@ -1,14 +1,15 @@
 import React from 'react'
 import Avatar from '@material-ui/core/Avatar'
-import { connect } from 'react-redux'
 import Menu from '@material-ui/core/Menu'
 import MenuItem from '@material-ui/core/MenuItem'
-import { userSignOut } from 'actions/Auth'
 import IntlMessages from 'util/IntlMessages'
 import defaultPhoto from 'assets/images/placeholder.jpg'
 import { withRouter } from 'react-router-dom'
+import Context from 'context'
 
 class UserInfo extends React.Component {
+  static contextType = Context
+
   state = {
     anchorEl: null,
     open: false
@@ -23,7 +24,9 @@ class UserInfo extends React.Component {
   }
 
   render () {
-    const { authUser, history } = this.props
+    const { history } = this.props
+    const { auth: { authUser, userSignOut } } = this.context
+
     return (
       <div className='user-profile d-flex flex-row align-items-center'>
         <Avatar
@@ -73,7 +76,7 @@ class UserInfo extends React.Component {
           <MenuItem
             onClick={() => {
               this.handleRequestClose()
-              this.props.userSignOut()
+              userSignOut()
             }}
           >
             <i className='zmdi zmdi-sign-in zmdi-hc-fw mr-2' />
@@ -86,9 +89,4 @@ class UserInfo extends React.Component {
   }
 }
 
-const mapStateToProps = ({ settings, auth }) => {
-  const { locale } = settings
-  const { authUser } = auth
-  return { locale, authUser }
-}
-export default withRouter(connect(mapStateToProps, { userSignOut })(UserInfo))
+export default withRouter(UserInfo)

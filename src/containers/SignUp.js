@@ -1,5 +1,4 @@
 import React from 'react'
-import { connect } from 'react-redux'
 import TextField from '@material-ui/core/TextField'
 import IconButton from '@material-ui/core/IconButton'
 import Button from '@material-ui/core/Button'
@@ -7,18 +6,12 @@ import { NotificationContainer, NotificationManager } from 'react-notifications'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import { Link } from 'react-router-dom'
 import IntlMessages from 'util/IntlMessages'
-import {
-  hideMessage,
-  showAuthLoader,
-  userFacebookSignIn,
-  userGithubSignIn,
-  userGoogleSignIn,
-  userSignUp,
-  userTwitterSignIn
-} from 'actions/Auth'
 import iota from 'assets/images/iota_light.svg'
+import Context from 'context'
 
 class SignUp extends React.Component {
+  static contextType = Context
+
   state = {
     name: '',
     email: '',
@@ -26,25 +19,38 @@ class SignUp extends React.Component {
   }
 
   componentDidMount = () => {
-    if (this.props.authUser !== null) {
-      this.props.history.push('/')
+    const { auth: { authUser } } = this.context
+    const { history } = this.props
+
+    if (authUser !== null) {
+      history.push('/')
     }
   }
 
   componentDidUpdate () {
-    if (this.props.showMessage) {
-      setTimeout(() => {
-        this.props.hideMessage()
-      }, 100)
+    const { auth: { showMessage, authUser, hideMessage } } = this.context
+    const { history } = this.props
+
+    if (showMessage) {
+      setTimeout(hideMessage, 100)
     }
-    if (this.props.authUser !== null) {
-      this.props.history.push('/')
+    if (authUser !== null) {
+      history.push('/')
     }
   }
 
   render () {
+    const {
+      auth: {
+        showAuthLoader,
+        userSignUp,
+        showMessage,
+        loader,
+        alertMessage,
+        userProviderSignIn
+      }
+    } = this.context
     const { name, email, password } = this.state
-    const { showMessage, loader, alertMessage } = this.props
     return (
       <div className='app-login-container d-flex justify-content-center align-items-center animated slideInUpTiny animation-duration-3'>
         <div className='app-login-main-content'>
@@ -109,8 +115,8 @@ class SignUp extends React.Component {
                   <Button
                     variant='contained'
                     onClick={() => {
-                      this.props.showAuthLoader()
-                      this.props.userSignUp({ email, password, name })
+                      showAuthLoader()
+                      userSignUp(email, password, name)
                     }}
                     color='primary'
                   >
@@ -127,8 +133,8 @@ class SignUp extends React.Component {
                       <IconButton
                         className='icon'
                         onClick={() => {
-                          this.props.showAuthLoader()
-                          this.props.userFacebookSignIn()
+                          showAuthLoader()
+                          userProviderSignIn('facebook')
                         }}
                       >
                         <i className='zmdi zmdi-facebook middle' />
@@ -139,8 +145,8 @@ class SignUp extends React.Component {
                       <IconButton
                         className='icon'
                         onClick={() => {
-                          this.props.showAuthLoader()
-                          this.props.userTwitterSignIn()
+                          showAuthLoader()
+                          userProviderSignIn('twitter')
                         }}
                       >
                         <i className='zmdi zmdi-twitter middle' />
@@ -151,8 +157,8 @@ class SignUp extends React.Component {
                       <IconButton
                         className='icon'
                         onClick={() => {
-                          this.props.showAuthLoader()
-                          this.props.userGoogleSignIn()
+                          showAuthLoader()
+                          userProviderSignIn('google')
                         }}
                       >
                         <i className='zmdi zmdi-google-plus middle' />
@@ -163,8 +169,8 @@ class SignUp extends React.Component {
                       <IconButton
                         className='icon'
                         onClick={() => {
-                          this.props.showAuthLoader()
-                          this.props.userGithubSignIn()
+                          showAuthLoader()
+                          userProviderSignIn('github')
                         }}
                       >
                         <i className='zmdi zmdi-github middle' />
@@ -188,17 +194,4 @@ class SignUp extends React.Component {
   }
 }
 
-const mapStateToProps = ({ auth }) => {
-  const { loader, alertMessage, showMessage, authUser } = auth
-  return { loader, alertMessage, showMessage, authUser }
-}
-
-export default connect(mapStateToProps, {
-  userSignUp,
-  hideMessage,
-  showAuthLoader,
-  userFacebookSignIn,
-  userGoogleSignIn,
-  userGithubSignIn,
-  userTwitterSignIn
-})(SignUp)
+export default SignUp

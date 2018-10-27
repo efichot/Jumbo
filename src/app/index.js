@@ -1,6 +1,5 @@
 import React, { Suspense } from 'react'
 import { Route, Switch, withRouter } from 'react-router-dom'
-import { connect } from 'react-redux'
 import Header from 'components/Header/index'
 import Sidebar from 'containers/SideNav/index'
 import Footer from 'components/Footer'
@@ -20,31 +19,22 @@ import Settings from './routes/settings'
 import Profile from './routes/profile'
 import { InstantSearch } from 'react-instantsearch-dom'
 import LinearProgress from '@material-ui/core/LinearProgress'
-import authContext from 'context/auth.js'
+import Context from 'context'
 
 const Chat = React.lazy(() => import('./routes/chat'))
 const ToDo = React.lazy(() => import('./routes/todo'))
 const NotFound = React.lazy(() => import('./routes/extraPages/routes/404'))
 class App extends React.Component {
-  state = {
-    isAuth: false,
-    toggleAuth: () => {}
-  }
-
-  toggleAuth = () => this.setState({ isAuth: !this.state.isAuth })
+  static contextType = Context
 
   render () {
     const {
-      match,
-      drawerType,
-      navigationStyle,
-      horizontalNavPosition
-    } = this.props
-    const drawerStyle = drawerType.includes(FIXED_DRAWER)
+      settings: { drawerType, navigationStyle, horizontalNavPosition }
+    } = this.context
+    const { match } = this.props
+    const drawerStyle = drawerType === FIXED_DRAWER
       ? 'fixed-drawer'
-      : drawerType.includes(COLLAPSED_DRAWER)
-          ? 'collapsible-drawer'
-          : 'mini-drawer'
+      : drawerType === COLLAPSED_DRAWER ? 'collapsible-drawer' : 'mini-drawer'
 
     // set default height and overflow for iOS mobile Safari 10+ support.
     if (isIOS && isMobile) {
@@ -59,91 +49,76 @@ class App extends React.Component {
         apiKey={process.env.REACT_APP_ALGOLIA_API_KEY}
         indexName={process.env.REACT_APP_ALGOLIA_INDICE}
       >
-        <authContext.Provider
-          value={{ isAuth: false, toggleAuth: this.toggleAuth }}
-        >
-          <div className={`app-container ${drawerStyle}`}>
-            <Tour />
+        <div className={`app-container ${drawerStyle}`}>
+          <Tour />
 
-            <Sidebar />
-            <div className='app-main-container'>
-              <div
-                className={`app-header ${navigationStyle === HORIZONTAL_NAVIGATION ? 'app-header-horizontal' : ''}`}
-              >
-                {navigationStyle === HORIZONTAL_NAVIGATION &&
-                  horizontalNavPosition === ABOVE_THE_HEADER &&
-                  <TopNav styleName='app-top-header' />}
-                <Header />
-                {navigationStyle === HORIZONTAL_NAVIGATION &&
-                  horizontalNavPosition === BELOW_THE_HEADER &&
-                  <TopNav />}
-              </div>
-
-              <main className='app-main-content-wrapper'>
-                <div className='app-main-content'>
-                  <Switch>
-                    <Route
-                      exact
-                      path={`${match.url}/dashboard`}
-                      component={Dashboard}
-                    />
-                    <Route
-                      exact
-                      path={`${match.url}/settings`}
-                      component={Settings}
-                    />
-                    <Route
-                      exact
-                      path={`${match.url}/profile`}
-                      component={Profile}
-                    />
-                    <Route
-                      exact
-                      path={`${match.url}/chat`}
-                      render={() => (
-                        <Suspense
-                          fallback={<LinearProgress color='secondary' />}
-                        >
-                          <Chat />
-                        </Suspense>
-                      )}
-                    />
-                    <Route
-                      exact
-                      path={`${match.url}/todo`}
-                      render={() => (
-                        <Suspense
-                          fallback={<LinearProgress color='secondary' />}
-                        >
-                          <ToDo />
-                        </Suspense>
-                      )}
-                    />
-                    <Route
-                      render={() => (
-                        <Suspense
-                          fallback={<LinearProgress color='secondary' />}
-                        >
-                          <NotFound />
-                        </Suspense>
-                      )}
-                    />
-                  </Switch>
-                </div>
-                <Footer />
-              </main>
+          <Sidebar />
+          <div className='app-main-container'>
+            <div
+              className={`app-header ${navigationStyle === HORIZONTAL_NAVIGATION ? 'app-header-horizontal' : ''}`}
+            >
+              {navigationStyle === HORIZONTAL_NAVIGATION &&
+                horizontalNavPosition === ABOVE_THE_HEADER &&
+                <TopNav styleName='app-top-header' />}
+              <Header />
+              {navigationStyle === HORIZONTAL_NAVIGATION &&
+                horizontalNavPosition === BELOW_THE_HEADER &&
+                <TopNav />}
             </div>
-            <ColorOption />
+
+            <main className='app-main-content-wrapper'>
+              <div className='app-main-content'>
+                <Switch>
+                  <Route
+                    exact
+                    path={`${match.url}/dashboard`}
+                    component={Dashboard}
+                  />
+                  <Route
+                    exact
+                    path={`${match.url}/settings`}
+                    component={Settings}
+                  />
+                  <Route
+                    exact
+                    path={`${match.url}/profile`}
+                    component={Profile}
+                  />
+                  <Route
+                    exact
+                    path={`${match.url}/chat`}
+                    render={() => (
+                      <Suspense fallback={<LinearProgress color='secondary' />}>
+                        <Chat />
+                      </Suspense>
+                    )}
+                  />
+                  <Route
+                    exact
+                    path={`${match.url}/todo`}
+                    render={() => (
+                      <Suspense fallback={<LinearProgress color='secondary' />}>
+                        <ToDo />
+                      </Suspense>
+                    )}
+                  />
+                  <Route
+                    render={() => (
+                      <Suspense fallback={<LinearProgress color='secondary' />}>
+                        <NotFound />
+                      </Suspense>
+                    )}
+                  />
+                </Switch>
+              </div>
+              <Footer />
+            </main>
           </div>
-        </authContext.Provider>
+          <ColorOption />
+        </div>
       </InstantSearch>
     )
   }
 }
 
-const mapStateToProps = ({ settings, auth }) => {
-  const { authUser } = auth
-  const { drawerType, navigationStyle, horizontalNavPosition } = settings
-  return { drawerType, navigationStyle, horizontalNavPosition, authUser }
-}
-export default withRouter(connect(mapStateToProps)(App))
+export default withRouter(App)

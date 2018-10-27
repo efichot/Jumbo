@@ -4,8 +4,11 @@ import Button from '@material-ui/core/Button'
 import IntlMessages from 'util/IntlMessages'
 import CustomScrollbars from 'util/CustomScrollbars'
 import Tooltip from '@material-ui/core/Tooltip'
+import Context from 'context'
 
 class SidenavContent extends Component {
+  static contextType = Context
+
   componentDidUpdate = (prevProps, prevState) => {
     const subMenuLi = document.querySelectorAll('.sub-menu > li')
     for (let i = 0; i < subMenuLi.length; i++) {
@@ -81,7 +84,7 @@ class SidenavContent extends Component {
   }
 
   render () {
-    const { drawerType } = this.props
+    const { settings: { drawerType } } = this.context
     const toolTip = drawerType === 'mini_drawer'
 
     return (

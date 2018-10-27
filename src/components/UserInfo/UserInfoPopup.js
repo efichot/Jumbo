@@ -1,13 +1,14 @@
 import React from 'react'
-import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
-import { userSignOut } from 'actions/Auth'
 import IntlMessages from 'util/IntlMessages'
 import defaultPhoto from 'assets/images/placeholder.jpg'
+import Context from 'context'
 
 class UserInfoPopup extends React.Component {
+  static contextType = Context
+
   render () {
-    const { authUser } = this.props
+    const { auth: { authUser, userSignOut } } = this.context
     return (
       <div>
         <div className='user-profile'>
@@ -34,7 +35,7 @@ class UserInfoPopup extends React.Component {
           href='javascript:void(0)'
           onClick={() => {
             console.log('Try to logoput')
-            this.props.userSignOut()
+            userSignOut()
           }}
         >
           <i className='zmdi zmdi-sign-in zmdi-hc-fw mr-1' />
@@ -45,9 +46,4 @@ class UserInfoPopup extends React.Component {
   }
 }
 
-const mapStateToProps = ({ auth }) => {
-  const { authUser } = auth
-  return { authUser }
-}
-
-export default connect(mapStateToProps, { userSignOut })(UserInfoPopup)
+export default UserInfoPopup

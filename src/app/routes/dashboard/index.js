@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import { connect } from 'react-redux'
 import ContainerHeader from 'components/ContainerHeader/index'
 import IntlMessages from 'util/IntlMessages'
 import Card from '@material-ui/core/Card'
@@ -15,7 +14,6 @@ import StripeCheckout from 'react-stripe-checkout'
 import { CardActions } from '@material-ui/core'
 import { functions } from 'helper/firebase'
 import CustomScrollbars from 'util/CustomScrollbars'
-import authContext from 'context/auth.js'
 
 const GET_WRITER_AND_BOOKS = gql`
   query($writerName: String!) {
@@ -46,12 +44,6 @@ export class Dashboard extends Component {
     buttonClicked: false,
     loading: false,
     apolloStore: null
-  }
-
-  static contextType = authContext
-
-  componentDidMount = () => {
-    console.log(this.context)
   }
 
   onToken = async token => {
@@ -320,6 +312,4 @@ export class Dashboard extends Component {
   }
 }
 
-const mapStateToProps = state => ({})
-
-export default connect(mapStateToProps, {})(Dashboard)
+export default Dashboard

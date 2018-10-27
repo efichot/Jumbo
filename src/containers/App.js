@@ -3,7 +3,6 @@ import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles'
 import MomentUtils from 'material-ui-pickers/utils/moment-utils'
 import { MuiPickersUtilsProvider } from 'material-ui-pickers'
 import { Redirect, Route, Switch } from 'react-router-dom'
-import { connect } from 'react-redux'
 import { IntlProvider } from 'react-intl'
 import 'react-notifications/lib/notifications.css'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
@@ -43,16 +42,11 @@ import MainApp from 'app/index'
 import SignIn from './SignIn'
 import SignUp from './SignUp'
 import ResetPass from './ResetPass'
-import {
-  setInitUrl,
-  userSignInSuccess,
-  userSignOutSuccess,
-  saveTokenFCM
-} from '../actions/Auth'
 import RTL from 'util/RTL'
 import { NotificationContainer } from 'react-notifications'
 import { auth, messaging } from 'helper/firebase'
 import LinearProgress from '@material-ui/core/LinearProgress'
+import Context from 'context'
 
 window.$ = window.jQuery = require('jquery')
 window.__MUI_USE_NEXT_TYPOGRAPHY_VARIANTS__ = true
@@ -73,25 +67,36 @@ const RestrictedRoute = ({ component: Component, authUser, ...rest }) => (
           />)}
   />
 )
-
 class App extends Component {
+  static contextType = Context
   componentDidMount () {
-    if (this.props.initURL === '') {
-      this.props.setInitUrl(this.props.history.location.pathname)
+    const {
+      auth: {
+        initURL,
+        setInitUrl,
+        userSignInSuccess,
+        saveTokenFCM,
+        userSignOutSuccess
+      }
+    } = this.context
+    const { history } = this.props
+
+    if (initURL === '') {
+      setInitUrl(history.location.pathname)
     }
     auth.onAuthStateChanged(user => {
       if (user) {
         console.log('User sign in')
-        this.props.userSignInSuccess(user)
+        userSignInSuccess(user)
         messaging
           .getToken()
           .then(token => {
-            this.props.saveTokenFCM(token)
+            saveTokenFCM(token)
           })
           .catch(e => console.log('Impossible to get tokenFCM'))
       } else {
         console.log('User not sign in')
-        this.props.userSignOutSuccess()
+        userSignOutSuccess()
       }
     })
   }
@@ -170,15 +175,11 @@ class App extends Component {
 
   render () {
     const {
-      match,
-      location,
-      themeColor,
-      isDarkTheme,
-      locale,
-      authUser,
-      initURL,
-      isDirectionRTL
-    } = this.props
+      auth: { authUser, initURL },
+      settings: { locale, isDarkTheme, isDirectionRTL, themeColor }
+    } = this.context
+    const { match, location } = this.props
+
     let applyTheme = createMuiTheme(indigoTheme)
     if (isDarkTheme) {
       document.body.classList.add('dark-theme')
@@ -240,29 +241,4 @@ class App extends Component {
   }
 }
 
-const mapStateToProps = ({ settings, auth }) => {
-  const {
-    themeColor,
-    sideNavColor,
-    darkTheme,
-    locale,
-    isDirectionRTL
-  } = settings
-  const { authUser, initURL } = auth
-  return {
-    themeColor,
-    sideNavColor,
-    isDarkTheme: darkTheme,
-    locale,
-    isDirectionRTL,
-    authUser,
-    initURL
-  }
-}
-
-export default connect(mapStateToProps, {
-  setInitUrl,
-  userSignInSuccess,
-  userSignOutSuccess,
-  saveTokenFCM
-})(App)
+export default App

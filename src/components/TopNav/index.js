@@ -15,7 +15,3 @@ class TopNav extends React.Component {
 }
 
 export default withRouter(TopNav)
-
-TopNav.defaultProps = {
-  styleName: ''
-}

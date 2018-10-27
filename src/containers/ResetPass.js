@@ -1,51 +1,53 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { connect } from 'react-redux'
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
 import IntlMessages from 'util/IntlMessages'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import iota from 'assets/images/iota_light.svg'
-import {
-  hideMessage,
-  showAuthLoader,
-  hideAuthLoader,
-  resetPass
-} from 'actions/Auth'
 import { NotificationContainer, NotificationManager } from 'react-notifications'
+import Context from 'context'
 
 class ResetPass extends React.Component {
+  static contextType = Context
+
   state = {
     email: ''
   }
 
   componentDidMount = () => {
-    if (this.props.authUser !== null) {
-      this.props.history.push('/')
+    const { auth: { authUser } } = this.context
+    const { history } = this.props
+
+    if (authUser !== null) {
+      history.push('/')
     }
   }
 
   componentDidUpdate () {
-    if (this.props.showMessage) {
-      setTimeout(() => {
-        this.props.hideMessage()
-      }, 100)
+    const { auth: { showMessage, authUser, hideMessage } } = this.context
+    const { history } = this.props
+
+    if (showMessage) {
+      setTimeout(hideMessage, 100)
     }
-    if (this.props.authUser !== null) {
-      this.props.history.push('/')
+    if (authUser !== null) {
+      history.push('/')
     }
   }
 
   render () {
     const { email } = this.state
     const {
-      showMessage,
-      loader,
-      alertMessage,
-      showAuthLoader,
-      successMessage,
-      resetPass
-    } = this.props
+      auth: {
+        showMessage,
+        loader,
+        alertMessage,
+        showAuthLoader,
+        successMessage,
+        resetPass
+      }
+    } = this.context
     return (
       <div className='app-login-container d-flex justify-content-center align-items-center animated slideInUpTiny animation-duration-3'>
         <div className='app-login-main-content'>
@@ -84,7 +86,7 @@ class ResetPass extends React.Component {
                     <Button
                       onClick={() => {
                         showAuthLoader()
-                        resetPass({ email })
+                        resetPass(email)
                       }}
                       variant='contained'
                       color='primary'
@@ -117,14 +119,4 @@ class ResetPass extends React.Component {
   }
 }
 
-const mapStateToProps = ({ auth }) => {
-  const { loader, alertMessage, showMessage, authUser, successMessage } = auth
-  return { loader, alertMessage, showMessage, authUser, successMessage }
-}
-
-export default connect(mapStateToProps, {
-  hideMessage,
-  showAuthLoader,
-  hideAuthLoader,
-  resetPass
-})(ResetPass)
+export default ResetPass

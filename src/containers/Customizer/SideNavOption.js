@@ -1,5 +1,4 @@
 import React from 'react'
-import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import FormControl from '@material-ui/core/FormControl'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
@@ -15,28 +14,32 @@ import {
   MINI_DRAWER,
   VERTICAL_NAVIGATION
 } from 'constants/ActionTypes'
-
-import {
-  changeNavigationStyle,
-  setDrawerType,
-  setHorizontalMenuPosition
-} from 'actions/index'
-
 import { Button, ButtonGroup } from 'reactstrap'
+import Context from 'context'
 
 class Customizer extends React.Component {
+  static contextType = Context
+
   setFixedDrawer = () => {
-    this.props.setDrawerType(FIXED_DRAWER)
+    this.context.settings.setDrawerType(FIXED_DRAWER)
   }
   setCollapsedDrawer = () => {
-    this.props.setDrawerType(COLLAPSED_DRAWER)
+    this.context.settings.setDrawerType(COLLAPSED_DRAWER)
   }
   setMiniDrawer = () => {
-    this.props.setDrawerType(MINI_DRAWER)
+    this.context.settings.setDrawerType(MINI_DRAWER)
   }
 
   render () {
-    const { drawerType, navigationStyle, horizontalNavPosition } = this.props
+    const {
+      settings: {
+        drawerType,
+        navigationStyle,
+        horizontalNavPosition,
+        changeNavigationStyle,
+        setHorizontalMenuPosition
+      }
+    } = this.context
 
     return (
       <div className='side-nav-option'>
@@ -51,7 +54,7 @@ class Customizer extends React.Component {
                 name='navStyle'
                 value={navigationStyle}
                 onChange={event => {
-                  this.props.changeNavigationStyle(event.target.value)
+                  changeNavigationStyle(event.target.value)
                 }}
               >
                 <FormControlLabel
@@ -75,7 +78,7 @@ class Customizer extends React.Component {
               color='default'
               className={`jr-btn  ${horizontalNavPosition === INSIDE_THE_HEADER && 'active'} `}
               onClick={() => {
-                this.props.setHorizontalMenuPosition(INSIDE_THE_HEADER)
+                setHorizontalMenuPosition(INSIDE_THE_HEADER)
               }}
               >
                 Inside
@@ -84,7 +87,7 @@ class Customizer extends React.Component {
               color='default'
               className={`jr-btn ${horizontalNavPosition === ABOVE_THE_HEADER && 'active'} `}
               onClick={() => {
-                this.props.setHorizontalMenuPosition(ABOVE_THE_HEADER)
+                setHorizontalMenuPosition(ABOVE_THE_HEADER)
               }}
               >
                 Top
@@ -93,7 +96,7 @@ class Customizer extends React.Component {
               color='default'
               className={`jr-btn ${horizontalNavPosition === BELOW_THE_HEADER && 'active'} `}
               onClick={() => {
-                this.props.setHorizontalMenuPosition(BELOW_THE_HEADER)
+                setHorizontalMenuPosition(BELOW_THE_HEADER)
               }}
               >
                 Below
@@ -103,21 +106,21 @@ class Customizer extends React.Component {
             <Button
               color='default'
               className={`jr-btn  ${drawerType === FIXED_DRAWER && 'active'} `}
-              onClick={this.setFixedDrawer.bind(this)}
+              onClick={this.setFixedDrawer}
               >
                 Fixed
               </Button>
             <Button
               color='default'
               className={`jr-btn ${drawerType === COLLAPSED_DRAWER && 'active'} `}
-              onClick={this.setCollapsedDrawer.bind(this)}
+              onClick={this.setCollapsedDrawer}
               >
                 Collapsed
               </Button>
             <Button
               color='default'
               className={`jr-btn ${drawerType === MINI_DRAWER && 'active'} `}
-              onClick={this.setMiniDrawer.bind(this)}
+              onClick={this.setMiniDrawer}
               >
                 Mini
               </Button>
@@ -128,15 +131,4 @@ class Customizer extends React.Component {
   }
 }
 
-const mapStateToProps = ({ settings }) => {
-  const { drawerType, navigationStyle, horizontalNavPosition } = settings
-  return { drawerType, navigationStyle, horizontalNavPosition }
-}
-
-export default withRouter(
-  connect(mapStateToProps, {
-    changeNavigationStyle,
-    setDrawerType,
-    setHorizontalMenuPosition
-  })(Customizer)
-)
+export default withRouter(Customizer)

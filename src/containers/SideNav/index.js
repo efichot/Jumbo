@@ -1,5 +1,4 @@
 import React from 'react'
-import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import Drawer from '@material-ui/core/Drawer'
 import SidenavContent from './SidenavContent'
@@ -10,44 +9,46 @@ import {
   FIXED_DRAWER,
   HORIZONTAL_NAVIGATION
 } from 'constants/ActionTypes'
-import {
-  toggleCollapsedNav,
-  updateWindowWidth,
-  setDrawerType
-} from 'actions/Setting'
+import Context from 'context'
 
 class SideNav extends React.PureComponent {
+  static contextType = Context
+
   onToggleCollapsedNav = e => {
-    const val = !this.props.navCollapsed
-    this.props.toggleCollapsedNav(val)
+    const { settings: { navCollapsed, toggleCollapsedNav } } = this.context
+    const val = !navCollapsed
+    toggleCollapsedNav(val)
   }
 
   setDrawerType = drawerType => e => {
-    if (drawerType === 'mini_drawer') this.props.setDrawerType('fixed_drawer')
-    else this.props.setDrawerType('mini_drawer')
+    const { settings: { setDrawerType } } = this.context
+    if (drawerType === 'mini_drawer') setDrawerType('fixed_drawer')
+    else setDrawerType('mini_drawer')
   }
 
   componentDidMount () {
     window.addEventListener('resize', () => {
-      this.props.updateWindowWidth(window.innerWidth)
+      this.context.settings.updateWindowWidth(window.innerWidth)
     })
   }
 
   render () {
     const {
-      navCollapsed,
-      drawerType,
-      width,
-      navigationStyle,
-      themeColor
-    } = this.props
-    let drawerStyle = drawerType.includes(FIXED_DRAWER)
+      settings: {
+        navCollapsed,
+        drawerType,
+        width,
+        navigationStyle,
+        themeColor
+      }
+    } = this.context
+    let drawerStyle = drawerType === FIXED_DRAWER
       ? 'd-xl-flex'
-      : drawerType.includes(COLLAPSED_DRAWER) ? '' : 'd-flex'
+      : drawerType === COLLAPSED_DRAWER ? '' : 'd-flex'
     let type = 'permanent'
     if (
-      drawerType.includes(COLLAPSED_DRAWER) ||
-      (drawerType.includes(FIXED_DRAWER) && width < 1200)
+      drawerType === COLLAPSED_DRAWER ||
+      (drawerType === FIXED_DRAWER && width < 1200)
     ) {
       type = 'temporary'
     }
@@ -63,7 +64,7 @@ class SideNav extends React.PureComponent {
         <Drawer
           className='app-sidebar-content'
           variant={type}
-          open={type.includes('temporary') ? navCollapsed : true}
+          open={type === 'temporary' ? navCollapsed : true}
           onClose={this.onToggleCollapsedNav}
           classes={{
             paper: 'side-nav'
@@ -88,21 +89,4 @@ class SideNav extends React.PureComponent {
   }
 }
 
-const mapStateToProps = ({ settings }) => {
-  const {
-    navCollapsed,
-    drawerType,
-    width,
-    navigationStyle,
-    themeColor
-  } = settings
-  return { navCollapsed, drawerType, width, navigationStyle, themeColor }
-}
-
-export default withRouter(
-  connect(mapStateToProps, {
-    toggleCollapsedNav,
-    updateWindowWidth,
-    setDrawerType
-  })(SideNav)
-)
+export default withRouter(SideNav)

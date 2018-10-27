@@ -1,23 +1,21 @@
-import React from 'react'
+import React, { Component } from 'react'
 import { Link, withRouter } from 'react-router-dom'
-import { connect } from 'react-redux'
 import AppBar from '@material-ui/core/AppBar'
 import Avatar from '@material-ui/core/Avatar'
 import Toolbar from '@material-ui/core/Toolbar'
 import IconButton from '@material-ui/core/IconButton'
 import { Dropdown, DropdownMenu, DropdownToggle } from 'reactstrap'
 import {
-  BELOW_THE_HEADER,
   COLLAPSED_DRAWER,
   FIXED_DRAWER,
   HORIZONTAL_NAVIGATION,
+  BELOW_THE_HEADER,
   INSIDE_THE_HEADER
 } from 'constants/ActionTypes'
 import SearchBox from 'components/SearchBox'
 import MailNotification from '../MailNotification/index'
 import AppNotification from '../AppNotification/index'
 import CardHeader from 'components/dashboard/Common/CardHeader/index'
-import { switchLanguage, toggleCollapsedNav } from 'actions/Setting'
 import IntlMessages from 'util/IntlMessages'
 import LanguageSwitcher from 'components/LanguageSwitcher/index'
 import Menu from 'components/TopNav/Menu'
@@ -25,8 +23,11 @@ import UserInfoPopup from 'components/UserInfo/UserInfoPopup'
 import iota from 'assets/images/iota_light.svg'
 import defaultPhoto from 'assets/images/placeholder.jpg'
 import { db } from 'helper/firebase'
+import Context from 'context'
 
-class Header extends React.Component {
+class Header extends Component {
+  static contextType = Context
+
   state = {
     anchorEl: undefined,
     searchBox: false,
@@ -39,8 +40,8 @@ class Header extends React.Component {
   }
 
   componentDidMount = () => {
-    const { uid } = this.props.authUser
-    db.collection('users').doc(uid).onSnapshot(doc => {
+    const { auth: { authUser } } = this.context
+    db.collection('users').doc(authUser.uid).onSnapshot(doc => {
       if (doc.exists) {
         this.setState({ messages: Object.values(doc.data().messages) })
       }
@@ -97,16 +98,13 @@ class Header extends React.Component {
 
   render () {
     const {
-      drawerType,
-      locale,
-      navigationStyle,
-      horizontalNavPosition,
-      authUser
-    } = this.props
+      auth: { authUser },
+      settings: { drawerType, navigationStyle, horizontalNavPosition, locale }
+    } = this.context
     const { messages } = this.state
-    const drawerStyle = drawerType.includes(FIXED_DRAWER)
+    const drawerStyle = drawerType === FIXED_DRAWER
       ? 'd-block d-xl-none'
-      : drawerType.includes(COLLAPSED_DRAWER) ? 'd-block' : 'd-none'
+      : drawerType === COLLAPSED_DRAWER ? 'd-block' : 'd-none'
 
     return (
       <AppBar
@@ -144,7 +142,7 @@ class Header extends React.Component {
               <Dropdown
                 className='quick-menu nav-searchbox'
                 isOpen={this.state.searchBox}
-                toggle={this.onSearchBoxSelect.bind(this)}
+                toggle={this.onSearchBoxSelect}
               >
                 <DropdownToggle
                   className='d-inline-block'
@@ -165,7 +163,7 @@ class Header extends React.Component {
               <Dropdown
                 className='quick-menu'
                 isOpen={this.state.langSwitcher}
-                toggle={this.onLangSwitcherSelect.bind(this)}
+                toggle={this.onLangSwitcherSelect}
               >
                 <DropdownToggle
                   className='d-inline-block'
@@ -189,7 +187,7 @@ class Header extends React.Component {
               <Dropdown
                 className='quick-menu'
                 isOpen={this.state.appNotification}
-                toggle={this.onAppNotificationSelect.bind(this)}
+                toggle={this.onAppNotificationSelect}
               >
                 <DropdownToggle
                   className='d-inline-block'
@@ -214,7 +212,7 @@ class Header extends React.Component {
               <Dropdown
                 className='quick-menu'
                 isOpen={this.state.mailNotification}
-                toggle={this.onMailNotificationSelect.bind(this)}
+                toggle={this.onMailNotificationSelect}
               >
                 <DropdownToggle
                   className='d-inline-block'
@@ -244,7 +242,7 @@ class Header extends React.Component {
                 <Dropdown
                   className='quick-menu'
                   isOpen={this.state.userInfo}
-                  toggle={this.onUserInfoSelect.bind(this)}
+                  toggle={this.onUserInfoSelect}
                 >
                   <DropdownToggle
                     className='d-inline-block'
@@ -270,23 +268,4 @@ class Header extends React.Component {
   }
 }
 
-const mapStateToProps = ({ settings, auth }) => {
-  const {
-    drawerType,
-    locale,
-    navigationStyle,
-    horizontalNavPosition
-  } = settings
-  const { authUser } = auth
-  return {
-    drawerType,
-    locale,
-    navigationStyle,
-    horizontalNavPosition,
-    authUser
-  }
-}
-
-export default withRouter(
-  connect(mapStateToProps, { toggleCollapsedNav, switchLanguage })(Header)
-)
+export default withRouter(Header)
