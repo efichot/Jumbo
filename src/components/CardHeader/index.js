@@ -1,5 +1,4 @@
 import React from 'react'
-import Chip from '@material-ui/core/Chip'
 import IntlMessages from 'util/IntlMessages'
 
 class CardHeader extends React.Component {
@@ -13,10 +12,9 @@ class CardHeader extends React.Component {
           {subHeading && <p className='sub-heading'>{subHeading}</p>}
         </div>
         {clearData &&
-          <Chip
-            label={<IntlMessages id='popup.clearData' />}
-            onClick={clearData}
-          />}
+          <span className='badge badge-primary p-1 pointer' onClick={clearData}>
+            <IntlMessages id='popup.clearData' />
+          </span>}
       </div>
     )
   }

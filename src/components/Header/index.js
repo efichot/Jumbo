@@ -15,7 +15,7 @@ import {
 import SearchBox from 'components/SearchBox'
 import MailNotification from '../MailNotification/index'
 import AppNotification from '../AppNotification/index'
-import CardHeader from 'components/dashboard/Common/CardHeader/index'
+import CardHeader from 'components/CardHeader/index'
 import IntlMessages from 'util/IntlMessages'
 import LanguageSwitcher from 'components/LanguageSwitcher/index'
 import Menu from 'components/TopNav/Menu'
@@ -85,12 +85,12 @@ class Header extends Component {
   }
 
   onToggleCollapsedNav = e => {
-    const val = !this.props.navCollapsed
-    this.props.toggleCollapsedNav(val)
+    const val = !this.context.settings.navCollapsed
+    this.context.settings.toggleCollapsedNav(val)
   }
 
   clearMessages = () => {
-    const { uid } = this.props.authUser
+    const { uid } = this.context.auth.authUser
     db.collection('users').doc(uid).update({
       messages: {}
     })
@@ -99,7 +99,13 @@ class Header extends Component {
   render () {
     const {
       auth: { authUser },
-      settings: { drawerType, navigationStyle, horizontalNavPosition, locale }
+      settings: {
+        drawerType,
+        navigationStyle,
+        horizontalNavPosition,
+        locale,
+        switchLanguage
+      }
     } = this.context
     const { messages } = this.state
     const drawerStyle = drawerType === FIXED_DRAWER
@@ -177,7 +183,7 @@ class Header extends Component {
 
                 <DropdownMenu right className='w-50'>
                   <LanguageSwitcher
-                    switchLanguage={this.props.switchLanguage}
+                    switchLanguage={switchLanguage}
                     handleRequestClose={this.handleRequestClose}
                   />
                 </DropdownMenu>

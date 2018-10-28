@@ -274,8 +274,25 @@ class MainApp extends React.Component {
         locale: 'en',
         name: 'English',
         icon: 'us'
-      }
+      },
+      switchLanguage: locale =>
+        this.setState({ settings: { ...this.state.settings, locale } })
     }
+  }
+
+  componentDidMount = () => {
+    const store = JSON.parse(window.localStorage.getItem('store'))
+
+    if (store) {
+      this.setState((state, props) => ({
+        auth: { ...state.auth, ...store.auth },
+        settings: { ...state.settings, ...store.settings }
+      }))
+    }
+  }
+
+  componentDidUpdate = () => {
+    window.localStorage.setItem('store', JSON.stringify(this.state))
   }
 
   getContext = () => ({

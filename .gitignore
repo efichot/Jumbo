@@ -12,6 +12,7 @@
 
 # production
 /build
+.firebase
 
 #api key
 .env
