@@ -5,7 +5,6 @@ import Button from '@material-ui/core/Button'
 import IntlMessages from 'util/IntlMessages'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import iota from 'assets/images/iota_light.svg'
-import { NotificationContainer, NotificationManager } from 'react-notifications'
 import Context from 'context'
 
 class ResetPass extends React.Component {
@@ -24,30 +23,9 @@ class ResetPass extends React.Component {
     }
   }
 
-  componentDidUpdate () {
-    const { auth: { showMessage, authUser, hideMessage } } = this.context
-    const { history } = this.props
-
-    if (showMessage) {
-      setTimeout(hideMessage, 100)
-    }
-    if (authUser !== null) {
-      history.push('/')
-    }
-  }
-
   render () {
     const { email } = this.state
-    const {
-      auth: {
-        showMessage,
-        loader,
-        alertMessage,
-        showAuthLoader,
-        successMessage,
-        resetPass
-      }
-    } = this.context
+    const { auth: { loader, showAuthLoader, resetPass } } = this.context
     return (
       <div className='app-login-container d-flex justify-content-center align-items-center animated slideInUpTiny animation-duration-3'>
         <div className='app-login-main-content'>
@@ -107,13 +85,6 @@ class ResetPass extends React.Component {
           <div className='loader-view'>
             <CircularProgress />
           </div>}
-        {showMessage &&
-          alertMessage !== '' &&
-          NotificationManager.error(alertMessage)}
-        {showMessage &&
-          successMessage !== '' &&
-          NotificationManager.success(successMessage)}
-        <NotificationContainer />
       </div>
     )
   }

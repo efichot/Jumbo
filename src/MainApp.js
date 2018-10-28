@@ -18,6 +18,7 @@ import {
   VERTICAL_NAVIGATION
 } from 'constants/ActionTypes'
 import { DARK_INDIGO } from 'constants/ThemeColors'
+import { NotificationManager } from 'react-notifications'
 
 class MainApp extends React.Component {
   state = {
@@ -25,31 +26,8 @@ class MainApp extends React.Component {
       loader: false,
       showAuthLoader: () =>
         this.setState({ auth: { ...this.state.auth, loader: true } }),
-
-      showMessage: false,
-      hideMessage: () =>
-        this.setState({
-          auth: {
-            ...this.state.auth,
-            alertMessage: '',
-            successMessage: '',
-            showMessage: false,
-            loader: false
-          }
-        }),
-
-      alertMessage: '',
-      showAlertMessage: message =>
-        this.setState({
-          auth: {
-            ...this.state.auth,
-            showMessage: true,
-            alertMessage: message,
-            loader: false
-          }
-        }),
-
-      successMessage: '',
+      hideAuthLoader: () =>
+        this.setState({ auth: { ...this.state.auth, loader: false } }),
 
       initURL: '',
       setInitUrl: url =>
@@ -69,9 +47,11 @@ class MainApp extends React.Component {
           await db.collection('users').doc(signInUser.user.uid).update({
             status: 'online'
           })
+          console.log(this.props)
         } catch (error) {
-          this.state.auth.showAlertMessage(error.message)
+          NotificationManager.error(error.message)
         }
+        this.state.auth.hideAuthLoader()
       },
       userProviderSignIn: async provider => {
         try {
@@ -101,8 +81,9 @@ class MainApp extends React.Component {
             status: 'online'
           })
         } catch (error) {
-          this.state.auth.showAlertMessage(error.message)
+          NotificationManager.error(error.message)
         }
+        this.state.auth.hideAuthLoader()
       },
       userSignUp: async (email, password, name) => {
         try {
@@ -122,24 +103,18 @@ class MainApp extends React.Component {
           ])
           this.state.auth.userSignInSuccess()
         } catch (error) {
-          this.state.auth.showAlertMessage(error.message)
+          NotificationManager.error(error.message)
         }
+        this.state.auth.hideAuthLoader()
       },
       resetPass: async email => {
         try {
           await auth.sendPasswordResetEmail(email)
-          this.setState({
-            auth: {
-              ...this.state.auth,
-              loader: false,
-              successMessage: 'Check your emails',
-              showMessage: true,
-              alertMessage: ''
-            }
-          })
+          NotificationManager.success('Check your emails')
         } catch (error) {
-          this.state.auth.showAlertMessage(error.message)
+          NotificationManager.error(error.message)
         }
+        this.state.auth.hideAuthLoader()
       },
       updateAccount: async (displayName, email, photoURL) =>
         this.setState({
@@ -166,8 +141,9 @@ class MainApp extends React.Component {
             this.state.auth.userSignOutSuccess()
           }
         } catch (error) {
-          this.state.auth.showAlertMessage(error.message)
+          NotificationManager.error(error.message)
         }
+        this.state.auth.hideAuthLoader()
       },
       userSignInSuccess: user =>
         this.setState({
@@ -280,8 +256,8 @@ class MainApp extends React.Component {
     }
   }
 
-  componentDidMount = () => {
-    const store = JSON.parse(window.localStorage.getItem('store'))
+  componentDidMount = async () => {
+    const store = await JSON.parse(window.localStorage.getItem('store'))
 
     if (store) {
       this.setState((state, props) => ({
@@ -295,13 +271,9 @@ class MainApp extends React.Component {
     window.localStorage.setItem('store', JSON.stringify(this.state))
   }
 
-  getContext = () => ({
-    ...this.state
-  })
-
   render () {
     return (
-      <Context.Provider value={this.getContext()}>
+      <Context.Provider value={{ ...this.state }}>
         <BrowserRouter>
           <ApolloProvider client={client}>
             <Switch>

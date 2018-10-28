@@ -115,7 +115,8 @@ export class Settings extends Component {
             user.email,
             user.photoURL
           )
-          this.setState({ file: null, loading: false, success: true })
+          NotificationManager.success('Profile updated')
+          this.setState({ file: null, loading: false })
         })
         .catch(e => {
           NotificationManager.error(e.message)
@@ -145,7 +146,8 @@ export class Settings extends Component {
             user.email,
             user.photoURL
           )
-          this.setState({ loading: false, success: true })
+          NotificationManager.success('Profile updated')
+          this.setState({ loading: false })
         })
         .catch(e => NotificationManager.error(e.message))
   }
@@ -167,8 +169,8 @@ export class Settings extends Component {
     user
       .updatePassword(this.state.password)
       .then(() => {
-        console.log('Password updated')
-        this.setState({ success: true, pass: false, loading: false })
+        NotificationManager.success('Password updated')
+        this.setState({ pass: false, loading: false })
       })
       .catch(e => {
         NotificationManager.error(e.message)
@@ -188,7 +190,7 @@ export class Settings extends Component {
       showConfirmPassword,
       success
     } = this.state
-    const { authUser, showMessage, alertMessage } = this.context.auth
+    const { authUser } = this.context.auth
 
     return (
       <div className='app-wrapper'>
@@ -433,7 +435,6 @@ export class Settings extends Component {
             <IntlMessages id='sweetAlerts.accountUpdated' />
           </SweetAlert>
         </div>
-        {showMessage && NotificationManager.error(alertMessage)}
       </div>
     )
   }

@@ -6,7 +6,6 @@ import Button from '@material-ui/core/Button'
 import IntlMessages from 'util/IntlMessages'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import iota from 'assets/images/iota_light.svg'
-import { NotificationContainer, NotificationManager } from 'react-notifications'
 import Context from 'context'
 
 class SignIn extends React.Component {
@@ -17,7 +16,7 @@ class SignIn extends React.Component {
     password: ''
   }
 
-  componentDidMount = () => {
+  componentDidUpdate = () => {
     const { auth: { authUser } } = this.context
     const { history } = this.props
 
@@ -26,28 +25,9 @@ class SignIn extends React.Component {
     }
   }
 
-  componentDidUpdate () {
-    const { auth: { showMessage, authUser, hideMessage } } = this.context
-    const { history } = this.props
-
-    if (showMessage) {
-      setTimeout(hideMessage, 100)
-    }
-    if (authUser !== null) {
-      history.push('/')
-    }
-  }
-
   render () {
     const {
-      auth: {
-        showAuthLoader,
-        userSignIn,
-        showMessage,
-        loader,
-        alertMessage,
-        userProviderSignIn
-      }
+      auth: { showAuthLoader, userSignIn, loader, userProviderSignIn }
     } = this.context
     const { email, password } = this.state
 
@@ -177,8 +157,6 @@ class SignIn extends React.Component {
           <div className='loader-view'>
             <CircularProgress />
           </div>}
-        {showMessage && NotificationManager.error(alertMessage)}
-        <NotificationContainer />
       </div>
     )
   }

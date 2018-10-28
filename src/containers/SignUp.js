@@ -2,7 +2,6 @@ import React from 'react'
 import TextField from '@material-ui/core/TextField'
 import IconButton from '@material-ui/core/IconButton'
 import Button from '@material-ui/core/Button'
-import { NotificationContainer, NotificationManager } from 'react-notifications'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import { Link } from 'react-router-dom'
 import IntlMessages from 'util/IntlMessages'
@@ -18,7 +17,7 @@ class SignUp extends React.Component {
     password: ''
   }
 
-  componentDidMount = () => {
+  componentDidUpdate = () => {
     const { auth: { authUser } } = this.context
     const { history } = this.props
 
@@ -27,28 +26,9 @@ class SignUp extends React.Component {
     }
   }
 
-  componentDidUpdate () {
-    const { auth: { showMessage, authUser, hideMessage } } = this.context
-    const { history } = this.props
-
-    if (showMessage) {
-      setTimeout(hideMessage, 100)
-    }
-    if (authUser !== null) {
-      history.push('/')
-    }
-  }
-
   render () {
     const {
-      auth: {
-        showAuthLoader,
-        userSignUp,
-        showMessage,
-        loader,
-        alertMessage,
-        userProviderSignIn
-      }
+      auth: { showAuthLoader, userSignUp, loader, userProviderSignIn }
     } = this.context
     const { name, email, password } = this.state
     return (
@@ -187,8 +167,6 @@ class SignUp extends React.Component {
           <div className='loader-view'>
             <CircularProgress />
           </div>}
-        {showMessage && NotificationManager.error(alertMessage)}
-        <NotificationContainer />
       </div>
     )
   }
