@@ -1,4 +1,4 @@
-# [React Redux Material Admin Template]
+# [React Context Material Admin Template]
 
 # Installation
 

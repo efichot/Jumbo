@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import { connect } from 'react-redux'
 import Drawer from '@material-ui/core/Drawer'
 import IntlMessages from 'util/IntlMessages'
 import CustomScrollbars from 'util/CustomScrollbars'
@@ -24,7 +23,10 @@ import Select from '@material-ui/core/Select'
 import InputLabel from '@material-ui/core/InputLabel'
 import Chip from '@material-ui/core/Chip'
 import { NotificationManager } from 'react-notifications'
+import Context from 'context'
 export class Todo extends Component {
+  static contextType = Context
+
   state = {
     drawer: false,
     search: '',
@@ -109,7 +111,7 @@ export class Todo extends Component {
         <CustomScrollbars
           className='module-side-scroll scrollbar'
           style={{
-            height: this.props.width >= 1200
+            height: this.context.settings.width >= 1200
               ? 'calc(100vh - 200px)'
               : 'calc(100vh - 80px)'
           }}
@@ -229,7 +231,7 @@ export class Todo extends Component {
     return (
       <ToDoList
         toDos={!deletedPage ? toDosFilter : toDosTrash}
-        width={this.props.width}
+        width={this.context.settings.width}
         onSortEnd={this.onSortEnd}
         useDragHandle // only if you use a SortableHandle
         toggleStar={this.toggleStar}
@@ -287,7 +289,7 @@ export class Todo extends Component {
 
   addTodo = () => {
     const { name, labelsSelected, toDos } = this.state
-    const { photoURL } = this.props.authUser
+    const { photoURL } = this.context.auth.authUser
 
     db.collection('todos').add({
       name,
@@ -355,7 +357,7 @@ export class Todo extends Component {
       name,
       labelsSelected
     } = this.state
-    const { authUser } = this.props
+    const { authUser } = this.context.auth
 
     const labels = ['Important', 'Useless']
 
@@ -502,7 +504,7 @@ export class Todo extends Component {
                   ? <div
                     className='d-flex flex-row justify-content-center align-items-center'
                     style={{
-                      height: this.props.width >= 1200
+                      height: this.context.settings.width >= 1200
                           ? 'calc(100vh - 265px)'
                           : 'calc(100vh - 245px)'
                     }}
@@ -510,7 +512,6 @@ export class Todo extends Component {
                     <CircularProgress />
                   </div>
                   : this.ShowToDos()}
-                {/* Snackbar */}
               </div>
             </div>
           </div>
@@ -520,10 +521,4 @@ export class Todo extends Component {
   }
 }
 
-const mapStateToProps = ({ settings, auth }) => {
-  const { width } = settings
-  const { authUser } = auth
-  return { width, authUser }
-}
-
-export default connect(mapStateToProps, {})(Todo)
+export default Todo
