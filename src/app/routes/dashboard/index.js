@@ -6,6 +6,8 @@ import CardContent from '@material-ui/core/CardContent'
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
 import { Query, Mutation } from 'react-apollo'
+import { GET_WRITER_AND_BOOKS } from 'graphql/Queries'
+import { ADD_BOOK } from 'graphql/Mutations'
 import gql from 'graphql-tag'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import { NotificationManager } from 'react-notifications'
@@ -14,27 +16,6 @@ import StripeCheckout from 'react-stripe-checkout'
 import { CardActions } from '@material-ui/core'
 import { functions } from 'helper/firebase'
 import CustomScrollbars from 'util/CustomScrollbars'
-
-const GET_WRITER_AND_BOOKS = gql`
-  query($writerName: String!) {
-    writer(name: $writerName) {
-      id
-      name
-      books {
-        title
-      }
-    }
-  }
-`
-
-const ADD_BOOK = gql`
-  mutation($title: String!, $writer: String!) {
-    addBook(title: $title, writer: $writer) {
-      title
-      writerId
-    }
-  }
-`
 
 export class Dashboard extends Component {
   state = {

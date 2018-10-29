@@ -101,7 +101,7 @@ class MainApp extends React.Component {
             }),
             signUpUser.user.sendEmailVerification()
           ])
-          this.state.auth.userSignInSuccess()
+          this.state.auth.userSignInSuccess(signUpUser.user)
         } catch (error) {
           NotificationManager.error(error.message)
         }
