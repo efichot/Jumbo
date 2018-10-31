@@ -68,48 +68,36 @@ class App extends React.Component {
 
             <main className='app-main-content-wrapper'>
               <div className='app-main-content'>
-                <Switch>
-                  <Route
-                    exact
-                    path={`${match.url}/dashboard`}
-                    component={Dashboard}
-                  />
-                  <Route
-                    exact
-                    path={`${match.url}/settings`}
-                    component={Settings}
-                  />
-                  <Route
-                    exact
-                    path={`${match.url}/profile`}
-                    component={Profile}
-                  />
-                  <Route
-                    exact
-                    path={`${match.url}/chat`}
-                    render={() => (
-                      <Suspense fallback={<LinearProgress color='secondary' />}>
-                        <Chat />
-                      </Suspense>
-                    )}
-                  />
-                  <Route
-                    exact
-                    path={`${match.url}/todo`}
-                    render={() => (
-                      <Suspense fallback={<LinearProgress color='secondary' />}>
-                        <ToDo />
-                      </Suspense>
-                    )}
-                  />
-                  <Route
-                    render={() => (
-                      <Suspense fallback={<LinearProgress color='secondary' />}>
-                        <NotFound />
-                      </Suspense>
-                    )}
-                  />
-                </Switch>
+                <Suspense fallback={<LinearProgress color='secondary' />}>
+                  <Switch>
+                    <Route
+                      exact
+                      path={`${match.url}/dashboard`}
+                      component={Dashboard}
+                    />
+                    <Route
+                      exact
+                      path={`${match.url}/settings`}
+                      component={Settings}
+                    />
+                    <Route
+                      exact
+                      path={`${match.url}/profile`}
+                      component={Profile}
+                    />
+                    <Route
+                      exact
+                      path={`${match.url}/chat`}
+                      render={() => <Chat />}
+                    />
+                    <Route
+                      exact
+                      path={`${match.url}/todo`}
+                      render={() => <ToDo />}
+                    />
+                    <Route render={() => <NotFound />} />
+                  </Switch>
+                </Suspense>
               </div>
               <Footer />
             </main>

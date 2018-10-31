@@ -12,72 +12,19 @@ const ServerError = React.lazy(() => import('./routes/500'))
 
 const Pages = ({ match }) => (
   <div className='app-wrapper'>
-    <Switch>
-      <Redirect exact from={`${match.url}/`} to={`${match.url}/about-us`} />
-      <Route
-        path={`${match.url}/about-us`}
-        render={() => (
-          <Suspense fallback={<LinearProgress color='secondary' />}>
-            <AboutUs />
-          </Suspense>
-        )}
-      />
-      <Route
-        path={`${match.url}/contact-us`}
-        render={() => (
-          <Suspense fallback={<LinearProgress color='secondary' />}>
-            <ContactUs />
-          </Suspense>
-        )}
-      />
-      <Route
-        path={`${match.url}/blog`}
-        render={() => (
-          <Suspense fallback={<LinearProgress color='secondary' />}>
-            <Blog />
-          </Suspense>
-        )}
-      />
-      <Route
-        path={`${match.url}/faq`}
-        render={() => (
-          <Suspense fallback={<LinearProgress color='secondary' />}>
-            <Faq />
-          </Suspense>
-        )}
-      />
-      <Route
-        path={`${match.url}/portfolio`}
-        render={() => (
-          <Suspense fallback={<LinearProgress color='secondary' />}>
-            <Portfolio />
-          </Suspense>
-        )}
-      />
-      <Route
-        path={`${match.url}/error-404`}
-        render={() => (
-          <Suspense fallback={<LinearProgress color='secondary' />}>
-            <NotFound />
-          </Suspense>
-        )}
-      />
-      <Route
-        path={`${match.url}/error-500`}
-        render={() => (
-          <Suspense fallback={<LinearProgress color='secondary' />}>
-            <ServerError />
-          </Suspense>
-        )}
-      />
-      <Route
-        render={() => (
-          <Suspense fallback={<LinearProgress color='secondary' />}>
-            <NotFound />
-          </Suspense>
-        )}
-      />
-    </Switch>
+    <Suspense fallback={<LinearProgress color='secondary' />}>
+      <Switch>
+        <Redirect exact from={`${match.url}/`} to={`${match.url}/about-us`} />
+        <Route path={`${match.url}/about-us`} render={() => <AboutUs />} />
+        <Route path={`${match.url}/contact-us`} render={() => <ContactUs />} />
+        <Route path={`${match.url}/blog`} render={() => <Blog />} />
+        <Route path={`${match.url}/faq`} render={() => <Faq />} />
+        <Route path={`${match.url}/portfolio`} render={() => <Portfolio />} />
+        <Route path={`${match.url}/error-404`} render={() => <NotFound />} />
+        <Route path={`${match.url}/error-500`} render={() => <ServerError />} />
+        <Route render={() => <NotFound />} />
+      </Switch>
+    </Suspense>
   </div>
 )
 
