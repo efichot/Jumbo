@@ -7,9 +7,10 @@ import IconButton from '@material-ui/core/IconButton'
 import {
   COLLAPSED_DRAWER,
   FIXED_DRAWER,
-  HORIZONTAL_NAVIGATION
+  HORIZONTAL_NAVIGATION,
 } from 'constants/ActionTypes'
 import Context from 'context'
+import { Transition, config } from 'react-spring'
 
 class SideNav extends React.PureComponent {
   static contextType = Context
@@ -26,21 +27,21 @@ class SideNav extends React.PureComponent {
     else setDrawerType('mini_drawer')
   }
 
-  componentDidMount () {
+  componentDidMount() {
     window.addEventListener('resize', () => {
       this.context.settings.updateWindowWidth(window.innerWidth)
     })
   }
 
-  render () {
+  render() {
     const {
       settings: {
         navCollapsed,
         drawerType,
         width,
         navigationStyle,
-        themeColor
-      }
+        themeColor,
+      },
     } = this.context
     let drawerStyle = drawerType === FIXED_DRAWER
       ? 'd-xl-flex'
@@ -62,25 +63,35 @@ class SideNav extends React.PureComponent {
     return (
       <div className={`app-sidebar d-none ${drawerStyle}`}>
         <Drawer
-          className='app-sidebar-content'
+          className="app-sidebar-content"
           variant={type}
           open={type === 'temporary' ? navCollapsed : true}
           onClose={this.onToggleCollapsedNav}
           classes={{
-            paper: 'side-nav'
+            paper: 'side-nav',
           }}
         >
           <UserInfo />
           <SidenavContent drawerType={drawerType} />
           <div
             style={{ backgroundColor: color }}
-            className='d-flex pointer'
+            className="d-flex pointer"
             onClick={this.setDrawerType(drawerType)}
           >
-            <IconButton className='ml-auto mr-4 mb-2 mt-1'>
-              {drawerType === 'mini_drawer'
-                ? <i className='zmdi zmdi-chevron-right text-grey' />
-                : <i className='zmdi zmdi-chevron-left text-grey' />}
+            <IconButton className="ml-auto mr-4 mb-4 mt-3">
+              <Transition
+                config={config.slow}
+                items={drawerType === 'mini_drawer'}
+                from={{ position: 'absolute', opacity: 0, transform: 'rotate(180deg)' }}
+                enter={{ opacity: 1, transform: 'rotate(0deg)' }}
+                leave={{ opacity: 0 }}
+              >
+                {toggle =>
+                  (toggle
+                    ? props => <i style={props} className="zmdi zmdi-chevron-right text-grey"/>
+                    : props => <i style={props} className="zmdi zmdi-chevron-left text-grey" />
+                  )}
+              </Transition>
             </IconButton>
           </div>
         </Drawer>

@@ -1,4 +1,5 @@
-import React, { Component } from 'react'
+/* eslint-disable jsx-a11y/accessible-emoji */
+import React, { Component, Suspense } from 'react'
 import ContainerHeader from 'components/ContainerHeader/index'
 import IntlMessages from 'util/IntlMessages'
 import Card from '@material-ui/core/Card'
@@ -16,7 +17,18 @@ import StripeCheckout from 'react-stripe-checkout'
 import { CardActions } from '@material-ui/core'
 import { functions } from 'helper/firebase'
 import CustomScrollbars from 'util/CustomScrollbars'
+import { Transition, config, Spring } from 'react-spring'
+import useFetch from 'fetch-suspense'
 
+function Comments () {
+  const data = useFetch(
+    'http://slowwly.robertomurray.co.uk/delay/3000/url/https://jsonplaceholder.typicode.com/comments',
+    {
+      method: 'GET'
+    }
+  )
+  return <h4>{data}</h4>
+}
 export class Dashboard extends Component {
   state = {
     writer: '',
@@ -24,7 +36,8 @@ export class Dashboard extends Component {
     writer2: '',
     buttonClicked: false,
     loading: false,
-    apolloStore: null
+    apolloStore: null,
+    toggle: false
   }
 
   onToken = async token => {
@@ -67,7 +80,14 @@ export class Dashboard extends Component {
   }
 
   render () {
-    const { buttonClicked, loading, apolloStore, title, writer2 } = this.state
+    const {
+      buttonClicked,
+      loading,
+      apolloStore,
+      title,
+      writer2,
+      toggle
+    } = this.state
     return (
       <div className='app-wrapper'>
         <div className='dashboard animated slideInUpTiny animation-duration-5'>
@@ -173,7 +193,7 @@ export class Dashboard extends Component {
               </Card>
             </div>
 
-            <div className='col-12 col-md-5'>
+            <div className='col-12 col-md-5 mb-3'>
               <Card>
                 <CardContent>
                   <CustomScrollbars
@@ -225,7 +245,7 @@ export class Dashboard extends Component {
                 </CardContent>
               </Card>
             </div>
-            <div className='col-12 col-md-7'>
+            <div className='col-12 col-md-7 mb-3'>
               <Card>
                 <CardContent>
                   <h3>
@@ -284,6 +304,55 @@ export class Dashboard extends Component {
                   </Mutation>
 
                 </div>
+              </Card>
+            </div>
+            <div className='col-12 col-md-6 mb-3'>
+
+              <Spring
+                config={config.slow}
+                from={{ transform: 'translate3d(0, 50px, 0)' }}
+                to={{
+                  transform: 'translate3d(0, 0, 0)'
+                }}
+              >
+                {props => (
+                  <Card style={props}>
+                    <CardContent>
+                      <h3>Animations with react-spring</h3>
+                      <Transition
+                        config={config.slow}
+                        items={toggle}
+                        from={{ position: 'absolute', opacity: 0 }}
+                        enter={{ opacity: 1 }}
+                        leave={{ opacity: 0 }}
+                      >
+                        {toggle =>
+                          (toggle
+                            ? props => <div style={props}>😄</div>
+                            : props => <div style={props}>🤪</div>)}
+                      </Transition>
+                    </CardContent>
+                    <CardActions>
+                      <Button
+                        variant='contained'
+                        color='primary'
+                        onClick={e => this.setState({ toggle: !toggle })}
+                      >
+                        Toggle
+                      </Button>
+                    </CardActions>
+                  </Card>
+                )}
+              </Spring>
+            </div>
+            <div className='col-12 col-md-6 mb-3'>
+              <Card>
+                <CardContent>
+                  <h3>React.Suspense with useFetch</h3>
+                  <Suspense fallback={<CircularProgress color='secondary' />}>
+                    <Comments />
+                  </Suspense>
+                </CardContent>
               </Card>
             </div>
           </div>

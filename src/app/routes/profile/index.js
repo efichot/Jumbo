@@ -42,7 +42,8 @@ export class Profile extends Component {
 
   render () {
     const { loader } = this.state
-    const { authUser } = this.context.auth
+    const { tokenFCM } = this.context.auth
+
     const topics = [
       { name: 'Foot', decription: 'Topics on europeen leagues', photo: Foot },
       {
@@ -86,7 +87,7 @@ export class Profile extends Component {
                               functions
                                 .httpsCallable('subscribeToTopic')({
                                   topic: topic.name,
-                                  token: authUser.tokenFCM
+                                  token: tokenFCM
                                 })
                                 .then(res => {
                                   const { done, message } = res.data
@@ -96,7 +97,9 @@ export class Profile extends Component {
                                     NotificationManager.error(message)
                                   }
                                 })
-                                .catch(e => NotificationManager.error(e))
+                                .catch(e =>
+                                  NotificationManager.error(e.message)
+                                )
                             }}
                           >
                             Subscribe
@@ -109,7 +112,7 @@ export class Profile extends Component {
                               functions
                                 .httpsCallable('unsubscribeFromTopic')({
                                   topic: topic.name,
-                                  token: authUser.tokenFCM
+                                  token: tokenFCM
                                 })
                                 .then(res => {
                                   const { done, message } = res.data
@@ -119,7 +122,9 @@ export class Profile extends Component {
                                     NotificationManager.error(message)
                                   }
                                 })
-                                .catch(e => NotificationManager.error(e))
+                                .catch(e =>
+                                  NotificationManager.error(e.message)
+                                )
                             }}
                           >
                             Unsubscribe
@@ -165,7 +170,7 @@ export class Profile extends Component {
                           }
                           this.setState({ loader: false })
                         })
-                        .catch(e => NotificationManager.error(e))
+                        .catch(e => NotificationManager.error(e.message))
                     }}
                   >
                     {loader

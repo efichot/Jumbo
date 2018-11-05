@@ -157,7 +157,7 @@ const unsubscribeFromTopic = functions.https.onCall((data, context) => {
     .unsubscribeFromTopic(token, topic)
     .then(() => {
       console.log(`Unsubscribe from topic:${topic}`)
-      return { done: true, message: `Subscribe to topic:${topic}` }
+      return { done: true, message: `Unsubscribe to topic:${topic}` }
     })
     .catch(e => {
       console.log(e)

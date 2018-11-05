@@ -69,6 +69,7 @@ const RestrictedRoute = ({ component: Component, authUser, ...rest }) => (
 )
 class App extends Component {
   static contextType = Context
+
   componentDidMount () {
     const {
       auth: {

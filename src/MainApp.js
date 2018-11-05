@@ -33,7 +33,7 @@ class MainApp extends React.Component {
       setInitUrl: url =>
         this.setState({ auth: { ...this.state.auth, setInitUrl: url } }),
 
-      token: null,
+      tokenFCM: null,
       saveTokenFCM: token =>
         this.setState({ auth: { ...this.state.auth, tokenFCM: token } }),
 
