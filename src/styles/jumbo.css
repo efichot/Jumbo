@@ -1,13 +1,13 @@
 @charset "UTF-8";
-@import url("https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i");
+@import url("https://fonts.googleapis.com/css?family=Hind+Vadodara");
 /*!
  * Bootstrap v4.0.0 (https://getbootstrap.com)
  * Copyright 2011-2018 The Bootstrap Authors
  * Copyright 2011-2018 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  */
-@import url("https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i");
-@import url("https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i");
+@import url("https://fonts.googleapis.com/css?family=Hind+Vadodara");
+@import url("https://fonts.googleapis.com/css?family=Hind+Vadodara");
 :root {
   --blue: #007bff;
   --indigo: #6610f2;
@@ -35,7 +35,7 @@
   --breakpoint-md: 768px;
   --breakpoint-lg: 992px;
   --breakpoint-xl: 1200px;
-  --font-family-sans-serif: "Roboto", sans-serif;
+  --font-family-sans-serif: "Hind Vadodara", sans-serif;
   --font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
@@ -63,7 +63,7 @@ article, aside, dialog, figcaption, figure, footer, header, hgroup, main, nav, s
 
 body {
   margin: 0;
-  font-family: "Roboto", sans-serif;
+  font-family: "Hind Vadodara", sans-serif;
   font-size: 14px;
   font-weight: 400;
   line-height: 1.5;
@@ -4773,7 +4773,7 @@ button.close {
   z-index: 1070;
   display: block;
   margin: 0;
-  font-family: "Roboto", sans-serif;
+  font-family: "Hind Vadodara", sans-serif;
   font-style: normal;
   font-weight: 400;
   line-height: 1.5;
@@ -4875,7 +4875,7 @@ button.close {
   z-index: 1060;
   display: block;
   max-width: 276px;
-  font-family: "Roboto", sans-serif;
+  font-family: "Hind Vadodara", sans-serif;
   font-style: normal;
   font-weight: 400;
   line-height: 1.5;
@@ -12252,7 +12252,7 @@ html {
 }
 
 body {
-  font-family: "Roboto", sans-serif;
+  font-family: "Hind Vadodara", sans-serif;
   font-size: 14px;
   font-weight: 400;
   color: #212529;
@@ -17219,6 +17219,7 @@ label {
 
 .user-profile {
   padding: 10px 0;
+  height: 75px;
 }
 
 .mh-120 {

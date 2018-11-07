@@ -71,14 +71,14 @@ class SideNav extends React.PureComponent {
             paper: 'side-nav',
           }}
         >
-          <UserInfo />
+          <UserInfo/>
           <SidenavContent drawerType={drawerType} />
           <div
             style={{ backgroundColor: color }}
             className="d-flex pointer"
             onClick={this.setDrawerType(drawerType)}
           >
-            <IconButton className="ml-auto mr-4 mb-4 mt-3">
+            <IconButton className="ml-auto p-2 mr-4 mb-4 mt-3">
               <Transition
                 config={config.slow}
                 items={drawerType === 'mini_drawer'}

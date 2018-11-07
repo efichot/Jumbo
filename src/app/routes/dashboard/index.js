@@ -19,10 +19,11 @@ import { functions } from 'helper/firebase'
 import CustomScrollbars from 'util/CustomScrollbars'
 import { Transition, config, Spring } from 'react-spring'
 import useFetch from 'fetch-suspense'
+import ComponentHook from 'components/ComponentHook'
 
 function Comments () {
   const data = useFetch(
-    'http://slowwly.robertomurray.co.uk/delay/3000/url/https://jsonplaceholder.typicode.com/comments',
+    'http://slowwly.robertomurray.co.uk/delay/2000/url/https://jsonplaceholder.typicode.com/todos/1',
     {
       method: 'GET'
     }
@@ -352,6 +353,14 @@ export class Dashboard extends Component {
                   <Suspense fallback={<CircularProgress color='secondary' />}>
                     <Comments />
                   </Suspense>
+                </CardContent>
+              </Card>
+            </div>
+            <div className='col-12 col-md-6 mb-3'>
+              <Card>
+                <CardContent>
+                  <h3>Use React hooks</h3>
+                  <ComponentHook />
                 </CardContent>
               </Card>
             </div>
