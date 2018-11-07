@@ -7,7 +7,7 @@ import CardContent from '@material-ui/core/CardContent'
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
 import { Query, Mutation } from 'react-apollo'
-import { GET_WRITER_AND_BOOKS } from 'graphql/Queries'
+import { GET_WRITER } from 'graphql/Queries'
 import { ADD_BOOK } from 'graphql/Mutations'
 import gql from 'graphql-tag'
 import CircularProgress from '@material-ui/core/CircularProgress'
@@ -139,7 +139,7 @@ export class Dashboard extends Component {
                   </div>
                   {buttonClicked &&
                     <Query
-                      query={GET_WRITER_AND_BOOKS}
+                      query={GET_WRITER}
                       variables={{ writerName: this.state.writer }}
                     >
                       {({ loading, data }) => {

@@ -1,22 +1,15 @@
-import React, { useState, useContext, Suspense } from 'react'
-import { useApolloQuery } from 'react-apollo-hooks'
+import React, { useState, useContext, Suspense, useEffect } from 'react'
+import { useApolloQuery, useApolloMutation } from 'react-apollo-hooks'
 import Context from 'context'
-import gql from 'graphql-tag'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import ButtonBase from '@material-ui/core/ButtonBase'
 import Typography from '@material-ui/core/Typography'
-
-const GET_BOOKS = gql`
-  query {
-    books {
-      title
-      writerId
-      writer {
-        name
-      }
-    }
-  }
-`
+import { Formik } from 'formik'
+import { TextField, Button } from '@material-ui/core'
+import { GET_BOOKS } from '../../graphql/Queries'
+import { ADD_BOOK } from '../../graphql/Mutations'
+import { Mutation } from 'react-apollo'
+import { NotificationManager } from 'react-notifications'
 
 const Books = () => {
   const { data, error } = useApolloQuery(GET_BOOKS)
@@ -38,6 +31,13 @@ export default function (props) {
   const [value, setValue] = useState('4')
   const [input, setInput] = useState('')
   const [display, setDisplay] = useState(false)
+
+  useEffect(
+    () => {
+      console.log('lol')
+    },
+    [value]
+  )
 
   return (
     <div className='d-flex flex-column align-items-center'>
@@ -86,6 +86,66 @@ export default function (props) {
           </Typography>
         </div>
       </ButtonBase>
+      <Mutation mutation={ADD_BOOK}>
+        {(mutation, { data, loading, error }) => {
+          if (error) NotificationManager.error(error.message)
+
+          return (
+            <Formik
+              initialValues={{
+                writer: '',
+                book: ''
+              }}
+              onSubmit={async ({ writer, book }) => {
+                const res = await mutation({
+                  variables: {
+                    title: book,
+                    writer
+                  }
+                })
+                if (res) {
+                  NotificationManager.success(
+                    `Book Added ${res.data.addBook.title}!`
+                  )
+                }
+              }}
+            >
+              {({ values, handleChange, handleSubmit }) => (
+                <form className='d-flex align-items-center mt-2'>
+                  <TextField
+                    name='writer'
+                    label='Writer'
+                    value={values.writer}
+                    onChange={handleChange}
+                    variant='outlined'
+                  />
+                  <TextField
+                    name='book'
+                    label='Book'
+                    value={values.book}
+                    onChange={handleChange}
+                    variant='outlined'
+                  />
+                  <Button
+                    variant='contained'
+                    color='primary'
+                    onClick={handleSubmit}
+                    disabled={loading}
+                  >
+                    Primary
+                    {loading &&
+                      <CircularProgress
+                        size={24}
+                        className='text-green position-absolute'
+                      />}
+                  </Button>
+
+                </form>
+              )}
+            </Formik>
+          )
+        }}
+      </Mutation>
     </div>
   )
 }
