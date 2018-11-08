@@ -1,5 +1,5 @@
 import React, { useState, useContext, Suspense, useEffect } from 'react'
-import { useApolloQuery, useApolloMutation } from 'react-apollo-hooks'
+import { useApolloQuery } from 'react-apollo-hooks'
 import Context from 'context'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import ButtonBase from '@material-ui/core/ButtonBase'
@@ -86,7 +86,17 @@ export default function (props) {
           </Typography>
         </div>
       </ButtonBase>
-      <Mutation mutation={ADD_BOOK}>
+      <Mutation
+        mutation={ADD_BOOK}
+        update={(cache, { data: { addBook } }) => {
+          const { books } = cache.readQuery({ query: GET_BOOKS })
+          books.push(addBook)
+          cache.writeQuery({
+            query: GET_BOOKS,
+            data: { books }
+          })
+        }}
+      >
         {(mutation, { data, loading, error }) => {
           if (error) NotificationManager.error(error.message)
 
@@ -96,7 +106,7 @@ export default function (props) {
                 writer: '',
                 book: ''
               }}
-              onSubmit={async ({ writer, book }) => {
+              onSubmit={async ({ writer, book }, { resetForm }) => {
                 const res = await mutation({
                   variables: {
                     title: book,
@@ -108,6 +118,7 @@ export default function (props) {
                     `Book Added ${res.data.addBook.title}!`
                   )
                 }
+                resetForm()
               }}
             >
               {({ values, handleChange, handleSubmit }) => (

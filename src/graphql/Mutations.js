@@ -5,6 +5,9 @@ export const ADD_BOOK = gql`
     addBook(title: $title, writer: $writer) {
       title
       writerId
+      writer {
+        name
+      }
     }
   }
 `
