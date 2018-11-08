@@ -15,12 +15,6 @@ import { Transition, config } from 'react-spring'
 class SideNav extends React.PureComponent {
   static contextType = Context
 
-  onToggleCollapsedNav = e => {
-    const { settings: { navCollapsed, toggleCollapsedNav } } = this.context
-    const val = !navCollapsed
-    toggleCollapsedNav(val)
-  }
-
   setDrawerType = drawerType => e => {
     const { settings: { setDrawerType } } = this.context
     if (drawerType === 'mini_drawer') setDrawerType('fixed_drawer')
@@ -41,6 +35,7 @@ class SideNav extends React.PureComponent {
         width,
         navigationStyle,
         themeColor,
+        toggleCollapsedNav
       },
     } = this.context
     let drawerStyle = drawerType === FIXED_DRAWER
@@ -66,7 +61,7 @@ class SideNav extends React.PureComponent {
           className="app-sidebar-content"
           variant={type}
           open={type === 'temporary' ? navCollapsed : true}
-          onClose={this.onToggleCollapsedNav}
+          onClose={toggleCollapsedNav}
           classes={{
             paper: 'side-nav',
           }}

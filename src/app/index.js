@@ -3,7 +3,7 @@ import { Route, Switch, withRouter } from 'react-router-dom'
 import Header from 'components/Header/index'
 import Sidebar from 'containers/SideNav/index'
 import Footer from 'components/Footer'
-import Tour from '../components/Tour/index'
+// import Tour from '../components/Tour/index'
 import {
   ABOVE_THE_HEADER,
   BELOW_THE_HEADER,
@@ -50,7 +50,7 @@ class App extends React.Component {
         indexName={process.env.REACT_APP_ALGOLIA_INDICE}
       >
         <div className={`app-container ${drawerStyle}`}>
-          <Tour />
+          {/* <Tour /> */}
 
           <Sidebar />
           <div className='app-main-container'>

@@ -175,11 +175,11 @@ class MainApp extends React.Component {
     },
     settings: {
       navCollapsed: false,
-      toggleCollapsedNav: val =>
+      toggleCollapsedNav: () =>
         this.setState({
           settings: {
             ...this.state.settings,
-            navCollapsed: !this.state.navCollapsed
+            navCollapsed: !this.state.settings.navCollapsed
           }
         }),
 
