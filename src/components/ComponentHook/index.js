@@ -1,5 +1,4 @@
-import React, { useState, useContext, Suspense, useEffect } from 'react'
-import { useApolloQuery } from 'react-apollo-hooks'
+import React, { useState, useContext, useEffect, Fragment } from 'react'
 import Context from 'context'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import ButtonBase from '@material-ui/core/ButtonBase'
@@ -8,23 +7,10 @@ import { Formik } from 'formik'
 import { TextField, Button } from '@material-ui/core'
 import { GET_BOOKS } from '../../graphql/Queries'
 import { ADD_BOOK } from '../../graphql/Mutations'
-import { Mutation } from 'react-apollo'
+import { Mutation, Query } from 'react-apollo'
 import { NotificationManager } from 'react-notifications'
-
-const Books = () => {
-  const { data, error } = useApolloQuery(GET_BOOKS)
-  if (error) return `Error! ${error.message}`
-
-  return (
-    <ul>
-      {data.books.map(book => (
-        <li key={book.title}>
-          {book.title} by {book.writer.name}
-        </li>
-      ))}
-    </ul>
-  )
-}
+import OnMount from '../OnMount'
+import { BOOKS_SUBSCRIPTION } from '../../graphql/Subscriptions'
 
 export default function (props) {
   const context = useContext(Context)
@@ -34,7 +20,7 @@ export default function (props) {
 
   useEffect(
     () => {
-      console.log('lol')
+      console.log('useEffect works like componentDidMount && componetDidUpdate')
     },
     [value]
   )
@@ -55,9 +41,38 @@ export default function (props) {
       <hr />
       <h3>Apollo Client</h3>
       {display &&
-        <Suspense fallback={<CircularProgress color='secondary' />}>
-          <Books />
-        </Suspense>}
+        <Query query={GET_BOOKS}>
+          {({ data, loading, error, subscribeToMore }) => {
+            if (error) return NotificationManager.error(error.message)
+            return loading
+              ? <CircularProgress color='secondary' />
+              : <Fragment>
+                <OnMount
+                  onEffect={() =>
+                      subscribeToMore({
+                        document: BOOKS_SUBSCRIPTION,
+                        updateQuery: (prev, { subscriptionData }) => {
+                          if (!subscriptionData.data) return prev
+                          console.log(subscriptionData.data)
+                          const newBook = subscriptionData.data.addBook
+
+                          return {
+                            ...prev,
+                            newBook
+                          }
+                        }
+                      })}
+                  />
+                <ul>
+                  {data.books.map(book => (
+                    <li key={book.title}>
+                      {book.title} by {book.writer.name}
+                    </li>
+                    ))}
+                </ul>
+              </Fragment>
+          }}
+        </Query>}
       <ButtonBase
         focusRipple
         onClick={e => setDisplay(!display)}
@@ -98,7 +113,7 @@ export default function (props) {
         }}
       >
         {(mutation, { data, loading, error }) => {
-          if (error) NotificationManager.error(error.message)
+          if (error) return NotificationManager.error(error.message)
 
           return (
             <Formik

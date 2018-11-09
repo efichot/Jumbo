@@ -19,7 +19,6 @@ import {
 } from 'constants/ActionTypes'
 import { DARK_INDIGO } from 'constants/ThemeColors'
 import { NotificationManager } from 'react-notifications'
-import { ApolloProvider as ApolloHooksProvider } from 'react-apollo-hooks'
 
 class MainApp extends React.Component {
   state = {
@@ -277,11 +276,9 @@ class MainApp extends React.Component {
       <Context.Provider value={{ ...this.state }}>
         <BrowserRouter>
           <ApolloProvider client={client}>
-            <ApolloHooksProvider client={client}>
-              <Switch>
-                <Route path='/' component={App} />
-              </Switch>
-            </ApolloHooksProvider>
+            <Switch>
+              <Route path='/' component={App} />
+            </Switch>
           </ApolloProvider>
         </BrowserRouter>
       </Context.Provider>
