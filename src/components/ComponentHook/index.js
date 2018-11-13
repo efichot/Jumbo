@@ -10,7 +10,7 @@ import { ADD_BOOK } from '../../graphql/Mutations'
 import { Mutation, Query } from 'react-apollo'
 import { NotificationManager } from 'react-notifications'
 import OnMount from '../OnMount'
-import { BOOKS_SUBSCRIPTION } from '../../graphql/Subscriptions'
+import { NEW_BOOK } from '../../graphql/Subscriptions'
 
 export default function (props) {
   const context = useContext(Context)
@@ -50,11 +50,11 @@ export default function (props) {
                 <OnMount
                   onEffect={() =>
                       subscribeToMore({
-                        document: BOOKS_SUBSCRIPTION,
+                        document: NEW_BOOK,
                         updateQuery: (prev, { subscriptionData }) => {
                           if (!subscriptionData.data) return prev
                           console.log(subscriptionData.data)
-                          const newBook = subscriptionData.data.addBook
+                          const newBook = subscriptionData.data.newBook
 
                           return {
                             ...prev,

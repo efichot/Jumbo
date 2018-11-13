@@ -8,6 +8,7 @@ const cors = require("cors");
 const algoliasearch = require("algoliasearch");
 const apollo_server_express_1 = require("apollo-server-express");
 const Stripe = require("stripe");
+const twilio = require("twilio");
 /////////* Admin SDK config */////////////
 admin.initializeApp();
 const env = functions.config();
@@ -19,6 +20,9 @@ const client = algoliasearch(env.algolia.appid, env.algolia.apikey);
 const index = client.initIndex('jumbo');
 ////////* Stripe config */////////////////
 const stripe = new Stripe(functions.config().stripe.secret);
+////////* Twilio config */////////////////
+const { sid, auth } = functions.config().twilio;
+const clientTwilio = twilio(sid, auth);
 /////////* EXPRESS config */////////////
 const app = express();
 app.use(bodyParser.json());
@@ -136,7 +140,7 @@ const unsubscribeFromTopic = functions.https.onCall((data, context) => {
         .unsubscribeFromTopic(token, topic)
         .then(() => {
         console.log(`Unsubscribe from topic:${topic}`);
-        return { done: true, message: `Subscribe to topic:${topic}` };
+        return { done: true, message: `Unsubscribe to topic:${topic}` };
     })
         .catch(e => {
         console.log(e);
@@ -248,6 +252,13 @@ const userDelete = functions.auth.user().onDelete(user => {
         .then(() => console.log('User deleted to the users collection'))
         .catch(e => console.log(e));
 });
+/////////* PUBSUB FUNCTIONS */////////////
+const callMe = functions.pubsub.topic('callme').onPublish(async (message) => {
+    const call = await clientTwilio.calls.create({
+        to: '+33618860770', from: '+33644601610', url: 'https://instafire.page.link/tc4X', method: 'GET'
+    });
+    return call.sid;
+});
 module.exports = {
     api,
     userCreate,
@@ -257,6 +268,7 @@ module.exports = {
     subscribeToTopic,
     unsubscribeFromTopic,
     sendPushMessageToTopic,
-    saveStripeTokenAndCreateStripeUser
+    saveStripeTokenAndCreateStripeUser,
+    callMe
 };
 //# sourceMappingURL=index.js.map

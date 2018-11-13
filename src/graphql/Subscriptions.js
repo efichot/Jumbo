@@ -1,13 +1,10 @@
 import gql from 'graphql-tag'
 
-export const BOOKS_SUBSCRIPTION = gql`
-  subscription {
-    onBookAdded() {
+export const NEW_BOOK = gql`
+  subscription newBook {
+    newBook {
       title
       writerId
-      writer {
-        name
-      }
     }
   }
 `

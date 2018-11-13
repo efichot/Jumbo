@@ -6,6 +6,7 @@ import * as cors from 'cors'
 import * as algoliasearch from 'algoliasearch'
 import { ApolloServer, gql } from 'apollo-server-express'
 import * as Stripe from 'stripe'
+import * as twilio from 'twilio'
 
 /////////* Admin SDK config */////////////
 admin.initializeApp()
@@ -21,6 +22,10 @@ const index = client.initIndex('jumbo')
 
 ////////* Stripe config */////////////////
 const stripe = new Stripe(functions.config().stripe.secret)
+
+////////* Twilio config */////////////////
+const { sid, auth } = functions.config().twilio
+const clientTwilio = twilio(sid, auth)
 
 /////////* EXPRESS config */////////////
 
@@ -296,6 +301,14 @@ const userDelete = functions.auth.user().onDelete(user => {
     .catch(e => console.log(e))
 })
 
+/////////* PUBSUB FUNCTIONS */////////////
+const callMe = functions.pubsub.topic('callme').onPublish(async message => {
+  const call = await clientTwilio.calls.create({
+    to: '+33618860770', from: '+33644601610', url: 'https://instafire.page.link/tc4X', method: 'GET'
+  })
+  return call.sid
+})
+
 module.exports = {
   api,
   userCreate,
@@ -305,5 +318,6 @@ module.exports = {
   subscribeToTopic,
   unsubscribeFromTopic,
   sendPushMessageToTopic,
-  saveStripeTokenAndCreateStripeUser
+  saveStripeTokenAndCreateStripeUser,
+  callMe
 }
