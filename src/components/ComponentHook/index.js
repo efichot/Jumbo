@@ -9,8 +9,8 @@ import { GET_BOOKS } from '../../graphql/Queries'
 import { ADD_BOOK } from '../../graphql/Mutations'
 import { Mutation, Query } from 'react-apollo'
 import { NotificationManager } from 'react-notifications'
-import OnMount from '../OnMount'
-import { NEW_BOOK } from '../../graphql/Subscriptions'
+// import OnMount from '../OnMount'
+// import { NEW_BOOK } from '../../graphql/Subscriptions'
 
 export default function (props) {
   const context = useContext(Context)
@@ -47,7 +47,7 @@ export default function (props) {
             return loading
               ? <CircularProgress color='secondary' />
               : <Fragment>
-                <OnMount
+                {/* <OnMount
                   onEffect={() =>
                       subscribeToMore({
                         document: NEW_BOOK,
@@ -62,7 +62,7 @@ export default function (props) {
                           }
                         }
                       })}
-                  />
+                  /> */}
                 <ul>
                   {data.books.map(book => (
                     <li key={book.title}>
@@ -103,14 +103,14 @@ export default function (props) {
       </ButtonBase>
       <Mutation
         mutation={ADD_BOOK}
-        update={(cache, { data: { addBook } }) => {
-          const { books } = cache.readQuery({ query: GET_BOOKS })
-          books.push(addBook)
-          cache.writeQuery({
-            query: GET_BOOKS,
-            data: { books }
-          })
-        }}
+        // update={(cache, { data: { addBook } }) => {
+        //   const { books } = cache.readQuery({ query: GET_BOOKS })
+        //   books.push(addBook)
+        //   cache.writeQuery({
+        //     query: GET_BOOKS,
+        //     data: { books }
+        //   })
+        // }}
       >
         {(mutation, { data, loading, error }) => {
           if (error) return NotificationManager.error(error.message)
@@ -126,7 +126,8 @@ export default function (props) {
                   variables: {
                     title: book,
                     writer
-                  }
+                  },
+                  refetchQueries: [{ query: GET_BOOKS }]
                 })
                 if (res) {
                   NotificationManager.success(
