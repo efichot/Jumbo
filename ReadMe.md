@@ -6,10 +6,10 @@
 
 Installing all the dependencies of project, run following command:
 
-`$yarn`
+`yarn`
 
 ## Only for pure create-react-app app
 
-run `$ yarn sass` to generate css, this will also watch your sass changes
+run `yarn sass` to generate css, this will also watch your sass changes
 
 run `yarn start` to run this app.
